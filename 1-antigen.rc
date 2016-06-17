@@ -1,0 +1,22 @@
+### Antigen ZSH Addons
+source ~/git/antigen/antigen.zsh
+antigen use oh-my-zsh
+
+antigen bundles <<EOBUNDLES
+git
+command-not-found
+docker
+docker-compose
+colored-man-pages
+brew
+osx
+ascii-soup/zsh-url-highlighter
+olivierverdier/zsh-git-prompt
+skx/sysadmin-util
+supercrabtree/k
+zsh-users/zsh-syntax-highlighting
+sublime
+zsh-users/zsh-completions
+zsh-navigation-tools
+EOBUNDLES
+antigen apply

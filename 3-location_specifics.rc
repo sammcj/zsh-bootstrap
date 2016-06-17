@@ -1,0 +1,11 @@
+case $HOST in
+    samm-mb*)
+        # placeholder for all
+        ;;
+    systems-samm*)
+        brew list > $HOME/Dropbox/dotfiles/brew_list-work-imac.txt
+        ;;
+    *)
+        # placeholder for all
+        ;;
+esac

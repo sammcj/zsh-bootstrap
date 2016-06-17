@@ -1,0 +1,125 @@
+### Options ###
+
+unalias run-help
+autoload run-help
+HELPDIR=/usr/local/share/zsh/help
+
+# Don't share tab history on iTerm2
+unsetopt inc_append_history
+unsetopt share_history
+
+# If we have a glob this will expand it
+setopt GLOB_COMPLETE
+setopt PUSHD_MINUS
+
+# Keep echo "station" > station from clobbering station
+setopt NO_CLOBBER
+
+# Case insensitive globbing
+setopt NO_CASE_GLOB
+
+# Be Reasonable!
+setopt NUMERIC_GLOB_SORT
+
+# I don't know why I never set this before.
+setopt EXTENDED_GLOB
+
+### Completion Stuff ###
+
+bindkey -M viins '\C-i' complete-word
+
+# Faster! (?)
+zstyle ':completion::complete:*' use-cache 1
+
+# case insensitive completion
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+
+zstyle ':completion:*' verbose yes
+zstyle ':completion:*:descriptions' format '%B%d%b'
+zstyle ':completion:*:messages' format '%d'
+zstyle ':completion:*:warnings' format 'No matches for: %d'
+zstyle ':completion:*' group-name ''
+
+# generate descriptions with magic.
+zstyle ':completion:*' auto-description 'specify: %d'
+
+# Don't prompt for a huge list, page it!
+zstyle ':completion:*:default' list-prompt '%S%M matches%s'
+
+# Don't prompt for a huge list, menu it!
+zstyle ':completion:*:default' menu 'select=0'
+
+# Have the newer files last so I see them first
+zstyle ':completion:*' file-sort modification reverse
+
+# color code completion!!!!  Wohoo!
+zstyle ':completion:*' list-colors "=(#b) #([0-9]#)*=36=31"
+
+unsetopt LIST_AMBIGUOUS
+setopt  COMPLETE_IN_WORD
+
+# Separate man page sections.  Neat.
+zstyle ':completion:*:manuals' separate-sections true
+
+# Egomaniac!
+zstyle ':completion:*' list-separator 'fREW'
+
+# complete with a menu for xwindow ids
+zstyle ':completion:*:windows' menu on=0
+zstyle ':completion:*:expand:*' tag-order all-expansions
+
+# more errors allowed for large words and fewer for small words
+zstyle ':completion:*:approximate:*' max-errors "reply=(  $((  ($#PREFIX+$#SUFFIX)/3  ))  )"
+
+# Errors format
+zstyle ':completion:*:corrections' format '%B%d (errors %e)%b'
+
+# Don't complete stuff already on the line
+zstyle ':completion::*:(rm|vi):*' ignore-line true
+
+# Don't complete directory we are already in (../here)
+zstyle ':completion:*' ignore-parents parent pwd
+
+zstyle ':completion::approximate*:*' prefix-needed false
+
+### Key bindings ###
+
+# Who doesn't want home and end to work?
+bindkey '\e[1~' beginning-of-line
+bindkey '\e[4~' end-of-line
+
+# Incremental search is elite!
+bindkey -M vicmd "/" history-incremental-search-backward
+bindkey -M vicmd "?" history-incremental-search-forward
+
+# Search based on what you typed in already
+bindkey -M vicmd "//" history-beginning-search-backward
+bindkey -M vicmd "??" history-beginning-search-forward
+
+# oh wow!  This is killer...  try it!
+bindkey -M vicmd "q" push-line
+
+# Ensure that arrow keys work as they should
+bindkey '\e[A' up-line-or-history
+bindkey '\e[B' down-line-or-history
+
+bindkey '\eOA' up-line-or-history
+bindkey '\eOB' down-line-or-history
+
+bindkey '\e[C' forward-char
+bindkey '\e[D' backward-char
+
+bindkey '\eOC' forward-char
+bindkey '\eOD' backward-char
+
+bindkey "5C" emacs-forward-word   #control left
+bindkey "5D" backward-word        #control right
+
+bindkey "^[[A" history-search-backward  # Search history with up arrow
+bindkey "^[[B" history-search-forward  # Search history with up arrow
+
+bindkey "^[[3~"   delete-char # delete keys
+bindkey "^[3;5~"  delete-char # delete keys
+
+# it's like, space AND completion.  Gnarlbot.
+bindkey -M viins ' ' magic-space

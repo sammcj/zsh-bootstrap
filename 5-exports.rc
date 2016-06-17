@@ -1,0 +1,6 @@
+### Exports ###
+
+export GREP_OPTIONS="--color"
+export LSCOLORS=ExFxCxDxBxegedabagacad
+
+export GOPATH=$HOME/go
