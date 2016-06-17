@@ -1,5 +1,8 @@
+#!/bin/bash
+
 alias dnf="sudo dnf"
-alias tree="tree -Ch"
+alias farsync="rsync -arv --numeric-ids --progress -e "ssh -T -c aes128-ctr -o Compression=no -x""
+alias tree="tree -ChF"
 alias subpup="subl ~/Dropbox/sublime_workspaces/puppet.sublime-project"
 alias subpup4="subl ~/Dropbox/sublime_workspaces/puppet4.sublime-project"
 alias git-hist="git gr"
@@ -11,7 +14,7 @@ alias dns="sudo killall -9 mDNSResponder"
 alias mtr="sudo mtr"
 alias plint="puppet-lint --with-filename --no-documentation-check --no-arrow_alignment-check --no-hard_tabs-check --no-80chars-check"
 alias bind="cd ~/git/puppet/files/int-bindmaster/var/named/master/private"
-alias gitclean="git remote prune origin; git repack -a -d -f --max-pack-size=10g --depth=250 --window=250; git gc --aggressive"
+alias gitclean="git remote prune origin; git repack -a -d -f --max-pack-size=10g --depth=500 --window=250; git gc --aggressive"
 alias gs="git status"
 alias ls='ls -G'
 alias updatedb='sudo /usr/libexec/locate.updatedb'
@@ -19,35 +22,25 @@ alias rake='noglob rake'
 alias netwatch='lsof -i'
 alias flushdns='sudo discoveryutil udnsflushcaches'
 alias server='sudo python3 -m http.server 80'
-alias eyaml-edit='eyaml edit --pkcs7-private-key ~/.keys/private_key.pkcs7.pem'
 alias c='ccat'
 alias i='itermocil'
 alias il='itermocil --list'
 alias p='subl ~/git/puppet'
 alias b="brew update; brew upgrade; brew cleanup"
-alias ba="gem update; gem cleanup; pip install -U pip; antigen-selfupdate; antigen-update; antigen-cleanup -y; vim +PluginUpdate +qall"
+alias ba="gem update; gem cleanup; pip install -U pip; antigen-selfupdate; antigen-update; antigen-cleanup -y; vim +PluginUpdate +qall; pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U"
+alias bab="b; ba"
 alias rmid="ssh-keygen -R"
 # alias crab='~/CrabHome/CrabExe/rlwrap -m$'\''\n'\'' -b '\'' .'\'' -e '\'''\'' -i -f ~/CrabHome/CrabExe/crab_completions -b '\'' .(,'\'' -H ~/CrabHome/CrabData/crab_history --pass-sigint-as-sigterm ~/CrabHome/CrabExe/crab -wrapped'
 alias gitday="git diff HEAD 'HEAD@{1 day ago}'"
 alias gitweek="git diff HEAD 'HEAD@{1 week ago}'"
 alias pipupgrade="pip freeze --local | grep -v '^\-e' | cut -d = -f 1 | xargs pip install -U"
 alias dl="echo sed -i \'$1d\' /Users/samm/.ssh/known_hosts"
-alias aria="aria2c -s 10 -j 10 --continue=true"
+alias aria="aria2c -s 10 -j 10 -x 10 -c --enable-http-pipelining=true --http-accept-gzip=true"
 alias dmesg="dmesg -LT"
-alias zshconfig="cd $HOME/Dropbox/dotfiles/shell_config && ls -ltar"
+alias zshconfig="subl $HOME/Dropbox/dotfiles/shell_config"
+alias ps-mem="ps xu --sort %mem | sed -e :a -e '1p;\$q;N;6,\$D;ba'" #show top memory hogs - linux only
 
 # Git alias
 alias co='git checkout'
 alias cpush="git add .; git commit -m 'corosync'; git push"
-
-# Directory jumps
-alias m="cd /Volumes/Music/beets"
-alias d="cd ~/Downloads"
-
-#################################################################################
-# start and stop the vpn from the command line from now on with these two commands
-# or rename the aliases as you see fit.
-#################################################################################
-alias startvpn="sudo launchctl load -w /Library/LaunchDaemons/net.juniper.AccessService.plist; open -a '/Applications/Junos Pulse.app/Contents/Plugins/JamUI/PulseTray.app/Contents/MacOS/PulseTray'"
-alias stopvpn="osascript -e 'tell application \"PulseTray.app\" to quit';sudo launchctl unload -w /Library/LaunchDaemons/net.juniper.AccessService.plist"
 

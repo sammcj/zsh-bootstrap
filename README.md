@@ -2,6 +2,8 @@
 
 This git directory in my dropbox and can run the below install script to bootstrap my zsh configuration.
 
+[![Issue Count](https://codeclimate.com/github/sammcj/zsh-bootstrap/badges/issue_count.svg)](https://codeclimate.com/github/sammcj/zsh-bootstrap)
+
 ## Install
 
 `~/Dropbox/dotfiles/shell_config/bootstrap_shell.sh`

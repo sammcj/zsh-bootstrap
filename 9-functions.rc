@@ -5,3 +5,14 @@ function mkcd
   mkdir -p "$dir" && cd "$dir";
 }
 
+function openfiles
+{
+  lsof| awk '{print $1}'|uniq -c|sort -r
+}
+
+# Shows real memory usage of an application and all its proccesses
+# Requires brew install pidof on macOS
+psof()
+{
+ ps u `pidof "$@"`
+}

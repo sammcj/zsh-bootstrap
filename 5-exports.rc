@@ -2,5 +2,5 @@
 
 export GREP_OPTIONS="--color"
 export LSCOLORS=ExFxCxDxBxegedabagacad
-
+export PATH=$PATH:/usr/local/m-cli
 export GOPATH=$HOME/go

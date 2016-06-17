@@ -6,7 +6,7 @@
 #
 # - Dropbox installed and synced
 # - Internet access
-# - Homebrew installed
+# - Homebrew, git installed
 
 brew install -y fzf tmux tmux-cssh zsh git
 
@@ -19,3 +19,17 @@ fi
 rm -f ~/.zshrc
 ln -s ~/Dropbox/dotfiles/shell_config/zshrc ~/.zshrc
 
+if [ ! -d "${ZDOTDIR:-$HOME}/.zprezto" ]; then
+  rm -f ~/.zprezto
+
+  git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}/.zprezto"
+
+  zsh
+  setopt EXTENDED_GLOB
+
+  for rcfile in "${ZDOTDIR:-$HOME}"/.zprezto/runcoms/^README.md\(.N\); do
+    ln -s "$rcfile" "${ZDOTDIR:-$HOME}/.${rcfile:t}"
+  done
+
+  ln -s ~/Dropbox/dotfiles/shell_config/zpreztorc ~/.zprezto
+fi
