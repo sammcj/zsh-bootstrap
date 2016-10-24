@@ -44,3 +44,6 @@ alias ps-mem="ps xu --sort %mem | sed -e :a -e '1p;\$q;N;6,\$D;ba'" #show top me
 alias co='git checkout'
 alias cpush="git add .; git commit -m 'corosync'; git push"
 
+# Jekyll alias
+alias js="jekyll serve ."
+alias jb="jekyll build ."
