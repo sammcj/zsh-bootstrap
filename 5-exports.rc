@@ -1,5 +1,6 @@
 ### Exports ###
 
+export HOMEBREW_NO_ANALYTICS=1
 export GREP_OPTIONS="--color"
 export LSCOLORS=ExFxCxDxBxegedabagacad
 export PATH=$PATH:/usr/local/m-cli
