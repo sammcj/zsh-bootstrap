@@ -1,4 +1,4 @@
-### Antigen ZSH Addons
+ad### Antigen ZSH Addons
 source ~/git/antigen/antigen.zsh
 antigen use oh-my-zsh
 
