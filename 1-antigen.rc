@@ -17,5 +17,6 @@ supercrabtree/k
 sublime
 zsh-users/zsh-completions
 zsh-navigation-tools
+rodjek/vim-puppet
 EOBUNDLES
 antigen apply
