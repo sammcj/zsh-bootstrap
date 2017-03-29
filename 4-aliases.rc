@@ -23,9 +23,10 @@ alias netwatch='lsof -i'
 alias flushdns='sudo discoveryutil udnsflushcaches'
 alias server='sudo python3 -m http.server 80'
 alias c='ccat'
+alias cc='colorize.py'
 alias i='itermocil'
 alias il='itermocil --list'
-alias p='subl ~/git/puppet'
+alias p='ping'
 alias b="brew update; brew upgrade; brew cleanup"
 alias ba="gem update; gem cleanup; pip install -U pip; antigen-selfupdate; antigen-update; antigen-cleanup -y; vim +PluginUpdate +qall; pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U"
 alias bab="b; ba"
