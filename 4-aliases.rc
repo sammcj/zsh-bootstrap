@@ -7,7 +7,7 @@ alias mygit="cd ~/git/; ls"
 # Sublime Projects
 alias subpup="subl ~/Dropbox/sublime_workspaces/puppet.sublime-project"
 alias subpup4="subl ~/Dropbox/sublime_workspaces/puppet4.sublime-project"
-alias zshconfig="subl $HOME/Dropbox/dotfiles/shell_config"
+alias zshconfig="subl \$HOME/Dropbox/dotfiles/shell_config"
 
 # Packages
 alias b="brew update; brew upgrade; brew cleanup"
@@ -16,7 +16,7 @@ alias ba="brew update; brew upgrade; brew cleanup; gem update; gem cleanup; pip 
 # Git
 alias gitdiff="git diff --color-words --color=always"
 alias gitclean="git fetch -p; git remote prune origin; git repack -a -d -f --max-pack-size=10g --depth=500 --window=250; git gc --aggressive"
-alias gitrb="for branch in `git branch -r --merged | grep -v HEAD`; do echo -e `git show --format="%ci %cr %an" $branch | head -n 1` \\t$branch; done | sort -r"
+alias gitrb='for branch in `git branch -r --merged | grep -v HEAD`; do echo -e `git show --format="%ci %cr %an" $branch | head -n 1` \\t$branch; done | sort -r'
 alias gs="git status"
 alias git-hist="git gr"
 alias git-delete-remote-branch="git push origin --delete"
@@ -52,7 +52,6 @@ alias i='itermocil'
 alias il='itermocil --list'
 alias p='ping'
 alias rmid="ssh-keygen -R"
-alias dl="echo sed -i \'$1d\' /Users/samm/.ssh/known_hosts"
 alias aria="aria2c -s 5 -j 5 -x 5 -c --enable-http-pipelining=true --http-accept-gzip=true"
 alias dmesg="dmesg -LT"
 alias ps-mem="ps xu --sort %mem | sed -e :a -e '1p;\$q;N;6,\$D;ba'" #show top memory hogs - linux only
