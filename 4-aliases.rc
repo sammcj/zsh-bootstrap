@@ -1,21 +1,45 @@
 #!/bin/bash
 
+# Directory Jumps
+alias d="cd ~/Downloads"
+alias mygit="cd ~/git/; ls"
+
+# Sublime Projects
+alias subpup="subl ~/Dropbox/sublime_workspaces/puppet.sublime-project"
+alias subpup4="subl ~/Dropbox/sublime_workspaces/puppet4.sublime-project"
+alias zshconfig="subl $HOME/Dropbox/dotfiles/shell_config"
+
+# Packages
+alias b="brew update; brew upgrade; brew cleanup"
+alias ba="brew update; brew upgrade; brew cleanup; gem update; gem cleanup; pip install -U pip; antigen-selfupdate; antigen-update; antigen-cleanup -y; vim +PluginUpdate +qall; pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U; pip3 freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip3 install -U"
+
+# Git
+alias gitdiff="git diff --color-words --color=always"
+alias gitclean="git fetch -p; git remote prune origin; git repack -a -d -f --max-pack-size=10g --depth=500 --window=250; git gc --aggressive"
+alias gitrb="for branch in `git branch -r --merged | grep -v HEAD`; do echo -e `git show --format="%ci %cr %an" $branch | head -n 1` \\t$branch; done | sort -r"
+alias gs="git status"
+alias git-hist="git gr"
+alias git-delete-remote-branch="git push origin --delete"
+alias ip="~/Dropbox/scripts/ixpull.sh"
+alias co='git checkout'
+alias dev="git add .; git commit -m 'wip / developing'; git push"
+alias gitday="git diff HEAD 'HEAD@{1 day ago}'"
+alias gitweek="git diff HEAD 'HEAD@{1 week ago}'"
+
+# Jekyll alias
+alias js="jekyll serve ."
+alias jb="jekyll build ."
+
+# Buku https://github.com/jarun/Buku#add-bookmarks-from-anywhere
+alias bukuadd="pbpaste | buku -a"
+
+# Misc
 alias dnf="sudo dnf"
 alias farsync="rsync -arv --numeric-ids --progress -e "ssh -T -c aes128-ctr -o Compression=no -x""
 alias tree="tree -ChF"
-alias subpup="subl ~/Dropbox/sublime_workspaces/puppet.sublime-project"
-alias subpup4="subl ~/Dropbox/sublime_workspaces/puppet4.sublime-project"
-alias git-hist="git gr"
-alias git-delete-remote-branch="git push origin --delete"
-alias mygit="cd ~/git/; ls"
-alias gitdiff="git diff --color-words --color=always"
-alias ip="~/Dropbox/scripts/ixpull.sh"
 alias dns="sudo killall -9 mDNSResponder"
 alias mtr="sudo mtr"
 alias plint="puppet-lint --with-filename --no-documentation-check --no-arrow_alignment-check --no-hard_tabs-check --no-80chars-check"
-alias bind="cd ~/git/puppet/files/int-bindmaster/var/named/master/private"
-alias gitclean="git remote prune origin; git repack -a -d -f --max-pack-size=10g --depth=500 --window=250; git gc --aggressive"
-alias gs="git status"
 alias ls='ls -G'
 alias updatedb='sudo /usr/libexec/locate.updatedb'
 alias rake='noglob rake'
@@ -27,23 +51,8 @@ alias cc='colorize.py'
 alias i='itermocil'
 alias il='itermocil --list'
 alias p='ping'
-alias b="brew update; brew upgrade; brew cleanup"
-alias ba="brew update; brew upgrade; brew cleanup; gem update; gem cleanup; pip install -U pip; antigen-selfupdate; antigen-update; antigen-cleanup -y; vim +PluginUpdate +qall; pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U; pip3 freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip3 install -U"
 alias rmid="ssh-keygen -R"
-# alias crab='~/CrabHome/CrabExe/rlwrap -m$'\''\n'\'' -b '\'' .'\'' -e '\'''\'' -i -f ~/CrabHome/CrabExe/crab_completions -b '\'' .(,'\'' -H ~/CrabHome/CrabData/crab_history --pass-sigint-as-sigterm ~/CrabHome/CrabExe/crab -wrapped'
-alias gitday="git diff HEAD 'HEAD@{1 day ago}'"
-alias gitweek="git diff HEAD 'HEAD@{1 week ago}'"
-alias pipupgrade="pip freeze --local | grep -v '^\-e' | cut -d = -f 1 | xargs pip install -U"
 alias dl="echo sed -i \'$1d\' /Users/samm/.ssh/known_hosts"
 alias aria="aria2c -s 5 -j 5 -x 5 -c --enable-http-pipelining=true --http-accept-gzip=true"
 alias dmesg="dmesg -LT"
-alias zshconfig="subl $HOME/Dropbox/dotfiles/shell_config"
 alias ps-mem="ps xu --sort %mem | sed -e :a -e '1p;\$q;N;6,\$D;ba'" #show top memory hogs - linux only
-
-# Git alias
-alias co='git checkout'
-alias cpush="git add .; git commit -m 'corosync'; git push"
-
-# Jekyll alias
-alias js="jekyll serve ."
-alias jb="jekyll build ."
