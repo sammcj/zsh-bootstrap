@@ -5,4 +5,4 @@ export GREP_OPTIONS="--color"
 export LSCOLORS=ExFxCxDxBxegedabagacad
 export PATH=$PATH:/usr/local/m-cli
 export GOPATH=$HOME/go
-export XZ_OPT="--threads=8”
+export XZ_OPT="--threads=8"
