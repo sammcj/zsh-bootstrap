@@ -55,3 +55,4 @@ alias rmid="ssh-keygen -R"
 alias aria="aria2c -s 5 -j 5 -x 5 -c --enable-http-pipelining=true --http-accept-gzip=true"
 alias dmesg="dmesg -LT"
 alias ps-mem="ps xu --sort %mem | sed -e :a -e '1p;\$q;N;6,\$D;ba'" #show top memory hogs - linux only
+alias history="fc -li 1000"
