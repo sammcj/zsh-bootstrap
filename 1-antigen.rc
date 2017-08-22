@@ -1,22 +1,33 @@
 ### Antigen ZSH Addons
 source ~/git/antigen/antigen.zsh
 antigen use oh-my-zsh
+#antigen theme https://github.com/iam4x/zsh-iterm-touchbar
 
 antigen bundles <<EOBUNDLES
 git
 command-not-found
 docker
 docker-compose
+johnlabarge/docker_fun
+webyneter/docker-aliases
+unixorn/docker-helpers.zshplugin
+dbz/zsh-kubernetes
+trapd00r/zsh-syntax-highlighting-filetypes
+MichaelAquilina/zsh-you-should-use
 colored-man-pages
 brew
 osx
 ascii-soup/zsh-url-highlighter
-olivierverdier/zsh-git-prompt
+smallhadroncollider/antigen-git-rebase
+rutchkiwi/copyzshell
 skx/sysadmin-util
 supercrabtree/k
 sublime
 zsh-users/zsh-completions
 zsh-navigation-tools
 rodjek/vim-puppet
+nojhan/liquidprompt
 EOBUNDLES
 antigen apply
+
+#olivierverdier/zsh-git-prompt

@@ -11,7 +11,8 @@ alias zshconfig="subl \$HOME/Dropbox/dotfiles/shell_config"
 
 # Packages
 alias b="brew update; brew upgrade; brew cleanup"
-alias ba="brew update; brew upgrade; brew cleanup; gem update; gem cleanup; pip install -U pip; antigen-selfupdate; antigen-update; antigen-cleanup -y; vim +PluginUpdate +qall; pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U; pip3 freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip3 install -U"
+alias ba="brew update; brew upgrade; brew cleanup; gem update; gem cleanup; pip install -U pip; antigen-selfupdate; antigen-update; antigen-cleanup -y; vim +PluginUpdate +qall"
+alias pa"pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U"
 
 # Git
 alias gitdiff="git diff --color-words --color=always"
@@ -25,6 +26,8 @@ alias co='git checkout'
 alias dev="git add .; git commit -m 'wip / developing'; git push"
 alias gitday="git diff HEAD 'HEAD@{1 day ago}'"
 alias gitweek="git diff HEAD 'HEAD@{1 week ago}'"
+alias prod="git checkout production"
+alias master="git checkout master"
 
 # Jekyll alias
 alias js="jekyll serve ."
