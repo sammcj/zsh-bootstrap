@@ -1,5 +1,9 @@
 ### History Stuff ###
 
+# Don't share tab history on iTerm2
+unsetopt inc_append_history
+unsetopt share_history
+
 # Where it gets saved
 HISTFILE=~/.history
 

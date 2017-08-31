@@ -6,10 +6,6 @@ ZSH_THEME="dieter"
 autoload run-help
 HELPDIR=/usr/local/share/zsh/help
 
-# Don't share tab history on iTerm2
-unsetopt inc_append_history
-unsetopt share_history
-
 # If we have a glob this will expand it
 setopt GLOB_COMPLETE
 setopt PUSHD_MINUS
