@@ -4,6 +4,7 @@
 HISTFILE=~/.history
 
 # Remember about a years worth of history (AWESOME)
+SAVEHIST=100000
 HISTSIZE=100000
 
 # Don't overwrite, append!
