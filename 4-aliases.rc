@@ -11,7 +11,7 @@ alias zshconfig="subl \$HOME/Dropbox/dotfiles/shell_config"
 
 # Packages
 alias b="brew update; brew upgrade; brew cleanup"
-alias ba="brew update; brew upgrade; brew cleanup; gem update; gem cleanup; pip install -U pip; antigen-selfupdate; antigen-update; antigen-cleanup -y; vim +PluginUpdate +qall"
+alias ba="brew update; brew upgrade; brew cleanup; gem update; gem cleanup; pip install -U pip; antigen selfupdate; antigen update; antigen cleanup -y; vim +PluginUpdate +qall"
 alias pa"pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U"
 
 # Git
@@ -19,6 +19,7 @@ alias gitdiff="git diff --color-words --color=always"
 alias gitclean="git fetch -p; git remote prune origin; git repack -a -d -f --max-pack-size=10g --depth=500 --window=250; git gc --aggressive"
 alias gitrb='for branch in `git branch -r --merged | grep -v HEAD`; do echo -e `git show --format="%ci %cr %an" $branch | head -n 1` \\t$branch; done | sort -r'
 alias gs="git status"
+alias gbd="git branch | egrep -v 'master|production' | xargs git branch -D"
 alias git-hist="git gr"
 alias git-delete-remote-branch="git push origin --delete"
 alias ip="~/Dropbox/scripts/ixpull.sh"
@@ -58,5 +59,6 @@ alias rmid="ssh-keygen -R"
 alias aria="aria2c -s 5 -j 5 -x 5 -c --enable-http-pipelining=true --http-accept-gzip=true"
 alias dmesg="dmesg -LT"
 alias ps-mem="ps xu --sort %mem | sed -e :a -e '1p;\$q;N;6,\$D;ba'" #show top memory hogs - linux only
-alias history="fc -li 1000"
+#alias history="fc -li 1000"
 alias cpuinfo="sysctl -n machdep.cpu.brand_string"
+alias g="googler"
