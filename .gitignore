@@ -1,3 +1,5 @@
+2-ssh_add.rc
 11-tokens.rc
 12-private-aliases.rc
 13-private-other.rc
+*private*

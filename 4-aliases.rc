@@ -19,7 +19,7 @@ alias gitdiff="git diff --color-words --color=always"
 alias gitclean="git fetch -p; git remote prune origin; git repack -a -d -f --max-pack-size=10g --depth=500 --window=250; git gc --aggressive"
 alias gitrb='for branch in `git branch -r --merged | grep -v HEAD`; do echo -e `git show --format="%ci %cr %an" $branch | head -n 1` \\t$branch; done | sort -r'
 alias gs="git status"
-alias gbd="git branch | egrep -v 'master|production' | xargs git branch -D"
+alias gbd="git branch | egrep -v 'master|production' | xargs git branch -D && git remote prune origin"
 alias git-hist="git gr"
 alias git-delete-remote-branch="git push origin --delete"
 alias ip="~/Dropbox/scripts/ixpull.sh"
@@ -39,7 +39,7 @@ alias bukuadd="pbpaste | buku -a"
 
 # Misc
 alias dnf="sudo dnf"
-alias farsync="rsync -arv --numeric-ids --progress -e "ssh -T -c aes128-ctr -o Compression=no -x""
+alias farsync="rsync -arv --numeric-ids --progress -e 'ssh -T -c aes128-ctr -o Compression=no -x'"
 alias tree="tree -ChF"
 alias dns="sudo killall -9 mDNSResponder"
 alias mtr="sudo mtr"
