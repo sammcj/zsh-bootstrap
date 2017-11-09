@@ -1,4 +1,3 @@
-
 function mkcd
 {
   dir="$*";
@@ -234,3 +233,25 @@ function git_current_user_email() {
 POST_1_7_2_GIT=$(git_compare_version "1.7.2")
 # Clean up the namespace slightly by removing the checker function
 unfunction git_compare_version
+
+# Neutral network image enhancement
+# https://github.com/alexjc/neural-enhance
+function enhance() {
+  docker run --rm -v $(PWD):/ne/input -it alexjc/neural-enhance --device=opencl /ne/input/`basename ${@:$#}`
+}
+
+function enhancegpufirst() {
+  docker run --rm -v $(PWD):/ne/input -it alexjc/neural-enhance --device=opencl0:0 /ne/input/`basename ${@:$#}`
+}
+
+function enhancegpusecond() {
+  docker run --rm -v $(PWD):/ne/input -it alexjc/neural-enhance --device=opencl0:1 /ne/input/`basename ${@:$#}`
+}
+
+function enhancegpucuda() {
+  docker run --rm -v $(PWD):/ne/input -it alexjc/neural-enhance --device=cuda /ne/input/`basename ${@:$#}`
+}
+
+function enhanceallimages() {
+  enhance "$(ls -1)"
+}
