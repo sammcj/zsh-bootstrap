@@ -16,6 +16,11 @@ psof()
  ps u `pidof "$@"`
 }
 
+# http://exercism.io/clients/cli/mac
+if [ -f ~/.config/exercism/exercism_completion.zsh ]; then
+  . ~/.config/exercism/exercism_completion.zsh
+fi
+
 # Outputs current branch info in prompt format
 function git_prompt_info() {
   local ref
@@ -237,7 +242,7 @@ unfunction git_compare_version
 # Neutral network image enhancement
 # https://github.com/alexjc/neural-enhance
 function enhance() {
-  docker run --rm -v $(PWD):/ne/input -it alexjc/neural-enhance --device=opencl /ne/input/`basename ${@:$#}`
+  docker run --rm -v $(PWD):/ne/input -it alexjc/neural-enhance --device=opencl /ne/input/"$1"
 }
 
 function enhancegpufirst() {
