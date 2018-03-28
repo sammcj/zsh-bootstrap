@@ -18,7 +18,7 @@ psof()
 
 # http://exercism.io/clients/cli/mac
 if [ -f ~/.config/exercism/exercism_completion.zsh ]; then
-  . ~/.config/exercism/exercism_completion.zsh
+  source ~/.config/exercism/exercism_completion.zsh
 fi
 
 # Outputs current branch info in prompt format
@@ -260,3 +260,5 @@ function enhancegpucuda() {
 function enhanceallimages() {
   enhance "$(ls -1)"
 }
+
+[ -f /usr/local/etc/profile.d/autojump.sh ] && . /usr/local/etc/profile.d/autojump.sh
