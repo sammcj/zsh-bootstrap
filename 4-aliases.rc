@@ -2,7 +2,6 @@
 
 # Directory Jumps
 alias d="cd ~/Downloads"
-alias mygit="cd ~/git/; ls"
 
 # Sublime Projects
 alias subpup="subl ~/Dropbox/sublime_workspaces/puppet.sublime-project"
@@ -23,7 +22,6 @@ alias gbd="git branch | egrep -v 'master|production' | xargs git branch -D && gi
 alias git-hist="git gr"
 alias git-delete-remote-branch="git push origin --delete"
 alias ip="~/Dropbox/scripts/ixpull.sh"
-alias co='git checkout'
 alias dev="git add .; git commit -m 'wip / developing'; git push"
 alias gitday="git diff HEAD 'HEAD@{1 day ago}'"
 alias gitweek="git diff HEAD 'HEAD@{1 week ago}'"
@@ -38,7 +36,6 @@ alias jb="jekyll build ."
 alias bukuadd="pbpaste | buku -a"
 
 # Misc
-alias dnf="sudo dnf"
 alias farsync="rsync -arv --numeric-ids --progress -e 'ssh -T -c aes128-ctr -o Compression=no -x'"
 alias tree="tree -ChF"
 alias dns="sudo killall -9 mDNSResponder"
@@ -52,9 +49,6 @@ alias flushdns='sudo discoveryutil udnsflushcaches'
 alias server='sudo python3 -m http.server 80'
 alias c='ccat'
 alias cc='colorize.py'
-alias i='itermocil'
-alias il='itermocil --list'
-alias p='ping'
 alias rmid="ssh-keygen -R"
 alias aria="aria2c -s 5 -j 5 -x 5 -c --enable-http-pipelining=true --http-accept-gzip=true"
 alias dmesg="dmesg -LT"
@@ -62,3 +56,5 @@ alias ps-mem="ps xu --sort %mem | sed -e :a -e '1p;\$q;N;6,\$D;ba'" #show top me
 #alias history="fc -li 1000"
 alias cpuinfo="sysctl -n machdep.cpu.brand_string"
 alias g="googler"
+alias psql="/Applications/Postgres.app/Contents/Versions/10/bin/psql"
+alias fastmail_you_there_bro="openssl s_client -connect imap.fastmail.com:993 -crlf"
