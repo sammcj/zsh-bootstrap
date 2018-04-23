@@ -7,3 +7,4 @@ export PATH=$PATH:/usr/local/m-cli
 export GOPATH=$HOME/go
 export XZ_OPT="--threads=8"
 export EDITOR="/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl --wait"
+export SSH_AUTH_SOCK=$HOME/.sekey/ssh-agent.ssh

@@ -27,6 +27,7 @@ alias gitday="git diff HEAD 'HEAD@{1 day ago}'"
 alias gitweek="git diff HEAD 'HEAD@{1 week ago}'"
 alias prod="git checkout production"
 alias master="git checkout master"
+alias jpgcompress='echo convert INPUTFILE -sampling-factor 4:2:0 -strip -interlace JPEG -colorspace sRGB OUTPUTFILE'
 
 # Jekyll alias
 alias js="jekyll serve ."

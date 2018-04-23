@@ -3,8 +3,6 @@
 # clone of https://github.com/zsh-users/antigen.git
 source ~/git/antigen/antigen.zsh
 
-#antigen use oh-my-zsh
-
 antigen bundles <<EOBUNDLES
 command-not-found
 docker
@@ -20,13 +18,14 @@ colored-man-pages
 brew
 osx
 smallhadroncollider/antigen-git-rebase
-sublime
 zsh-users/zsh-completions
 zsh-navigation-tools
 rodjek/vim-puppet
 zsh-users/zsh-history-substring-search
+zsh-autosuggestions
 EOBUNDLES
 antigen apply
+
 
 #johnlabarge/docker_fun
 #webyneter/docker-aliases
@@ -36,3 +35,5 @@ antigen apply
 #antigen theme https://github.com/iam4x/zsh-iterm-touchbar
 #unixorn/docker-helpers.zshplugin
 #nojhan/liquidprompt
+#tysonwolker/iterm-tab-colors
+#iam4x/zsh-iterm-touchbar
