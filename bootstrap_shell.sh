@@ -8,7 +8,7 @@
 # - Internet access
 # - Homebrew, git installed
 
-brew install -y fzf tmux tmux-cssh zsh git sekey
+brew install -y fzf tmux tmux-cssh zsh git sekey gpg
 
 grep -q -F '/usr/local/bin/zsh' /etc/shells || echo '/usr/local/bin/zsh' | sudo tee -a /etc/shells
 

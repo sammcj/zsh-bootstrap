@@ -1,4 +1,1 @@
 PATH=/usr/local/bin:/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/sbin:$HOME/bin:$HOME/Dropbox/scripts:$HOME/Dropbox/bin:$HOME/git/scripts:/git/scripts:$HOME/historian:$HOME/go/bin:$PATH
-
-# added by Miniconda3 installer
-export PATH="/Users/samm/miniconda3/bin:$PATH"
