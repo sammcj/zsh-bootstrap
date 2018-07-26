@@ -37,10 +37,10 @@ alias jb="jekyll build ."
 alias bukuadd="pbpaste | buku -a"
 
 # Misc
-alias farsync="sync -rhm -e 'ssh -T -c aes128-gcm@openssh.com -o Compression=no -x' --partial --progress"
+alias farsync="rsync -rhm --numeric-ids -e 'ssh -T -c aes128-gcm@openssh.com -o Compression=no -x' --partial --progress"
 alias tree="tree -ChF"
-alias dns="sudo killall -9 mDNSResponder"
 alias mtr="sudo mtr"
+alias iftop="sudo iftop -i en0"
 alias plint="puppet-lint --with-filename --no-documentation-check --no-arrow_alignment-check --no-hard_tabs-check --no-80chars-check"
 alias ls='ls -G'
 alias updatedb='sudo /usr/libexec/locate.updatedb'
