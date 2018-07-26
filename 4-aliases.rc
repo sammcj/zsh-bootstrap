@@ -37,7 +37,7 @@ alias jb="jekyll build ."
 alias bukuadd="pbpaste | buku -a"
 
 # Misc
-alias farsync="rsync -arv --numeric-ids --progress -e 'ssh -T -c aes128-ctr -o Compression=no -x'"
+alias farsync="rsync -rIhmu -e 'ssh -T -c aes128-gcm@openssh.com -o Compression=no -x' --partial --progress"
 alias tree="tree -ChF"
 alias dns="sudo killall -9 mDNSResponder"
 alias mtr="sudo mtr"
