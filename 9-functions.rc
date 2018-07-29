@@ -6,8 +6,9 @@ function mkcd
 
 function yt
 {
-  nohup youtube-dl "$1" 2>&1 > youtube-dl-"$(date +%Y%m%d-%H%M%S)".log &
+  nohup youtube-dl "$1" 2>&1 > /dev/null &
 }
+# change /dev/null to youtube-dl-"$(date +%Y%m%d-%H%M%S)".log if you want logging
 
 function openfiles
 {
