@@ -6,7 +6,7 @@ function mkcd
 
 function yt
 {
- nohup youtube-dl "$1" 2>&1 > /dev/null &
+ nohup youtube-dl --no-progress "$1" 2>&1 > /dev/null &
 }
 # change /dev/null to youtube-dl-"$(date +%Y%m%d-%H%M%S)".log if you want logging
 

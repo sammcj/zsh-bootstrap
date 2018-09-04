@@ -37,7 +37,8 @@ alias jb="jekyll build ."
 alias bukuadd="pbpaste | buku -a"
 
 # Misc
-alias farsync="rsync -rhm --numeric-ids -e 'ssh -T -c aes128-gcm@openssh.com -o Compression=no -x' --partial --progress"
+alias farsync="rsync -xrhm --numeric-ids -e 'ssh -T -c aes128-gcm@openssh.com -o Compression=no -x' --partial --progress"
+alias arcfarsync="rsync -rhm --numeric-ids -e 'ssh -T -c arcfour -o Compression=no -x' --partial --progress"
 alias tree="tree -ChF"
 alias mtr="sudo mtr"
 alias iftop="sudo iftop -i en0"
@@ -59,3 +60,5 @@ alias cpuinfo="sysctl -n machdep.cpu.brand_string"
 alias g="googler"
 alias psql="/Applications/Postgres.app/Contents/Versions/10/bin/psql"
 alias fastmail_you_there_bro="openssl s_client -connect imap.fastmail.com:993 -crlf"
+
+#alias yt='youtube-dl'

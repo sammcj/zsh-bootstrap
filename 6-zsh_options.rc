@@ -53,6 +53,9 @@ zstyle ':completion:*' file-sort modification reverse
 # color code completion!!!!  Wohoo!
 zstyle ':completion:*' list-colors "=(#b) #([0-9]#)*=36=31"
 
+# don't tab complete hosts (slow and if you have ad-blocking in your hosts file annoying)
+#zstyle ':completion:*' hosts off
+
 unsetopt LIST_AMBIGUOUS
 setopt  COMPLETE_IN_WORD
 
