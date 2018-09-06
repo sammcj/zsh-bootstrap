@@ -16,6 +16,11 @@ if [ ! -d "$HOME/.antigen" ]; then
   git clone https://github.com/zsh-users/antigen.git "$HOME/.antigen"
 fi
 
+if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
+  mkdir -p ~/.tmux/plugins
+  git clone https://github.com/tmux-plugins/tpm $HOME/.tmux/plugins/tpm
+fi
+
 rm -f ~/.zshrc
 ln -s ~/Dropbox/dotfiles/shell_config/zshrc ~/.zshrc
 
