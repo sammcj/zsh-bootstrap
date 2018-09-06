@@ -8,7 +8,6 @@ command-not-found
 docker
 docker-compose
 git
-dbz/zsh-kubernetes
 zsh-users/zsh-syntax-highlighting
 trapd00r/zsh-syntax-highlighting-filetypes
 ascii-soup/zsh-url-highlighter
@@ -26,7 +25,7 @@ zsh-autosuggestions
 EOBUNDLES
 antigen apply
 
-
+#dbz/zsh-kubernetes
 #johnlabarge/docker_fun
 #webyneter/docker-aliases
 #supercrabtree/k
