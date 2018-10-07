@@ -10,18 +10,19 @@ function yt
 }
 # change /dev/null to youtube-dl-"$(date +%Y%m%d-%H%M%S)".log if you want logging
 
+## Commented out as not using
+# function openfiles
+# {
+#   lsof| awk '{print $1}'|uniq -c|sort -r
+# }
 
-function openfiles
-{
-  lsof| awk '{print $1}'|uniq -c|sort -r
-}
-
-# Shows real memory usage of an application and all its proccesses
-# Requires brew install pidof on macOS
-psof()
-{
- ps u `pidof "$@"`
-}
+## Commented out as not using
+# # Shows real memory usage of an application and all its proccesses
+# # Requires brew install pidof on macOS
+# psof()
+# {
+#  ps u `pidof "$@"`
+# }
 
 # http://exercism.io/clients/cli/mac
 if [ -f ~/.config/exercism/exercism_completion.zsh ]; then

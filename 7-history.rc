@@ -7,8 +7,8 @@
 HISTFILE=~/.history
 
 # Remember about a years worth of history (AWESOME)
-SAVEHIST=100000
-HISTSIZE=100000
+export SAVEHIST=100000
+export HISTSIZE=100000
 
 # Don't overwrite, append!
 setopt APPEND_HISTORY

@@ -33,11 +33,8 @@ alias jpgcompress='echo convert INPUTFILE -sampling-factor 4:2:0 -strip -interla
 alias js="jekyll serve ."
 alias jb="jekyll build ."
 
-# Buku https://github.com/jarun/Buku#add-bookmarks-from-anywhere
-alias bukuadd="pbpaste | buku -a"
-
 # Misc
-alias farsync="rsync -xrhm --numeric-ids -e 'ssh -T -c aes128-gcm@openssh.com -o Compression=no -x' --partial --progress"
+alias farsync="rsync -xrhm --numeric-ids -e 'ssh -T -c aes128-gcm@openssh.com -o Compression=no -x' --partial --progress" #TODO: fix bug where this overwrites file name
 alias arcfarsync="rsync -rhm --numeric-ids -e 'ssh -T -c arcfour -o Compression=no -x' --partial --progress"
 alias tree="tree -ChF"
 alias mtr="sudo mtr"
