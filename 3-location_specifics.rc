@@ -1,9 +1,12 @@
 case $HOST in
     samm-mb*)
-        # placeholder for all
+        # placeholder
+        ;;
+    systems-samm-mb*)
+        # placeholder
         ;;
     systems-samm*)
-        brew list > $HOME/Dropbox/dotfiles/brew_list-work-imac.txt
+         # placeholder
         ;;
     *)
         # placeholder for all
