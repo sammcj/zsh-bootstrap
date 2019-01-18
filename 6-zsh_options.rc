@@ -38,6 +38,9 @@ zstyle ':completion:*:messages' format '%d'
 zstyle ':completion:*:warnings' format 'No matches for: %d'
 zstyle ':completion:*' group-name ''
 
+# don't mess up url passing as arguments
+zstyle ':urlglobber' url-other-schema
+
 # generate descriptions with magic.
 zstyle ':completion:*' auto-description 'specify: %d'
 
