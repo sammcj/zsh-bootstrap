@@ -18,10 +18,10 @@ brew
 osx
 smallhadroncollider/antigen-git-rebase
 zsh-users/zsh-completions
+zsh-users/zsh-autosuggestions
 zsh-navigation-tools
 rodjek/vim-puppet
 zsh-users/zsh-history-substring-search
-zsh-autosuggestions
 EOBUNDLES
 antigen apply
 
