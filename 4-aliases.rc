@@ -34,7 +34,7 @@ alias js="jekyll serve ."
 alias jb="jekyll build ."
 
 # Misc
-alias farsync="rsync -xrhm --numeric-ids -e 'ssh -T -c aes128-gcm@openssh.com -o Compression=no -x' --partial --progress" #TODO: fix bug where this overwrites file name
+alias farsync='rsync -xrhm --numeric-ids -e "ssh -T -c aes128-gcm@openssh.com -o Compression=no" -x --partial --progress' #TODO: fix bug where this overwrites file name
 alias arcfarsync="rsync -rhm --numeric-ids -e 'ssh -T -c arcfour -o Compression=no -x' --partial --progress"
 alias tree="tree -ChF"
 alias mtr="sudo mtr"
@@ -59,3 +59,6 @@ alias psql="/Applications/Postgres.app/Contents/Versions/10/bin/psql"
 alias fastmail_you_there_bro="openssl s_client -connect imap.fastmail.com:993 -crlf"
 
 #alias yt='youtube-dl'
+
+# MacOS shortcuts
+alias delete-all-local-snapshots='for d in $(tmutil listlocalsnapshotdates | grep -v "Snapshot dates for all disks"); do sudo tmutil deletelocalsnapshots $d; done'
