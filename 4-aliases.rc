@@ -5,7 +5,6 @@ alias d="cd ~/Downloads"
 
 # Sublime Projects
 alias subpup="subl ~/Dropbox/sublime_workspaces/puppet.sublime-project"
-alias subpup4="subl ~/Dropbox/sublime_workspaces/puppet4.sublime-project"
 alias zshconfig="subl \$HOME/Dropbox/dotfiles/shell_config"
 
 # Packages
@@ -62,3 +61,6 @@ alias fastmail_you_there_bro="openssl s_client -connect imap.fastmail.com:993 -c
 
 # MacOS shortcuts
 alias delete-all-local-snapshots='for d in $(tmutil listlocalsnapshotdates | grep -v "Snapshot dates for all disks"); do sudo tmutil deletelocalsnapshots $d; done'
+
+# Kubes
+alias kubes-busybox='kubectl run -i --tty loader --image=busybox /bin/sh'

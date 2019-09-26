@@ -8,17 +8,17 @@
 # - Internet access
 # - Homebrew, git installed
 
-brew install -y fzf tmux tmux-cssh zsh git sekey gpg jq
+brew install fzf tmux tmux-cssh zsh git sekey gpg jq
 
 grep -q -F '/usr/local/bin/zsh' /etc/shells || echo '/usr/local/bin/zsh' | sudo tee -a /etc/shells
 
-if [ ! -d "$HOME/.antigen" ]; then
-  git clone https://github.com/zsh-users/antigen.git "$HOME/.antigen"
+if [ ! -d "${HOME}/.antigen" ]; then
+  git clone https://github.com/zsh-users/antigen.git "${HOME}/.antigen"
 fi
 
-if [ ! -d "$HOME/.tmux/plugins/tpm" ]; then
+if [ ! -d "${HOME}/.tmux/plugins/tpm" ]; then
   mkdir -p ~/.tmux/plugins
-  git clone https://github.com/tmux-plugins/tpm $HOME/.tmux/plugins/tpm
+  git clone https://github.com/tmux-plugins/tpm "${HOME}/.tmux/plugins/tpm"
 fi
 
 rm -f ~/.zshrc

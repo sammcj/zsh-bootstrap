@@ -20,11 +20,12 @@ smallhadroncollider/antigen-git-rebase
 zsh-users/zsh-completions
 zsh-users/zsh-autosuggestions
 zsh-navigation-tools
-rodjek/vim-puppet
 zsh-users/zsh-history-substring-search
+glcoud
 EOBUNDLES
 antigen apply
 
+#rodjek/vim-puppet
 #dbz/zsh-kubernetes
 #johnlabarge/docker_fun
 #webyneter/docker-aliases
