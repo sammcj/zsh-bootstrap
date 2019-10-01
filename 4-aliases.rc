@@ -5,7 +5,7 @@ alias d="cd ~/Downloads"
 
 # Sublime Projects
 alias subpup="subl ~/Dropbox/sublime_workspaces/puppet.sublime-project"
-alias zshconfig="subl \$HOME/Dropbox/dotfiles/shell_config"
+alias zshconfig="code \$HOME/Dropbox/dotfiles/shell_config"
 
 # Packages
 alias b="brew update; brew upgrade; brew cask upgrade; brew cleanup"

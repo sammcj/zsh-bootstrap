@@ -17,8 +17,10 @@ fi
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
 # If google-cloud-sdk is installed, source it
-[ -f /usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc ] && source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc'
-[ -f /usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc ] && source '/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc'
+
+CLOUD_SDK_HOME=/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk
+#source "${CLOUD_SDK_HOME}/path.zsh.inc"
+source "${CLOUD_SDK_HOME}/completion.zsh.inc"
 
 export PATH="/usr/local/bin:$PATH"
 
