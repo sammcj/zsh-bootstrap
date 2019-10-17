@@ -24,11 +24,6 @@ function yt
 #  ps u `pidof "$@"`
 # }
 
-# http://exercism.io/clients/cli/mac
-if [ -f ~/.config/exercism/exercism_completion.zsh ]; then
-  source ~/.config/exercism/exercism_completion.zsh
-fi
-
 # Outputs current branch info in prompt format
 function git_prompt_info() {
   local ref
@@ -273,5 +268,5 @@ function enhanceallimages() {
 
 pdfcompress ()
 {
-   gs -q -dNOPAUSE -dBATCH -dSAFER -sDEVICE=pdfwrite -dCompatibilityLevel=1.3 -dPDFSETTINGS=/screen -dEmbedAllFonts=true -dSubsetFonts=true -dColorImageDownsampleType=/Bicubic -dColorImageResolution=144 -dGrayImageDownsampleType=/Bicubic -dGrayImageResolution=144 -dMonoImageDownsampleType=/Bicubic -dMonoImageResolution=144 -sOutputFile=$1.compressed.pdf $1;
+  gs -q -dNOPAUSE -dBATCH -dSAFER -sDEVICE=pdfwrite -dCompatibilityLevel=1.3 -dPDFSETTINGS=/screen -dEmbedAllFonts=true -dSubsetFonts=true -dColorImageDownsampleType=/Bicubic -dColorImageResolution=144 -dGrayImageDownsampleType=/Bicubic -dGrayImageResolution=144 -dMonoImageDownsampleType=/Bicubic -dMonoImageResolution=144 -sOutputFile=$1.compressed.pdf $1;
 }

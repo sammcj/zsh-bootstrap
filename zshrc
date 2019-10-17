@@ -27,9 +27,11 @@ export PATH="/usr/local/bin:$PATH"
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 export PATH="$PATH:$HOME/.rvm/bin"
 
-# Perl 5
-PATH="/Users/samm/perl5/bin${PATH:+:${PATH}}"; export PATH;
-PERL5LIB="/Users/samm/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
-PERL_LOCAL_LIB_ROOT="/Users/samm/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
-PERL_MB_OPT="--install_base \"/Users/samm/perl5\""; export PERL_MB_OPT;
-PERL_MM_OPT="INSTALL_BASE=/Users/samm/perl5"; export PERL_MM_OPT;
+test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/samm/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/samm/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/samm/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/samm/google-cloud-sdk/completion.zsh.inc'; fi

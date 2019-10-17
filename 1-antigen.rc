@@ -22,6 +22,7 @@ zsh-users/zsh-autosuggestions
 zsh-navigation-tools
 zsh-users/zsh-history-substring-search
 glcoud
+nojhan/liquidprompt
 EOBUNDLES
 antigen apply
 
@@ -34,6 +35,5 @@ antigen apply
 #rutchkiwi/copyzshell
 #antigen theme https://github.com/iam4x/zsh-iterm-touchbar
 #unixorn/docker-helpers.zshplugin
-#nojhan/liquidprompt
 #tysonwolker/iterm-tab-colors
 #iam4x/zsh-iterm-touchbar

@@ -3,7 +3,7 @@
 export HOMEBREW_NO_ANALYTICS=1
 export GREP_OPTIONS="--color"
 export LSCOLORS=ExFxCxDxBxegedabagacad
-export PATH=$PATH:/usr/local/m-cli
+#export PATH=$PATH:/usr/local/m-cli
 export GOPATH=$HOME/go
 export XZ_OPT="--threads=8"
 export EDITOR="/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl --wait"
