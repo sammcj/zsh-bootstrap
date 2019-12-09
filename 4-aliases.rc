@@ -61,6 +61,9 @@ alias fastmail_you_there_bro="openssl s_client -connect imap.fastmail.com:993 -c
 
 # MacOS shortcuts
 alias delete-all-local-snapshots='for d in $(tmutil listlocalsnapshotdates | grep -v "Snapshot dates for all disks"); do sudo tmutil deletelocalsnapshots $d; done'
+alias screenshots-jpg='defaults write com.apple.screencapture type JPG'
+alias screenshots-png='defaults write com.apple.screencapture type PNG'
+
 
 # Kubes
-alias kubes-busybox='kubectl run -i --tty loader --image=busybox /bin/sh'
+#alias kubes-busybox='kubectl run -i --tty loader --image=busybox /bin/sh'
