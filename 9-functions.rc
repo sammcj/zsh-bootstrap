@@ -10,20 +10,6 @@ function yt
 }
 # change /dev/null to youtube-dl-"$(date +%Y%m%d-%H%M%S)".log if you want logging
 
-## Commented out as not using
-# function openfiles
-# {
-#   lsof| awk '{print $1}'|uniq -c|sort -r
-# }
-
-## Commented out as not using
-# # Shows real memory usage of an application and all its proccesses
-# # Requires brew install pidof on macOS
-# psof()
-# {
-#  ps u `pidof "$@"`
-# }
-
 # Outputs current branch info in prompt format
 function git_prompt_info() {
   local ref
@@ -241,28 +227,6 @@ function git_current_user_email() {
 POST_1_7_2_GIT=$(git_compare_version "1.7.2")
 # Clean up the namespace slightly by removing the checker function
 unfunction git_compare_version
-
-# Neutral network image enhancement
-# https://github.com/alexjc/neural-enhance
-function enhance() {
-  docker run --rm -v $(PWD):/ne/input -it alexjc/neural-enhance --device=opencl /ne/input/"$1"
-}
-
-function enhancegpufirst() {
-  docker run --rm -v $(PWD):/ne/input -it alexjc/neural-enhance --device=opencl0:0 /ne/input/`basename ${@:$#}`
-}
-
-function enhancegpusecond() {
-  docker run --rm -v $(PWD):/ne/input -it alexjc/neural-enhance --device=opencl0:1 /ne/input/`basename ${@:$#}`
-}
-
-function enhancegpucuda() {
-  docker run --rm -v $(PWD):/ne/input -it alexjc/neural-enhance --device=cuda /ne/input/`basename ${@:$#}`
-}
-
-function enhanceallimages() {
-  enhance "$(ls -1)"
-}
 
 #source /usr/local/etc/profile.d/autojump.sh
 

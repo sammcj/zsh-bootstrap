@@ -19,7 +19,7 @@ fi
 # If google-cloud-sdk is installed, source it
 
 CLOUD_SDK_HOME=/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk
-#source "${CLOUD_SDK_HOME}/path.zsh.inc"
+source "${CLOUD_SDK_HOME}/path.zsh.inc"
 source "${CLOUD_SDK_HOME}/completion.zsh.inc"
 
 export PATH="/usr/local/bin:$PATH"
