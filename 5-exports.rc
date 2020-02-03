@@ -1,10 +1,11 @@
 ### Exports ###
 
 export HOMEBREW_NO_ANALYTICS=1
+export SAM_CLI_TELEMETRY=0 # AWS SAM
 export GREP_OPTIONS="--color"
 export LSCOLORS=ExFxCxDxBxegedabagacad
 #export PATH=$PATH:/usr/local/m-cli
-export GOPATH=$HOME/go
+export GOPATH="${HOME}/go"
 export XZ_OPT="--threads=8"
-export EDITOR="/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl --wait"
+#export EDITOR="/Applications/Sublime Text.app/Contents/SharedSupport/bin/subl --wait"
 #export RUBYOPT="--jit"

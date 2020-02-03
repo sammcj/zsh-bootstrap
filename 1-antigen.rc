@@ -8,7 +8,7 @@ command-not-found
 docker
 docker-compose
 git
-zsh-users/zsh-syntax-highlighting
+zdharma/fast-syntax-highlighting
 trapd00r/zsh-syntax-highlighting-filetypes
 ascii-soup/zsh-url-highlighter
 olivierverdier/zsh-git-prompt
@@ -22,7 +22,9 @@ zsh-users/zsh-autosuggestions
 zsh-navigation-tools
 zsh-users/zsh-history-substring-search
 glcoud
+gcloud-zsh-completion
 nojhan/liquidprompt
+robertzk/send.zsh
 EOBUNDLES
 antigen apply
 
@@ -37,3 +39,5 @@ antigen apply
 #unixorn/docker-helpers.zshplugin
 #tysonwolker/iterm-tab-colors
 #iam4x/zsh-iterm-touchbar
+#littleq0903/gcloud-zsh-completion
+#zsh-users/zsh-syntax-highlighting favouring fast-syntax-highlighting instead
