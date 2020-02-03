@@ -12,8 +12,13 @@ brew install fzf tmux tmux-cssh zsh git sekey gpg jq
 
 grep -q -F '/usr/local/bin/zsh' /etc/shells || echo '/usr/local/bin/zsh' | sudo tee -a /etc/shells
 
-if [ ! -d "${HOME}/.antigen" ]; then
-  git clone https://github.com/zsh-users/antigen.git "${HOME}/.antigen"
+# Disabled antigen in favour of zgen for performance
+# if [ ! -d "${HOME}/.antigen" ]; then
+#   git clone https://github.com/zsh-users/antigen.git "${HOME}/.antigen"
+# fi
+
+if [ ! -d "${HOME}/.zgen" ]; then
+  git clone https://github.com/tarjoilija/zgen.git "${HOME}/.zgen"
 fi
 
 if [ ! -d "${HOME}/.tmux/plugins/tpm" ]; then

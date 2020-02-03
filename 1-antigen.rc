@@ -1,33 +1,73 @@
+# load zgen
+source "${HOME}/.zgen/zgen.zsh"
+
+if ! zgen saved; then
+  # Load the oh-my-zsh's library.
+  zgen oh-my-zsh
+
+  # load specific oh-my-zsh plugins
+  zgen oh-my-zsh plugins/colored-man-pages
+  zgen oh-my-zsh plugins/osx
+  zgen oh-my-zsh plugins/docker
+  zgen oh-my-zsh plugins/docker-compose
+  zgen oh-my-zsh plugins/git
+  zgen oh-my-zsh plugins/gcloud
+
+  # load plugins
+  zgen load zdharma/fast-syntax-highlighting
+  zgen load ascii-soup/zsh-url-highlighter
+  zgen load olivierverdier/zsh-git-prompt
+  zgen load smallhadroncollider/antigen-git-rebase
+  zgen load zsh-users/zsh-autosuggestions
+  zgen load zsh-navigation-tools
+  zgen load zsh-users/zsh-history-substring-search
+  zgen load nojhan/liquidprompt
+  zgen load robertzk/send.zsh
+
+  # disabled plugins
+  # zgen oh-my-zsh plugins/command-not-found
+  # zgen oh-my-zsh plugins/brew
+
+  # zgen load zsh-users/zsh-completions
+  # zgen load MichaelAquilina/zsh-you-should-use
+  # zgen load trapd00r/zsh-syntax-highlighting-filetypes
+
+  zgen save
+fi
+
+### Disabled Antigen in favour of zgen's performance ###
 ### Antigen ZSH Addons
 
 # clone of https://github.com/zsh-users/antigen.git
-source ~/git/antigen/antigen.zsh
 
-antigen bundles <<EOBUNDLES
-command-not-found
-docker
-docker-compose
-git
-zdharma/fast-syntax-highlighting
-trapd00r/zsh-syntax-highlighting-filetypes
-ascii-soup/zsh-url-highlighter
-olivierverdier/zsh-git-prompt
-MichaelAquilina/zsh-you-should-use
-colored-man-pages
-brew
-osx
-smallhadroncollider/antigen-git-rebase
-zsh-users/zsh-completions
-zsh-users/zsh-autosuggestions
-zsh-navigation-tools
-zsh-users/zsh-history-substring-search
-glcoud
-gcloud-zsh-completion
-nojhan/liquidprompt
-robertzk/send.zsh
-EOBUNDLES
-antigen apply
+# source ~/git/antigen/antigen.zsh
 
+# antigen bundles <<EOBUNDLES
+# command-not-found
+# docker
+# docker-compose
+# git
+# zdharma/fast-syntax-highlighting
+# trapd00r/zsh-syntax-highlighting-filetypes
+# ascii-soup/zsh-url-highlighter
+# olivierverdier/zsh-git-prompt
+# MichaelAquilina/zsh-you-should-use
+# colored-man-pages
+# brew
+# osx
+# smallhadroncollider/antigen-git-rebase
+# zsh-users/zsh-completions
+# zsh-users/zsh-autosuggestions
+# zsh-navigation-tools
+# zsh-users/zsh-history-substring-search
+# glcoud
+# gcloud-zsh-completion
+# nojhan/liquidprompt
+# robertzk/send.zsh
+# EOBUNDLES
+# antigen apply
+
+### Disabled plugins ###
 #rodjek/vim-puppet
 #dbz/zsh-kubernetes
 #johnlabarge/docker_fun
