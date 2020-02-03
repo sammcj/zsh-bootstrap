@@ -6,9 +6,7 @@
 # Uncomment below AND zprof at the end of this file to debug timing
 #zmodload zsh/zprof
 
-# Source google-cloud-sdk
-autoload -U compinit compdef
-compinit
+# Source google-cloud-sdk (breaks if you source later)
 source "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc"
 source "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc"
 
