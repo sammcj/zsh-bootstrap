@@ -67,3 +67,6 @@ alias screenshots-png='defaults write com.apple.screencapture type PNG'
 
 # Kubes
 #alias kubes-busybox='kubectl run -i --tty loader --image=busybox /bin/sh'
+
+# VSC
+alias code='/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code'
