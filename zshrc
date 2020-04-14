@@ -34,3 +34,5 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 #zprof
 
 
+export PATH="$HOME/.helm:$PATH"
+source $HOME/.helm/helmenv.sh

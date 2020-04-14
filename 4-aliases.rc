@@ -9,7 +9,7 @@ alias zshconfig="code \$HOME/Dropbox/dotfiles/shell_config"
 
 # Packages
 alias b="brew update; brew upgrade; brew cask upgrade; brew cleanup"
-alias ba="brew update; brew upgrade; brew cask upgrade; brew cleanup; gem update; pip install -U pip; pip3 install -U pip; antigen selfupdate; antigen update; antigen cleanup -y; vim +PluginUpdate +qall"
+alias ba="brew update; brew upgrade; brew cask upgrade; brew cleanup; gem update; pip install -U pip; pip3 install -U pip; zgen selfupdate; zgen update; vim +PluginUpdate +qall"
 alias pa"pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U"
 
 # Git
@@ -66,7 +66,12 @@ alias screenshots-png='defaults write com.apple.screencapture type PNG'
 
 
 # Kubes
-#alias kubes-busybox='kubectl run -i --tty loader --image=busybox /bin/sh'
+alias kubes-busybox='kubectl run -i --tty loader --image=busybox /bin/sh'
+alias k='kubectl'
 
 # VSC
 alias code='/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code'
+
+# Merge two files with diff
+alias merge='diff --line-format %L'
+

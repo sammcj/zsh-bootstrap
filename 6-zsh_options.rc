@@ -122,8 +122,10 @@ bindkey "5D" backward-word        #control right
 bindkey "^[[A" history-search-backward  # Search history with up arrow
 bindkey "^[[B" history-search-forward  # Search history with up arrow
 
-bindkey "^[[3~"   delete-char # delete keys
-bindkey "^[3;5~"  delete-char # delete keys
+# bindkey "^[[3~"   delete-char # delete keys
+# bindkey "^[3;5~"  delete-char # delete keys
+
+bindkey -M emacs '^H' backward-kill-word # backwards delete word
 
 # it's like, space AND completion.  Gnarlbot.
 bindkey -M viins ' ' magic-space
@@ -132,4 +134,5 @@ bindkey -M viins ' ' magic-space
 unsetopt auto_name_dirs
 alias .='pwd'
 
-
+# cd into a directory when you type its name
+setopt autocd
