@@ -8,7 +8,8 @@
 # - Internet access
 # - Homebrew, git installed
 
-brew install fzf tmux tmux-cssh zsh git sekey gpg jq
+brew install fzf tmux tmux-cssh zsh git sekey gpg jq youtube-dl nmap mtr testssl ncdu xz
+brew cask install appcleaner handbrake imageoptim launchcontrol onyx wireshark stay
 
 grep -q -F '/usr/local/bin/zsh' /etc/shells || echo '/usr/local/bin/zsh' | sudo tee -a /etc/shells
 
@@ -43,3 +44,6 @@ if [ ! -d "${ZDOTDIR:-$HOME}/.zprezto" ]; then
 
   ln -s ~/Dropbox/dotfiles/shell_config/zpreztorc ~/.zprezto
 fi
+
+# Configure youtube-dl to always get the best video and audio quality
+mkdir -p .config/youtube-dl && echo "-f 'bestvideo+bestaudio'" > ~/.config/youtube-dl/config
