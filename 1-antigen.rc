@@ -10,8 +10,8 @@ if ! zgen saved; then
   zgen oh-my-zsh plugins/docker
   zgen oh-my-zsh plugins/docker-compose
   zgen oh-my-zsh plugins/git
-  #zgen oh-my-zsh plugins/gcloud
-  #zgen oh-my-zsh plugins/aws
+  # zgen oh-my-zsh plugins/gcloud
+  # zgen oh-my-zsh plugins/aws
 
   # load plugins
   zgen load zdharma/fast-syntax-highlighting
