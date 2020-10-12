@@ -7,8 +7,8 @@
 #zmodload zsh/zprof
 
 # Source google-cloud-sdk (breaks if you source later)
-source "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc"
-source "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc"
+#source "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc"
+#source "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc"
 
 ## Source all configs
 
@@ -35,4 +35,4 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 
 
 export PATH="$HOME/.helm:$PATH"
-source $HOME/.helm/helmenv.sh
+#source $HOME/.helm/helmenv.sh
