@@ -54,7 +54,7 @@ alias ps-mem="ps xu --sort %mem | sed -e :a -e '1p;\$q;N;6,\$D;ba'" #show top me
 #alias history="fc -li 1000"
 alias cpuinfo="sysctl -n machdep.cpu.brand_string"
 alias g="googler"
-alias psql="/Applications/Postgres.app/Contents/Versions/10/bin/psql"
+alias psql="/Applications/Postgres.app/Contents/Versions/latest/bin/psql"
 alias fastmail_you_there_bro="openssl s_client -connect imap.fastmail.com:993 -crlf"
 
 #alias yt='youtube-dl'
