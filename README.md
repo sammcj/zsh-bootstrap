@@ -6,12 +6,12 @@ This git directory in my dropbox and can run the below install script to bootstr
 
 ## Install
 
-`~/Dropbox/dotfiles/shell_config/bootstrap_shell.sh`
+`$HOME/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/bootstrap_shell.sh`
 
 ## Assumptions
 
-- [Dropbox](https://www.dropbox.com/en_GB/downloading?os=mac) is installed and syncd at ~/Dropbox
-- You have internet access
+- iCloud Drive or some sort of syncing tool like Dropbox etc...
+- Internet access
 - [Homebrew](http://brew.sh/) is installed
 - Any private exports such as github API tokens etc... can be put in `11-tokens.rc` which is [ignored by git](.gitignore)
 

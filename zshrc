@@ -12,8 +12,8 @@
 
 ## Source all configs
 
-if [ -d $HOME/Dropbox/dotfiles/shell_config ]; then
-  for file in $HOME/Dropbox/dotfiles/shell_config/*.rc; do
+if [ -d $HOME/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config ]; then
+  for file in $HOME/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/*.rc; do
     source $file
   done
 fi

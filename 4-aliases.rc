@@ -2,10 +2,10 @@
 
 # Directory Jumps
 alias d="cd ~/Downloads"
+alias icloud_drive="cd ~/Library/Mobile\ Documents/com\~apple\~CloudDocs/"
 
-# Sublime Projects
-alias subpup="subl ~/Dropbox/sublime_workspaces/puppet.sublime-project"
-alias zshconfig="code \$HOME/Dropbox/dotfiles/shell_config"
+# IDE Projects
+alias zshconfig="code ~/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/" #TODO cleanup this, move stuff out of Dropbox\ Import
 
 # Packages
 alias b="brew update; brew upgrade; brew cask upgrade; brew cleanup"
@@ -20,7 +20,7 @@ alias gs="git status"
 alias gbd="git branch | egrep -v 'master|production' | xargs git branch -D && git remote prune origin"
 alias git-hist="git gr"
 alias git-delete-remote-branch="git push origin --delete"
-#alias ip="~/Dropbox/scripts/ixpull.sh"
+#alias ip="\$HOME/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/scripts/ixpull.sh"
 #alias dev="git add .; git commit -m 'wip / developing'; git push"
 alias gitday="git diff HEAD 'HEAD@{1 day ago}'"
 alias gitweek="git diff HEAD 'HEAD@{1 week ago}'"

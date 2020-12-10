@@ -28,7 +28,7 @@ if [ ! -d "${HOME}/.tmux/plugins/tpm" ]; then
 fi
 
 rm -f ~/.zshrc
-ln -s ~/Dropbox/dotfiles/shell_config/zshrc ~/.zshrc
+ln -s $HOME/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/zshrc ~/.zshrc
 
 if [ ! -d "${ZDOTDIR:-$HOME}/.zprezto" ]; then
   rm -f ~/.zprezto
@@ -42,7 +42,7 @@ if [ ! -d "${ZDOTDIR:-$HOME}/.zprezto" ]; then
     ln -s "$rcfile" "${ZDOTDIR:-$HOME}/.${rcfile:t}"
   done
 
-  ln -s ~/Dropbox/dotfiles/shell_config/zpreztorc ~/.zprezto
+  ln -s $HOME/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/zpreztorc ~/.zprezto
 fi
 
 # Configure youtube-dl to always get the best video and audio quality
