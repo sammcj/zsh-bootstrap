@@ -8,7 +8,7 @@
 # - Internet access
 # - Homebrew, git installed
 
-brew install fzf tmux tmux-cssh zsh git sekey gpg jq youtube-dl nmap mtr testssl ncdu xz
+brew install fzf tmux tmux-cssh zsh git sekey gpg jq youtube-dl nmap mtr testssl ncdu xz kube-ps1
 brew cask install appcleaner handbrake imageoptim launchcontrol onyx wireshark stay
 
 grep -q -F '/usr/local/bin/zsh' /etc/shells || echo '/usr/local/bin/zsh' | sudo tee -a /etc/shells

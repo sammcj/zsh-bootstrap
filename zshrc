@@ -36,3 +36,11 @@ export PATH="$PATH:$HOME/.rvm/bin"
 
 export PATH="$HOME/.helm:$PATH"
 #source $HOME/.helm/helmenv.sh
+export PATH="/opt/homebrew/bin:$PATH"
+export PATH="/opt/homebrew/sbin:$PATH"
+
+# Enable direnv - https://direnv.net
+# eval "$(direnv hook zsh)"
+
+# Enable endgame AWS scanner
+# https://users.aalto.fi/~saarit2/deoxy/gz_howy.htm
