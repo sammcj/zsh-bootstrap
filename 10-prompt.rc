@@ -14,5 +14,5 @@ ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[green]%}!"
 ZSH_THEME_GIT_PROMPT_UNTRACKED="%{$fg[green]%}?"
 ZSH_THEME_GIT_PROMPT_CLEAN=""
 
-source "/usr/local/opt/kube-ps1/share/kube-ps1.sh"
+source "/usr/local/share/kube-ps1.sh"
 PS1='$(kube_ps1)'$PS1

@@ -20,14 +20,12 @@ if ! zgen saved; then
   #zgen load smallhadroncollider/antigen-git-rebase
   zgen load zsh-users/zsh-autosuggestions
   #zgen load zsh-users/zsh-history-substring-search
-  ##zgen load zsh-users/zsh-completions
 
   # disabled plugins
   # zgen oh-my-zsh plugins/colored-man-pages
   # zgen oh-my-zsh plugins/command-not-found
   # zgen oh-my-zsh plugins/brew
   # zgen load zsh-navigation-tools
-  # zgen load robertzk/send.zsh
   # zgen load zsh-users/zsh-completions
   # zgen load MichaelAquilina/zsh-you-should-use
   # zgen load trapd00r/zsh-syntax-highlighting-filetypes
