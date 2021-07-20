@@ -6,3 +6,4 @@
 *private*
 .DS_Store
 *.zwc
+.dccache
