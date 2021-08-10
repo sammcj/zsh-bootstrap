@@ -17,15 +17,16 @@ alias gitdiff="git diff --color-words --color=always"
 alias gitclean="git fetch -p; git remote prune origin; git repack -a -d -f --max-pack-size=10g --depth=500 --window=250; git gc --aggressive"
 alias gitrb='for branch in `git branch -r --merged | grep -v HEAD`; do echo -e `git show --format="%ci %cr %an" $branch | head -n 1` \\t$branch; done | sort -r'
 alias gs="git status"
-#alias gbd="git branch | egrep -v 'master|production' | xargs git branch -D && git remote prune origin"
-alias git-hist="git gr"
+alias gbd="git branch -d"
+alias githist="git gr"
 alias git-delete-remote-branch="git push origin --delete"
-#alias ip="\$HOME/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/scripts/ixpull.sh"
-#alias dev="git add .; git commit -m 'wip / developing'; git push"
+alias gitwip="git add .; git commit -m 'WIP - will rebase'; git push"
 alias gitday="git diff HEAD 'HEAD@{1 day ago}'"
 alias gitweek="git diff HEAD 'HEAD@{1 week ago}'"
-alias prod="git checkout production"
-alias master="git checkout master"
+alias gitprod="git checkout production"
+alias gitmaster="git checkout master"
+
+
 alias jpgcompress='echo convert INPUTFILE -sampling-factor 4:2:0 -strip -interlace JPEG -colorspace sRGB OUTPUTFILE'
 
 # Jekyll alias
@@ -68,6 +69,7 @@ alias screenshots-png='defaults write com.apple.screencapture type PNG'
 # Kubes
 alias kubes-busybox='kubectl run -i --tty loader --image=busybox /bin/sh'
 alias k='kubectl'
+alias k_docker_desktop='export KUBECONFIG=~/.kube/config-docker-desktop'
 
 # VSC
 alias code='/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code'
