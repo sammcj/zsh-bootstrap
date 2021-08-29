@@ -17,9 +17,12 @@ if ! zgen saved; then
   zgen load zdharma/fast-syntax-highlighting
   zgen load ascii-soup/zsh-url-highlighter
   zgen load olivierverdier/zsh-git-prompt
-  #zgen load smallhadroncollider/antigen-git-rebase
+  zgen load sudosubin/zsh-github-cli
   zgen load zsh-users/zsh-autosuggestions
-  #zgen load zsh-users/zsh-history-substring-search
+  zgen load sirhc/okta.plugin.zsh
+
+  # Themes
+  # zgen load dracula/zsh
 
   # disabled plugins
   # zgen oh-my-zsh plugins/colored-man-pages
@@ -29,6 +32,8 @@ if ! zgen saved; then
   # zgen load zsh-users/zsh-completions
   # zgen load MichaelAquilina/zsh-you-should-use
   # zgen load trapd00r/zsh-syntax-highlighting-filetypes
+  # zgen load smallhadroncollider/antigen-git-rebase
+  # zgen load zsh-users/zsh-history-substring-search
 
   zgen save
 fi
