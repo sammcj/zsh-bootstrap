@@ -86,3 +86,6 @@ alias tf='terraform'
 
 # GCP
 alias glogin='gcloud auth login --no-launch-browser'
+
+# DNS benchmarking using https://github.com/redsift/dnstrace
+alias dnsbenchmark='dnstrace -n 10 -c 10 --server 192.168.0.1 --recurse microsoft.com'

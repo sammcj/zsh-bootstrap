@@ -10,7 +10,8 @@
 
 brew install fzf tmux tmux-cssh zsh git sekey gpg jq youtube-dl nmap mtr testssl \
   ncdu xz kube-ps1 appcleaner handbrake imageoptim launchcontrol onyx stay wireshark \
-  speedtest-cli jq awscli iperf3 quicklook-json qlmarkdown qlstephen qlcolorcode
+  speedtest-cli jq awscli iperf3 quicklook-json qlmarkdown qlstephen qlcolorcode vlc \
+  drawio launchrocket haptic-touch-bar vyprvpn qbittorrent osxfuse
 
 grep -q -F '/usr/local/bin/zsh' /etc/shells || echo '/usr/local/bin/zsh' | sudo tee -a /etc/shells
 
@@ -51,6 +52,9 @@ if [ ! -d "${ZDOTDIR:-$HOME}/.zprezto" ]; then
 
   ln -s $HOME/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/zpreztorc ~/.zprezto
 fi
+
+# Configure .gitconfig
+ln -sf ~/Library/Mobile\ Documents/com~apple~CloudDocs/Dropbox\ Import/dotfiles/gitconfig ~/.gitconfig
 
 # Configure youtube-dl to always get the best video and audio quality
 mkdir -p .config/youtube-dl && echo "-f 'bestvideo+bestaudio'" > ~/.config/youtube-dl/config
