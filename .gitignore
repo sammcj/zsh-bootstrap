@@ -2,7 +2,6 @@
 11-tokens.rc
 12-private-aliases.rc
 13-private-other.rc
-14-private-aliases-2.rc
 *private*
 .DS_Store
 *.zwc

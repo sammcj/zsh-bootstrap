@@ -11,7 +11,8 @@
 brew install fzf tmux tmux-cssh zsh git sekey gpg jq youtube-dl nmap mtr testssl \
   ncdu xz kube-ps1 appcleaner handbrake imageoptim launchcontrol onyx stay wireshark \
   speedtest-cli jq awscli iperf3 quicklook-json qlmarkdown qlstephen qlcolorcode vlc \
-  drawio launchrocket haptic-touch-bar vyprvpn qbittorrent osxfuse
+  drawio launchrocket haptic-touch-bar vyprvpn qbittorrent osxfuse git-quick-stats \
+  bat exa git-delta duf cheat hyperfine
 
 grep -q -F '/usr/local/bin/zsh' /etc/shells || echo '/usr/local/bin/zsh' | sudo tee -a /etc/shells
 

@@ -2,11 +2,9 @@ case $HOST in
     samm-mb*)
         # placeholder
         ;;
-    systems-samm-mb*)
+    Sams-Air*)
+        alias docker=podman
         # placeholder
-        ;;
-    systems-samm*)
-         # placeholder
         ;;
     *)
         # placeholder for all

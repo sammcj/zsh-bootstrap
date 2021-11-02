@@ -1,5 +1,5 @@
 # Editors
-.dccache
+**/.dccache
 .vscode
 .idea
 *.swp
