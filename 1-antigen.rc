@@ -6,7 +6,7 @@ if ! zgen saved; then
   zgen oh-my-zsh
 
   # load specific oh-my-zsh plugins
-  zgen oh-my-zsh plugins/osx
+  zgen oh-my-zsh plugins/macos
   zgen oh-my-zsh plugins/docker
   zgen oh-my-zsh plugins/docker-compose
   zgen oh-my-zsh plugins/git

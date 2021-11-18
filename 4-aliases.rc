@@ -48,7 +48,6 @@ alias rake='noglob rake'
 alias netwatch='lsof -i'
 alias flushdns='sudo discoveryutil udnsflushcaches'
 alias server='sudo python3 -m http.server 80'
-alias c='ccat'
 alias cc='colorize.py'
 alias rmid="ssh-keygen -R"
 alias aria="aria2c -s 5 -j 5 -x 5 -c --enable-http-pipelining=true --http-accept-gzip=true"
@@ -91,5 +90,10 @@ alias glogin='gcloud auth login --no-launch-browser'
 alias dnsbenchmark='dnstrace -n 10 -c 10 --server 192.168.0.1 --recurse microsoft.com'
 
 # modern unix command replacements
-alias ls='exa'
-alias cat='bat'
+alias c='bat'
+
+# Docker
+# podman machine init --cpus=3 --disk-size=30 --memory=3192 podman-machine-default
+# colima start --cpu 3 --memory 3 --disk 30 --mount $HOME/.vault-tokens:w
+# ln -s /usr/local/bin/colima /usr/local/bin/docker
+# alias docker='colima'
