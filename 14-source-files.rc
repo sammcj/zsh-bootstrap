@@ -4,3 +4,7 @@ source ~/.iterm2_shell_integration.zsh
 
 # RVM
 source ~/.rvm/scripts/rvm
+
+
+# Node FNM
+eval "$(fnm env --use-on-cd)"

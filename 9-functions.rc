@@ -259,3 +259,9 @@ function mv() {
   read -ei "$1" newfilename
   mv -v "$1" "$newfilename"
 }
+
+# Azure AD login
+function aad() {
+  aws-azure-login --no-prompt --profile $@
+  export AWS_PROFILE=$@
+}

@@ -27,7 +27,10 @@ alias gitday="git diff HEAD 'HEAD@{1 day ago}'"
 alias gitweek="git diff HEAD 'HEAD@{1 week ago}'"
 alias gitprod="git checkout production"
 alias gitmaster="git checkout master"
+alias gitupdateallrepos="find . -name .git -type d | xargs -n1 -P4 -I% git --git-dir=% --work-tree=%/.. fetch --all --recurse-submodules"
 
+# Find commands I type often so I can alias them
+alias typeless='history n 20000 | sed "s/.*  //"  | sort | uniq -c | sort -g | tail -n 100'
 
 alias jpgcompress='echo convert INPUTFILE -sampling-factor 4:2:0 -strip -interlace JPEG -colorspace sRGB OUTPUTFILE'
 
@@ -55,7 +58,7 @@ alias dmesg="dmesg -LT"
 alias ps-mem="ps xu --sort %mem | sed -e :a -e '1p;\$q;N;6,\$D;ba'" #show top memory hogs - linux only
 #alias history="fc -li 1000"
 alias cpuinfo="sysctl -n machdep.cpu.brand_string"
-alias g="googler"
+alias g="cd ~/git/kmart"
 alias psql="/Applications/Postgres.app/Contents/Versions/latest/bin/psql"
 alias fastmail_you_there_bro="openssl s_client -connect imap.fastmail.com:993 -crlf"
 
@@ -97,3 +100,6 @@ alias c='bat'
 # colima start --cpu 3 --memory 3 --disk 30 --mount $HOME/.vault-tokens:w
 # ln -s /usr/local/bin/colima /usr/local/bin/docker
 # alias docker='colima'
+
+alias youtube-dl='yt-dlp'
+

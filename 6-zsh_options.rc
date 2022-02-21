@@ -150,3 +150,4 @@ zstyle :bracketed-paste-magic paste-finish pastefinish
 
 # Autocomplete kubectl for k alias
 complete -F __start_kubectl k
+compdef __start_kubectl k

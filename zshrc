@@ -1,3 +1,8 @@
+
+#### FIG ENV VARIABLES ####
+# Please make sure this block is at the start of this file.
+[ -s ~/.fig/shell/pre.sh ] && source ~/.fig/shell/pre.sh
+#### END FIG ENV VARIABLES ####
 # ~/.zshrc
 
 # There is an alias to jump to the directory with the various
@@ -9,6 +14,9 @@
 # Source google-cloud-sdk (breaks if you source later)
 #source "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc"
 #source "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc"
+
+autoload -U +X bashcompinit && bashcompinit
+autoload -U +X compinit && compinit
 
 ## Source all configs
 
@@ -44,3 +52,7 @@ export PATH="/opt/homebrew/sbin:$PATH"
 
 # Enable endgame AWS scanner
 # https://users.aalto.fi/~saarit2/deoxy/gz_howy.htm
+#### FIG ENV VARIABLES ####
+# Please make sure this block is at the end of this file.
+[ -s ~/.fig/fig.sh ] && source ~/.fig/fig.sh
+#### END FIG ENV VARIABLES ####

@@ -17,9 +17,10 @@ if ! zgen saved; then
   zgen load zdharma-continuum/fast-syntax-highlighting
   zgen load ascii-soup/zsh-url-highlighter
   zgen load olivierverdier/zsh-git-prompt
-  zgen load sudosubin/zsh-github-cli
+  # zgen load sudosubin/zsh-github-cli
   zgen load zsh-users/zsh-autosuggestions
-  zgen load sirhc/okta.plugin.zsh
+  
+  zgen load nnao45/zsh-kubectl-completion
 
   # Themes
   # zgen load dracula/zsh
