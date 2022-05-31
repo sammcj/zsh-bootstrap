@@ -9,10 +9,11 @@ alias zshconfig="code ~/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\
 
 # Packages
 alias b="brew update; brew upgrade"
-alias ba="brew update; brew upgrade; pip install -U pip; pip3 install -U pip; zgen selfupdate; zgen update; vim +PluginUpdate +qall"
+alias ba="omz update; brew update; brew upgrade; pip install -U pip; pip3 install -U pip; zgen selfupdate; zgen update; vim +PluginUpdate +qall"
 alias pa"pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U"
 
 # Git
+alias main="git checkout main && git pull"
 alias gitdiff="git diff --color-words --color=always"
 alias gitclean="git fetch -p; git remote prune origin; git repack -a -d -f --max-pack-size=10g --depth=500 --window=250; git gc --aggressive"
 alias gitrb='for branch in `git branch -r --merged | grep -v HEAD`; do echo -e `git show --format="%ci %cr %an" $branch | head -n 1` \\t$branch; done | sort -r'
@@ -70,7 +71,6 @@ alias clear-download-history="sqlite3 ~/Library/Preferences/com.apple.LaunchServ
 alias screenshots-jpg='defaults write com.apple.screencapture type JPG'
 alias screenshots-png='defaults write com.apple.screencapture type PNG'
 
-
 # Kubes
 alias kubes-busybox='kubectl run -i --tty loader --image=busybox /bin/sh'
 alias k='kubectl'
@@ -103,3 +103,8 @@ alias c='bat'
 
 alias youtube-dl='yt-dlp'
 
+#alias nvm='echo I think you meant FNM'
+
+# node / typescript
+# update all packages in package.json except @types/node
+alias ncu='ncu -u \!@types/node --deep'

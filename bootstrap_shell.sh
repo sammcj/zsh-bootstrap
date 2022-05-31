@@ -58,4 +58,7 @@ fi
 ln -sf ~/Library/Mobile\ Documents/com~apple~CloudDocs/Dropbox\ Import/dotfiles/gitconfig ~/.gitconfig
 
 # Configure youtube-dl to always get the best video and audio quality
-mkdir -p .config/youtube-dl && echo "-f 'bestvideo+bestaudio'" > ~/.config/youtube-dl/config
+mkdir -p .config/youtube-dl && echo "-f 'bestvideo+bestaudio'" >~/.config/youtube-dl/config
+
+# https://github.com/barthr/redo
+go install github.com/barthr/redo@latest

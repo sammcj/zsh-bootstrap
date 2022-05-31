@@ -5,6 +5,18 @@ source ~/.iterm2_shell_integration.zsh
 # RVM
 source ~/.rvm/scripts/rvm
 
+# Node / Javascript
+eval "$(/opt/homebrew/bin/fnm env --use-on-cd)"
 
-# Node FNM
-eval "$(fnm env --use-on-cd)"
+# # Nodejs NVM
+# export NVM_DIR="$HOME/.nvm"
+# [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+# [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+
+# Krew Kubernetes plugin manager
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+
+#https://github.com/barthr/redo
+export REDO_HISTORY_PATH=~/.history
+export EDITOR=vim
+export REDO_ALIAS_PATH=~/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/redo_aliases

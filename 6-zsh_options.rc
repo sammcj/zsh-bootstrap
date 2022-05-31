@@ -30,6 +30,10 @@ zstyle ':completion::complete:*' use-cache 1
 # case insensitive completion
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
+# tab completion for the middle of words
+autoload compinstall
+zstyle ':completion:*' matcher-list '' '' '' 'l:|=* r:|=*'
+
 zstyle ':completion:*' verbose yes
 zstyle ':completion:*:descriptions' format '%B%d%b'
 zstyle ':completion:*:messages' format '%d'
@@ -151,3 +155,6 @@ zstyle :bracketed-paste-magic paste-finish pastefinish
 # Autocomplete kubectl for k alias
 complete -F __start_kubectl k
 compdef __start_kubectl k
+
+# zsh CTRL+e summons redo
+bindkey -s '^l' 'redo^M'
