@@ -4,8 +4,7 @@
 #
 # Requirements:
 #
-# - Dropbox installed and synced
-# - Internet access
+# - iCloud synced, internet access
 # - Homebrew, git installed
 
 brew install fzf tmux zsh git gpg jq kube-ps1 bat git-delta cheat aria2 \
@@ -48,11 +47,6 @@ brew install yt-dlp handbrake imageoptim vlc flac fnm ffmpeg x265 x264 xvid lame
 ##### End installs #####
 
 grep -q -F '/usr/local/bin/zsh' /etc/shells || echo '/usr/local/bin/zsh' | sudo tee -a /etc/shells
-
-# Disabled antigen in favour of zgen for performance
-# if [ ! -d "${HOME}/.antigen" ]; then
-#   git clone https://github.com/zsh-users/antigen.git "${HOME}/.antigen"
-# fi
 
 if [ ! -d "${HOME}/.zgen" ]; then
   git clone https://github.com/tarjoilija/zgen.git "${HOME}/.zgen"
