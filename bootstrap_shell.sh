@@ -8,11 +8,44 @@
 # - Internet access
 # - Homebrew, git installed
 
-brew install fzf tmux zsh git gpg jq youtube-dl nmap mtr testssl \
-  ncdu xz kube-ps1 appcleaner handbrake imageoptim launchcontrol stay wireshark \
-  speedtest-cli jq awscli iperf3 vlc drawio launchrocket qbittorrent osxfuse \
-  bat git-delta duf cheat hyperfine testssl terraforming telnet cheat aria2 tflint \
-  tfenv kubernetes-cli podman docker lima colima googler git-quick-stats
+brew install fzf tmux zsh git gpg jq kube-ps1 bat git-delta cheat aria2 \
+  bash bash-completion grep gawk lzo lz4 wget zlib zstd zsh-autosuggestions \
+  zsh-completions zsh-history-substring-search zsh-navigation-tools
+
+# The following brew installs aren't required to bootstrap the shell
+
+# Git related
+brew install git-delta git-quick-stats git-secrets gitleaks gh icdiff pre-commit gitahead
+
+# Cloud things
+brew install aws-cdk aws-iam-authenticator aws-okta aws-sam-cli aws-shell aws-sso-util \
+  awscli aws-azure-login terraforming terraform cfn-lint tfenv tflint eksctl lazygit s3cmd \
+  terraform-docs terraform-ls google-cloud-sdk
+
+# Build and dev related
+brew install golang autoconf autoenv automake cmake go gcc make node hadolint nvm pyenv \
+  rust ruby-completion shellcheck yq yarn jsonlint
+npm install -G husky npm-check-updates eslint prettier
+
+# Containers related
+brew install docker-slim podman docker lima colima kubernetes-cli docker-compose-completion \
+  dive helm k9s lens
+
+# Other tools/apps
+brew install appcleaner launchcontrol stay drawio launchrocket qbittorrent osxfuse ncdu xz \
+  duf telnet gnu-sed gnupg graphviz fd htop lftp k3d links neovim parallel pandoc p7zip \
+  openssl@3 rsync authy bettertouchtool appcleaner calibre drawio fedora-media-writer knockknock \
+  ngrok macdown launchcontrol launchrocket monodraw onyx qlvideo pdfshaver qbittorrent \
+  sekey send-to-kindle serial xld
+
+# Testing related
+brew install fio nmap mtr testssl speedtest-cli iperf3 wireshark hyperfine mtr siege \
+  testssl paw postman
+
+# Media related
+brew install yt-dlp handbrake imageoptim vlc flac fnm ffmpeg x265 x264 xvid lame
+
+##### End installs #####
 
 grep -q -F '/usr/local/bin/zsh' /etc/shells || echo '/usr/local/bin/zsh' | sudo tee -a /etc/shells
 

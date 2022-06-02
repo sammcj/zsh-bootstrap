@@ -28,7 +28,8 @@ bindkey -M viins '\C-i' complete-word
 zstyle ':completion::complete:*' use-cache 1
 
 # case insensitive completion
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+# NOTE THIS MAY CAUSE PERFORMANCE ISSUES
+# zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
 # tab completion for the middle of words
 autoload compinstall
