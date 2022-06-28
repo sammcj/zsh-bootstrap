@@ -7,14 +7,48 @@
 # - iCloud synced, internet access
 # - Homebrew, git installed
 
+# Items required for the shell
 brew install fzf tmux zsh git gpg jq kube-ps1 bat git-delta cheat aria2 \
   bash bash-completion grep gawk lzo lz4 wget zlib zstd zsh-autosuggestions \
   zsh-completions zsh-history-substring-search zsh-navigation-tools
+
+# Favour installing apps from the App store as they come with security sandboxing
+
+brew install mas
+mas install 1532419400 904280696 1289583905 1166066070 937984704 425424353 1262957439 \
+  1006739057 411643860 1529448980 1091189122 803453959 1048732801 409183694 1333542190 \
+  1569813296 1270075435 921923693 490179405 1497506650 413969927 1538761576
+
+# 1333542190 1Password 7
+# 1569813296 1Password for Safari
+# 1270075435 Strongbox
+# 1532419400 MeetingBar
+# 904280696 Things
+# 1289583905 Pixelmator Pro
+# 1166066070 Bumpr
+# 409183694 Keynote
+# 937984704 Amphetamine
+# 425424353 The Unarchiver
+# 1262957439 Textual IRC Client
+# 1006739057 NepTunes
+# 411643860 DaisyDisk
+# 1529448980 Reeder
+# 409201541 Pages
+# 1091189122 Bear
+# 803453959 Slack
+# 1048732801 NZB Control
+# 921923693 LibreOffice Vanilla
+# 490179405 Okta Verify
+# 1497506650 Yubico Authenticator
+# 413969927 Audiobook Binder
+# 1538761576 Authy Authenticator App
 
 # The following brew installs aren't required to bootstrap the shell
 
 # Git related
 brew install git-delta git-quick-stats git-secrets gitleaks gh icdiff pre-commit gitahead
+
+pip3 install mu-repo
 
 # Cloud things
 brew install aws-cdk aws-iam-authenticator aws-okta aws-sam-cli aws-shell aws-sso-util \
@@ -24,6 +58,7 @@ brew install aws-cdk aws-iam-authenticator aws-okta aws-sam-cli aws-shell aws-ss
 # Build and dev related
 brew install golang autoconf autoenv automake cmake go gcc make node hadolint nvm pyenv \
   rust ruby-completion shellcheck yq yarn jsonlint
+
 npm install -G husky npm-check-updates eslint prettier
 
 # Containers related
@@ -32,17 +67,17 @@ brew install docker-slim podman docker lima colima kubernetes-cli docker-compose
 
 # Other tools/apps
 brew install appcleaner launchcontrol stay drawio launchrocket qbittorrent osxfuse ncdu xz \
-  duf telnet gnu-sed gnupg graphviz fd htop lftp k3d links neovim parallel pandoc p7zip \
+  duf telnet gnu-sed gnupg graphviz fd htop lftp k3d links parallel pandoc p7zip \
   openssl@3 rsync authy bettertouchtool appcleaner calibre drawio fedora-media-writer knockknock \
   ngrok macdown launchcontrol launchrocket monodraw onyx qlvideo pdfshaver qbittorrent \
-  sekey send-to-kindle serial xld
+  sekey send-to-kindle serial Secretive
 
 # Testing related
 brew install fio nmap mtr testssl speedtest-cli iperf3 wireshark hyperfine mtr siege \
   testssl paw postman
 
 # Media related
-brew install yt-dlp handbrake imageoptim vlc flac fnm ffmpeg x265 x264 xvid lame
+brew install yt-dlp handbrake imageoptim vlc flac fnm ffmpeg x265 x264 xvid lame xld
 
 ##### End installs #####
 

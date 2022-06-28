@@ -262,7 +262,7 @@ function mv() {
 
 # Azure AD login
 function aad() {
-  aws-azure-login --no-prompt --profile $@
+  aws-azure-login --no-prompt --profile "$@"
   export AWS_PROFILE=$@
 }
 
@@ -280,3 +280,30 @@ load-nvmrc() {
 
 add-zsh-hook chpwd load-nvmrc
 load-nvmrc
+
+# Github
+# Deletes workflow logs from a given repo older than 1 month
+# e.g. USER=myuser REPO=myrepo ghac
+function ghac() {
+  DATE=$(date -v "-1m" +"%Y-%m-%d") gh api repos/$USER/$REPO/actions/runs --paginate -q '.workflow_runs[] | select (.run_started_at  <= "env.DATE") | (.id)' \
+    | xargs -n1 -I % gh api repos/$USER/$REPO/actions/runs/% -X DELETE
+}
+
+# Git checkout new branch, git add, git commit, git push in all subdirectories matching a pattern
+function git_add_commit_push(){
+  if [[ -z $1 ]] || [[ -z "$2" ]] || [[ -z "$3" ]]; then
+    echo 'You must pass three paramters, branchname, commit message, dir match - e.g. "my-branch" "commit message" ABC*';
+  fi
+  BRANCHNAME=$1
+  COMMITNAME=$2
+  MATCHDIRS=$3
+  for dir in $MATCHDIRS;
+    do (
+      cd "$dir" &&
+      git checkout -b "$BRANCHNAME" &&
+      git add . &&
+      git commit -n -m "$COMMITNAME" &&
+      git push
+      )
+    done
+}

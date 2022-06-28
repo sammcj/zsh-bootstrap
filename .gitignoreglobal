@@ -11,3 +11,6 @@ Session.vim
 
 # misc
 .tmp
+
+# git mu-repo
+.mu_repo

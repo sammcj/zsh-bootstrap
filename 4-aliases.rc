@@ -9,17 +9,17 @@ alias zshconfig="code ~/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\
 
 # Packages
 alias b="brew update; brew upgrade"
-alias ba="omz update; brew update; brew upgrade; pip install -U pip; pip3 install -U pip; zgen selfupdate; zgen update; vim +PluginUpdate +qall"
+alias ba="omz update; brew update; brew upgrade; pip install -U pip; pip3 install -U pip; zgen selfupdate; zgen update; vim +PluginUpdate +qall; ncu --global"
 alias pa"pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U"
 
 # Git
 alias main="git checkout main && git pull"
 alias gitdiff="git diff --color-words --color=always"
 alias gitclean="git fetch -p; git remote prune origin; git repack -a -d -f --max-pack-size=10g --depth=500 --window=250; git gc --aggressive"
-alias gitrb='for branch in `git branch -r --merged | grep -v HEAD`; do echo -e `git show --format="%ci %cr %an" $branch | head -n 1` \\t$branch; done | sort -r'
+#alias gitrb='for branch in `git branch -r --merged | grep -v HEAD`; do echo -e `git show --format="%ci %cr %an" $branch | head -n 1` \\t$branch; done | sort -r'
 alias gs="git status"
 alias gbd="git branch -d"
-alias githist="git gr"
+alias githist="git log --graph --pretty=oneline --abbrev-commit"
 alias git-delete-remote-branch="git push origin --delete"
 alias gitwip="git add .; git commit -m 'WIP - will rebase'; git push"
 alias gitamend="GIT_SEQUENCE_EDITOR=\"sed -i -re 's/^pick /e /'\"; git rebase -i"
@@ -33,7 +33,7 @@ alias gitupdateallrepos="find . -name .git -type d | xargs -n1 -P4 -I% git --git
 # Find commands I type often so I can alias them
 alias typeless='history n 20000 | sed "s/.*  //"  | sort | uniq -c | sort -g | tail -n 100'
 
-alias jpgcompress='echo convert INPUTFILE -sampling-factor 4:2:0 -strip -interlace JPEG -colorspace sRGB OUTPUTFILE'
+# alias jpgcompress='echo convert INPUTFILE -sampling-factor 4:2:0 -strip -interlace JPEG -colorspace sRGB OUTPUTFILE'
 
 # Jekyll alias
 alias js="jekyll serve ."
@@ -51,7 +51,7 @@ alias updatedb='sudo /usr/libexec/locate.updatedb'
 alias rake='noglob rake'
 alias netwatch='lsof -i'
 alias flushdns='sudo discoveryutil udnsflushcaches'
-alias server='sudo python3 -m http.server 80'
+alias httpserver='sudo python3 -m http.server 80'
 alias cc='colorize.py'
 alias rmid="ssh-keygen -R"
 alias aria="aria2c -s 5 -j 5 -x 5 -c --enable-http-pipelining=true --http-accept-gzip=true"
@@ -66,7 +66,7 @@ alias fastmail_you_there_bro="openssl s_client -connect imap.fastmail.com:993 -c
 #alias yt='youtube-dl'
 
 # MacOS shortcuts
-alias delete-all-local-snapshots='for d in $(tmutil listlocalsnapshotdates | grep -v "Snapshot dates for all disks"); do sudo tmutil deletelocalsnapshots $d; done'
+# alias delete-all-local-snapshots='for d in $(tmutil listlocalsnapshotdates | grep -v "Snapshot dates for all disks"); do sudo tmutil deletelocalsnapshots $d; done'
 alias clear-download-history="sqlite3 ~/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV* 'delete from LSQuarantineEvent'"
 alias screenshots-jpg='defaults write com.apple.screencapture type JPG'
 alias screenshots-png='defaults write com.apple.screencapture type PNG'
@@ -85,6 +85,7 @@ alias merge='diff --line-format %L'
 # Terraform
 alias t='terraform'
 alias tf='terraform'
+alias tfn='terraform'
 
 # GCP
 alias glogin='gcloud auth login --no-launch-browser'
@@ -108,3 +109,17 @@ alias youtube-dl='yt-dlp'
 # node / typescript
 # update all packages in package.json except @types/node
 alias ncu='ncu -u \!@types/node --deep'
+
+### Suffix Aliases ###
+
+# VSCode
+alias -s {ts,md,js,json,py,yaml,rb,css,rc,yml}=code
+
+# Firefox
+alias -s html=/Applications/Firefox.app
+
+# VLC
+alias -s {mkv,mp4,m4v,avi,mpg,mpeg}=vlc
+
+# Preview
+alias -s {jpg,jpeg,png,gif,bmp,ico,svg,webp}=open
