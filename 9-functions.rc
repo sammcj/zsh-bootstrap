@@ -260,9 +260,9 @@ function mv() {
   mv -v "$1" "$newfilename"
 }
 
-# Azure AD login
-function aad() {
-  aws-azure-login --no-prompt --profile "$@"
+# AWS Azure AD login
+function aws-azure-login() {
+  command aws-azure-login --no-prompt --profile "$@"
   export AWS_PROFILE=$@
 }
 

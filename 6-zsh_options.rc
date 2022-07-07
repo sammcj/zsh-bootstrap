@@ -135,7 +135,7 @@ bindkey -M viins ' ' magic-space
 
 # rvm compat
 unsetopt auto_name_dirs
-alias .='pwd'
+# alias .='pwd'
 
 # cd into a directory when you type its name
 setopt autocd

@@ -9,7 +9,7 @@ alias zshconfig="code ~/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\
 
 # Packages
 alias b="brew update; brew upgrade"
-alias ba="omz update; brew update; brew upgrade; pip install -U pip; pip3 install -U pip; zgen selfupdate; zgen update; vim +PluginUpdate +qall; ncu --global"
+alias ba="omz update; brew update; brew upgrade; pip install -U pip; pip3 install -U pip; zgen selfupdate; zgen update; vim +PluginUpdate +qall; ncu --global; mas upgrade; asdf plugin update --all"
 alias pa"pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U"
 
 # Git
@@ -22,13 +22,15 @@ alias gbd="git branch -d"
 alias githist="git log --graph --pretty=oneline --abbrev-commit"
 alias git-delete-remote-branch="git push origin --delete"
 alias gitwip="git add .; git commit -m 'WIP - will rebase'; git push"
-alias gitamend="GIT_SEQUENCE_EDITOR=\"sed -i -re 's/^pick /e /'\"; git rebase -i"
+alias gitamendrebase="GIT_SEQUENCE_EDITOR=\"sed -i -re 's/^pick /e /'\"; git rebase -i"
+alias amend="git commit --amend --no-edit"
 alias gitlast="git add .;git commit --amend -C HEAD ; git push"
 alias gitday="git diff HEAD 'HEAD@{1 day ago}'"
 alias gitweek="git diff HEAD 'HEAD@{1 week ago}'"
 alias gitprod="git checkout production"
 alias gitmaster="git checkout master"
 alias gitupdateallrepos="find . -name .git -type d | xargs -n1 -P4 -I% git --git-dir=% --work-tree=%/.. fetch --all --recurse-submodules"
+alias ip="git-update-all.sh"
 
 # Find commands I type often so I can alias them
 alias typeless='history n 20000 | sed "s/.*  //"  | sort | uniq -c | sort -g | tail -n 100'

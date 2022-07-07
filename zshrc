@@ -1,4 +1,3 @@
-
 #### FIG ENV VARIABLES ####
 # Please make sure this block is at the start of this file.
 [ -s ~/.fig/shell/pre.sh ] && source ~/.fig/shell/pre.sh
@@ -26,7 +25,6 @@ if [ -d $HOME/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/do
   done
 fi
 
-
 ### Below are items added by installer scripts (usually homebrew) ####
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -41,8 +39,7 @@ export PATH="$PATH:$HOME/.rvm/bin"
 # Uncomment below to enable debug timing
 #zprof
 
-
-export PATH="$HOME/.helm:$PATH"
+# export PATH="$HOME/.helm:$PATH"
 #source $HOME/.helm/helmenv.sh
 export PATH="/opt/homebrew/bin:$PATH"
 export PATH="/opt/homebrew/sbin:$PATH"
@@ -52,7 +49,20 @@ export PATH="/opt/homebrew/sbin:$PATH"
 
 # Enable endgame AWS scanner
 # https://users.aalto.fi/~saarit2/deoxy/gz_howy.htm
-#### FIG ENV VARIABLES ####
-# Please make sure this block is at the end of this file.
-[ -s ~/.fig/fig.sh ] && source ~/.fig/fig.sh
-#### END FIG ENV VARIABLES ####
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+#__conda_setup="$('/Users/samm/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+#if [ $? -eq 0 ]; then
+#    eval "$__conda_setup"
+#else
+#    if [ -f "/Users/samm/miniconda3/etc/profile.d/conda.sh" ]; then
+#        . "/Users/samm/miniconda3/etc/profile.d/conda.sh"
+#    else
+#        export PATH="/Users/samm/miniconda3/bin:$PATH"
+#    fi
+#fi
+#unset __conda_setup
+# <<< conda initialize <<<
+
+. /opt/homebrew/opt/asdf/libexec/asdf.sh

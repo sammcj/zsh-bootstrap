@@ -70,7 +70,7 @@ brew install appcleaner launchcontrol stay drawio launchrocket qbittorrent osxfu
   duf telnet gnu-sed gnupg graphviz fd htop lftp k3d links parallel pandoc p7zip \
   openssl@3 rsync authy bettertouchtool appcleaner calibre drawio fedora-media-writer knockknock \
   ngrok macdown launchcontrol launchrocket monodraw onyx qlvideo pdfshaver qbittorrent \
-  sekey send-to-kindle serial Secretive
+  sekey send-to-kindle serial Secretive asdf
 
 # Testing related
 brew install fio nmap mtr testssl speedtest-cli iperf3 wireshark hyperfine mtr siege \
