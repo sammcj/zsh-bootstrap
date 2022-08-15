@@ -1,3 +1,5 @@
+# shellcheck disable=SC2148
+
 # load zgen
 source "${HOME}/.zgen/zgen.zsh"
 

@@ -1,22 +1,12 @@
+# shellcheck disable=SC2148
+
 # iTerm2 Shell integration
 # https://www.iterm2.com/documentation-shell-integration.html
-source ~/.iterm2_shell_integration.zsh
+source $HOME/.iterm2_shell_integration.zsh
 
 # RVM
-source ~/.rvm/scripts/rvm
+source $HOME/.rvm/scripts/rvm
 
 # Node / Javascript
+# Note: If this doesn't work, make sure you've cleaned up nvm directories and related PATHs
 eval "$(/opt/homebrew/bin/fnm env --use-on-cd)"
-
-# # Nodejs NVM
-# export NVM_DIR="$HOME/.nvm"
-# [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
-# [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
-
-# Krew Kubernetes plugin manager
-export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
-
-#https://github.com/barthr/redo
-export REDO_HISTORY_PATH=~/.history
-export EDITOR=vim
-export REDO_ALIAS_PATH=~/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/redo_aliases

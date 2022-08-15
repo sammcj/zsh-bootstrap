@@ -1,1 +1,31 @@
-PATH=/usr/local/bin:/usr/local/opt/gnu-sed/libexec/gnubin:/usr/local/sbin:$HOME/bin:$HOME/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/scripts:$HOME/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/bin:$HOME/git/scripts:/git/scripts:$HOME/go/bin:/Users/samm/Library/Python/3.9/bin:/Users/samm/.local/bin:$PATH
+#shellcheck disable=SC2148
+
+export PATH="/usr/local/bin:$PATH"
+
+#test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
+# Uncomment below to enable debug timing
+#zprof
+
+export PATH="/opt/homebrew/bin:$PATH"
+export PATH="/opt/homebrew/sbin:$PATH"
+
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+export PATH="$PATH:$HOME/.rvm/bin"
+
+# Golang
+export PATH="$PATH:$HOME/go/bin"
+
+export PATH="$PATH:$HOME/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/bin"
+export PATH="$PATH:$HOME/git/scripts"
+export PATH="$PATH:$HOME/.local/bin"
+
+# added by Miniconda3 installer
+export PATH="/Users/samm/miniconda3/bin:$PATH"
+
+### Kubernetes / k8s related exports ###
+
+# Krew Kubernetes plugin manager
+# export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+
+#source $HOME/.helm/helmenv.sh

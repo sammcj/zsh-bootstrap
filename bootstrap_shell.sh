@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Sets up my zsh shell just the way I like it
 #
@@ -17,7 +17,8 @@ brew install fzf tmux zsh git gpg jq kube-ps1 bat git-delta cheat aria2 \
 brew install mas
 mas install 1532419400 904280696 1289583905 1166066070 937984704 425424353 1262957439 \
   1006739057 411643860 1529448980 1091189122 803453959 1048732801 409183694 1333542190 \
-  1569813296 1270075435 921923693 490179405 1497506650 413969927 1538761576
+  1569813296 1270075435 921923693 490179405 1497506650 413969927 1538761576 1233965871 \
+  1365531024
 
 # 1333542190 1Password 7
 # 1569813296 1Password for Safari
@@ -42,44 +43,64 @@ mas install 1532419400 904280696 1289583905 1166066070 937984704 425424353 12629
 # 1497506650 Yubico Authenticator
 # 413969927 Audiobook Binder
 # 1538761576 Authy Authenticator App
+# 1233965871 Screenbrush
+# 1365531024 1blocker for safari
 
 # The following brew installs aren't required to bootstrap the shell
 
 # Git related
-brew install git-delta git-quick-stats git-secrets gitleaks gh icdiff pre-commit gitahead
+brew install git-delta git-quick-stats git-secrets gitleaks gh icdiff pre-commit
 
 pip3 install mu-repo
 
 # Cloud things
-brew install aws-cdk aws-iam-authenticator aws-okta aws-sam-cli aws-shell aws-sso-util \
-  awscli aws-azure-login terraforming terraform cfn-lint tfenv tflint eksctl lazygit s3cmd \
-  terraform-docs terraform-ls google-cloud-sdk
+brew install aws-cdk aws-iam-authenticator aws-okta aws-shell aws-sso-util \
+  awscli terraforming terraform cfn-lint tfenv tflint eksctl lazygit s3cmd \
+  terraform-docs terraform-ls
+
+brew tap aws/tap
+brew install aws-sam-cli
 
 # Build and dev related
-brew install golang autoconf autoenv automake cmake go gcc make node hadolint nvm pyenv \
-  rust ruby-completion shellcheck yq yarn jsonlint
+brew install golang autoconf autoenv automake cmake go gcc make node hadolint pyenv \
+  rust ruby-completion shellcheck yq yarn jsonlint docker-credential-helper font-blex-mono-nerd-font fnm
 
-npm install -G husky npm-check-updates eslint prettier
+npm install -G husky npm-check-updates eslint prettier aws-azure-login editorconfig
 
 # Containers related
 brew install docker-slim podman docker lima colima kubernetes-cli docker-compose-completion \
-  dive helm k9s lens
+  dive helm k9s lens docker-compose
 
 # Other tools/apps
 brew install appcleaner launchcontrol stay drawio launchrocket qbittorrent osxfuse ncdu xz \
   duf telnet gnu-sed gnupg graphviz fd htop lftp k3d links parallel pandoc p7zip \
   openssl@3 rsync authy bettertouchtool appcleaner calibre drawio fedora-media-writer knockknock \
   ngrok macdown launchcontrol launchrocket monodraw onyx qlvideo pdfshaver qbittorrent \
-  sekey send-to-kindle serial Secretive asdf
+  sekey send-to-kindle serial Secretive thefuck hot
+
+# # Quicklook plugins https://github.com/sindresorhus/quick-look-plugins
+# replaced with Peek from the app store.
+# brew install qlcolorcode qlstephen qlmarkdown quicklook-json qlimagesize apparency qlvideo webpquicklook
+# xattr -d -r com.apple.quarantine ~/Library/QuickLook
 
 # Testing related
 brew install fio nmap mtr testssl speedtest-cli iperf3 wireshark hyperfine mtr siege \
-  testssl paw postman
+  testssl paw
+
+go install github.com/rhysd/actionlint/cmd/actionlint@latest
 
 # Media related
-brew install yt-dlp handbrake imageoptim vlc flac fnm ffmpeg x265 x264 xvid lame xld
+brew install yt-dlp handbrake imageoptim vlc flac ffmpeg x265 x264 xvid lame xld
 
 ##### End installs #####
+
+# Docker compose v2
+
+mkdir -p ~/.docker/cli-plugins/
+chmod +x ~/.docker/cli-plugins/docker-compose
+ln -sfn /opt/homebrew/opt/docker-compose/bin/docker-compose ~/.docker/cli-plugins/docker-compose
+
+####
 
 grep -q -F '/usr/local/bin/zsh' /etc/shells || echo '/usr/local/bin/zsh' | sudo tee -a /etc/shells
 
@@ -88,7 +109,7 @@ if [ ! -d "${HOME}/.zgen" ]; then
 fi
 
 if [ ! -d "${HOME}/.tmux/plugins/tpm" ]; then
-  mkdir -p ~/.tmux/plugins
+  mkdir -p $HOME/.tmux/plugins
   git clone https://github.com/tmux-plugins/tpm "${HOME}/.tmux/plugins/tpm"
 fi
 
@@ -98,7 +119,7 @@ if [ ! -d "${HOME}/.gitignoreglobal" ]; then
   git config --global core.excludesfile ~/.gitignoreglobal
 fi
 
-rm -f ~/.zshrc
+rm -f $HOME/.zshrc
 ln -s $HOME/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/zshrc ~/.zshrc
 
 if [ ! -d "${ZDOTDIR:-$HOME}/.zprezto" ]; then
@@ -124,3 +145,7 @@ mkdir -p .config/youtube-dl && echo "-f 'bestvideo+bestaudio'" >~/.config/youtub
 
 # https://github.com/barthr/redo
 go install github.com/barthr/redo@latest
+
+# link main zshrc
+rm -f ~/.zshrc
+ln -s /Users/samm/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/zshrc ~/.zshrc

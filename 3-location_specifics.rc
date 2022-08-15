@@ -1,12 +1,14 @@
+# shellcheck disable=SC2148
+
 case $HOST in
-    samm-mb*)
-        # placeholder
-        ;;
-    Sams-Air*)
-        alias docker=podman
-        # placeholder
-        ;;
-    *)
-        # placeholder for all
-        ;;
+samm-mb*)
+  # placeholder
+  ;;
+Sams-Air*)
+  alias docker=podman
+  # placeholder
+  ;;
+*)
+  # placeholder for all
+  ;;
 esac

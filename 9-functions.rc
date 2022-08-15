@@ -1,3 +1,5 @@
+#shellcheck disable=SC2148
+
 function mkcd
 {
   dir="$*";
@@ -264,22 +266,8 @@ function mv() {
 function aws-azure-login() {
   command aws-azure-login --no-prompt --profile "$@"
   export AWS_PROFILE=$@
+  export AWSCLIPARAMS="--profile=$@"
 }
-
-# NVM node versions
-autoload -U add-zsh-hook
-
-load-nvmrc() {
-  if [[ -f .nvmrc && -r .nvmrc ]]; then
-    nvm use
-  elif [[ $(nvm version) != $(nvm version default) ]]; then
-    echo "Reverting to nvm default version"
-    nvm use default
-  fi
-}
-
-add-zsh-hook chpwd load-nvmrc
-load-nvmrc
 
 # Github
 # Deletes workflow logs from a given repo older than 1 month
@@ -307,3 +295,33 @@ function git_add_commit_push(){
       )
     done
 }
+
+# Interactive cd using fzf
+function fcd() {
+  local dir;
+
+  while true; do
+    # exit with ^D
+    dir="$(ls -a1p | grep '/$' | grep -v '^./$' | fzf --height 40% --reverse --no-multi --preview 'pwd' --preview-window=up,1,border-none --no-info)"
+    if [[ -z "${dir}" ]]; then
+      break
+    else
+      cd "${dir}"
+    fi
+  done
+}
+
+# An improved version with softlinks - MAYBE?
+# function fcd() {
+#   local dir;
+
+#   while true; do
+#     # exit with ^D
+#     dir="$(ls -a1F | grep '[/@]$' | grep -v '^./$' | sed 's/@$//' | fzf --height 40% --reverse --no-multi --preview 'pwd' --preview-window=up,1,border-none --no-info)"
+#     if [[ -z "${dir}" ]]; then
+#       break
+#     elif [[ -d "${dir}" ]]; then
+#       cd "${dir}"
+#     fi
+#   done
+# }

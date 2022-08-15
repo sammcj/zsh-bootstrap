@@ -1,7 +1,4 @@
-#### FIG ENV VARIABLES ####
-# Please make sure this block is at the start of this file.
-[ -s ~/.fig/shell/pre.sh ] && source ~/.fig/shell/pre.sh
-#### END FIG ENV VARIABLES ####
+# shellcheck disable=SC2148
 # ~/.zshrc
 
 # There is an alias to jump to the directory with the various
@@ -29,21 +26,6 @@ fi
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-export PATH="/usr/local/bin:$PATH"
-
-# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
-export PATH="$PATH:$HOME/.rvm/bin"
-
-#test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-
-# Uncomment below to enable debug timing
-#zprof
-
-# export PATH="$HOME/.helm:$PATH"
-#source $HOME/.helm/helmenv.sh
-export PATH="/opt/homebrew/bin:$PATH"
-export PATH="/opt/homebrew/sbin:$PATH"
-
 # Enable direnv - https://direnv.net
 # eval "$(direnv hook zsh)"
 
@@ -65,4 +47,5 @@ export PATH="/opt/homebrew/sbin:$PATH"
 #unset __conda_setup
 # <<< conda initialize <<<
 
-. /opt/homebrew/opt/asdf/libexec/asdf.sh
+# Thefuck
+eval "$(thefuck --alias)"

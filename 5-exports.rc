@@ -1,3 +1,5 @@
+#shellcheck disable=SC2148
+
 ### Exports ###
 
 export HOMEBREW_NO_ANALYTICS=1
@@ -8,8 +10,7 @@ export LSCOLORS=ExFxCxDxBxegedabagacad
 export GOPATH="${HOME}/go"
 export XZ_OPT="--threads=8"
 export MU_REPO_SERIAL=false
+export EDITOR=vim
 
-# nvm
-export NVM_DIR="$HOME/.nvm"
-[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"                                       # This loads nvm
-[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" # This loads nvm bash_completion
+# colima / docker
+export DOCKER_HOST="unix://$HOME/.colima/docker.sock"

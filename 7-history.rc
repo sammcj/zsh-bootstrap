@@ -1,3 +1,5 @@
+#shellcheck disable=SC2148
+
 ### History Stuff ###
 
 # Don't share tab history on iTerm2
@@ -41,4 +43,3 @@ setopt EXTENDED_HISTORY
 setopt HIST_SAVE_NO_DUPS
 setopt HIST_EXPIRE_DUPS_FIRST
 setopt HIST_FIND_NO_DUPS
-
