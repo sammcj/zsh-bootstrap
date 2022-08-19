@@ -14,3 +14,6 @@ export EDITOR=vim
 
 # colima / docker
 export DOCKER_HOST="unix://$HOME/.colima/docker.sock"
+
+# aws
+export AWS_DEFAULT_REGION=ap-southeast-2

@@ -25,7 +25,7 @@ alias gitclean="git fetch -p; git remote prune origin; git repack -a -d -f --max
 #alias gitrb='for branch in `git branch -r --merged | grep -v HEAD`; do echo -e `git show --format="%ci %cr %an" $branch | head -n 1` \\t$branch; done | sort -r'
 alias gs="git status"
 alias gbd="git branch -d"
-alias git-delete-local-branches="git for-each-ref --format '%(refname:short)' refs/heads | grep -v 'master\|main' | xargs git branch -D"
+alias git-delete-local-branches="git fetch --all --prune"
 alias githist="git log --graph --pretty=oneline --abbrev-commit"
 alias git-delete-remote-branch="git push origin --delete"
 alias gitwip="git add .; git commit -m 'WIP - will rebase'; git push"

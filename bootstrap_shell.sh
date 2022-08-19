@@ -139,6 +139,7 @@ fi
 
 # Configure .gitconfig
 ln -sf ~/Library/Mobile\ Documents/com~apple~CloudDocs/Dropbox\ Import/dotfiles/gitconfig ~/.gitconfig
+ln -s ~/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/ ~/.gitconfig-no_push
 
 # Configure youtube-dl to always get the best video and audio quality
 mkdir -p .config/youtube-dl && echo "-f 'bestvideo+bestaudio'" >~/.config/youtube-dl/config
