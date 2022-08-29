@@ -63,7 +63,7 @@ brew install aws-sam-cli
 
 # Build and dev related
 brew install golang autoconf autoenv automake cmake go gcc make node hadolint pyenv \
-  rust ruby-completion shellcheck yq yarn jsonlint docker-credential-helper font-blex-mono-nerd-font fnm
+  rust ruby-completion shellcheck yq yarn jsonlint docker-credential-helper fnm
 
 npm install -G husky npm-check-updates eslint prettier aws-azure-login editorconfig
 
@@ -91,6 +91,11 @@ go install github.com/rhysd/actionlint/cmd/actionlint@latest
 
 # Media related
 brew install yt-dlp handbrake imageoptim vlc flac ffmpeg x265 x264 xvid lame xld
+
+# Fonts
+brew tap homebrew/cask-fonts
+brew install --cask font-hack-nerd-font
+brew install font-blex-mono-nerd-font
 
 ##### End installs #####
 
@@ -145,7 +150,10 @@ ln -s ~/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles
 mkdir -p .config/youtube-dl && echo "-f 'bestvideo+bestaudio'" >~/.config/youtube-dl/config
 
 # https://github.com/barthr/redo
-go install github.com/barthr/redo@latest
+# go install github.com/barthr/redo@latest
+
+# 1Password CLI (not actually using this at the moment)
+# brew install --cask 1password/tap/1password-cli
 
 # link main zshrc
 rm -f ~/.zshrc

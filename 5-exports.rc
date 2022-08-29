@@ -17,3 +17,9 @@ export DOCKER_HOST="unix://$HOME/.colima/docker.sock"
 
 # aws
 export AWS_DEFAULT_REGION=ap-southeast-2
+
+# Tells 'less' not to paginate if less than a page
+export LESS="-F -X $LESS"
+
+# Options to fzf command
+export FZF_COMPLETION_OPTS='--border --info=inline'

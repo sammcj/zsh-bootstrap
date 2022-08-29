@@ -10,4 +10,4 @@ echo "Testing this script (run_tests.sh) for bash errors..."
 shellcheck run_tests.sh
 
 echo "Testing included .rc files for bash errors..."
-shellcheck -e SC1090 0- -e SC2148 -e SC2034 ./*.rc
+shellcheck -e SC1090 -e SC2148 -e SC2034 ./*.rc

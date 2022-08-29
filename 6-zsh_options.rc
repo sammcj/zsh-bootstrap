@@ -3,8 +3,8 @@
 ### Options ###
 
 #unalias run-help
-autoload run-help
-HELPDIR=/usr/local/share/zsh/help
+# autoload run-help
+# HELPDIR=/usr/local/share/zsh/help
 
 
 # Keep echo "station" > station from clobbering station

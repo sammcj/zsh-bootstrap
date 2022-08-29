@@ -16,4 +16,4 @@ Session.vim
 .mu_repo
 
 # node
-node_modules
+#node_modules

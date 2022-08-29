@@ -23,7 +23,7 @@ alias main="git checkout main && git pull"
 alias gitdiff="git diff --color-words --color=always"
 alias gitclean="git fetch -p; git remote prune origin; git repack -a -d -f --max-pack-size=10g --depth=500 --window=250; git gc --aggressive"
 #alias gitrb='for branch in `git branch -r --merged | grep -v HEAD`; do echo -e `git show --format="%ci %cr %an" $branch | head -n 1` \\t$branch; done | sort -r'
-alias gs="git status"
+alias gs="git --no-pager status"
 alias gbd="git branch -d"
 alias git-delete-local-branches="git fetch --all --prune"
 alias githist="git log --graph --pretty=oneline --abbrev-commit"
@@ -37,6 +37,7 @@ alias gitweek="git diff HEAD 'HEAD@{1 week ago}'"
 alias gitprod="git checkout production"
 alias gitmaster="git checkout master"
 alias gitupdateallrepos="find . -name .git -type d | xargs -n1 -P4 -I% git --git-dir=% --work-tree=%/.. fetch --all --recurse-submodules"
+alias git-checkout-branch="git branch --sort=-committerdate | fzf --header 'Checkout Recent Branch' --preview 'git diff {1} --color=always' --pointer='>' | xargs git checkout"
 
 # GNU tools
 alias sed="gsed"
