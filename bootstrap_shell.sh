@@ -114,18 +114,18 @@ if [ ! -d "${HOME}/.zgen" ]; then
 fi
 
 if [ ! -d "${HOME}/.tmux/plugins/tpm" ]; then
-  mkdir -p $HOME/.tmux/plugins
+  mkdir -p "$HOME"/.tmux/plugins
   git clone https://github.com/tmux-plugins/tpm "${HOME}/.tmux/plugins/tpm"
 fi
 
 # Setup global gitignore file
 if [ ! -d "${HOME}/.gitignoreglobal" ]; then
-  ln -s $HOME/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/.gitignoreglobal $HOME/.gitignoreglobal
+  ln -s "$HOME"/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/.gitignoreglobal "$HOME"/.gitignoreglobal
   git config --global core.excludesfile ~/.gitignoreglobal
 fi
 
-rm -f $HOME/.zshrc
-ln -s $HOME/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/zshrc ~/.zshrc
+rm -f "$HOME"/.zshrc
+ln -s "$HOME"/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/zshrc ~/.zshrc
 
 if [ ! -d "${ZDOTDIR:-$HOME}/.zprezto" ]; then
   rm -f ~/.zprezto
@@ -135,11 +135,12 @@ if [ ! -d "${ZDOTDIR:-$HOME}/.zprezto" ]; then
   zsh
   setopt EXTENDED_GLOB
 
+  # shellcheck disable=SC2043
   for rcfile in "${ZDOTDIR:-$HOME}"/.zprezto/runcoms/^README.md\(.N\); do
     ln -s "$rcfile" "${ZDOTDIR:-$HOME}/.${rcfile:t}"
   done
 
-  ln -s $HOME/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/zpreztorc ~/.zprezto
+  ln -s "$HOME"/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/zpreztorc ~/.zprezto
 fi
 
 # Configure .gitconfig

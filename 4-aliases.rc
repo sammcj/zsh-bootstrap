@@ -7,7 +7,7 @@ alias d="cd ~/Downloads"
 alias icloud_drive="cd ~/Library/Mobile\ Documents/com\~apple\~CloudDocs/"
 
 # IDE Projects
-alias zshconfig="code ~/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/" #TODO cleanup this, move stuff out of Dropbox\ Import
+alias zshconfig="cd ~/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/ && code ." #TODO cleanup this, move stuff out of Dropbox\ Import
 
 # Packages
 alias b="brew update; brew upgrade"
