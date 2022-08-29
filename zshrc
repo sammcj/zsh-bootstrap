@@ -25,6 +25,7 @@ fi
 ### Below are items added by installer scripts (usually homebrew) ####
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+source /opt/homebrew/Cellar/fzf/*/shell/key-bindings.zsh
 
 # Enable direnv - https://direnv.net
 # eval "$(direnv hook zsh)"
