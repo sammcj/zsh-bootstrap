@@ -121,6 +121,9 @@ alias nvm='echo I think you meant FNM'
 # update all packages in package.json except @types/node
 alias ncu='ncu -u \!@types/node --deep'
 
+# nice JSON graphing / visulisation tool
+alias json-graph='colima start && docker run -p 8888:8080 jsonvisio && open http://localhost:8888/editor'
+
 # Backblaze
 alias backblaze_edit='code /Library/Backblaze.bzpkg/bzdata/bzexcluderules_editable.xml'
 
