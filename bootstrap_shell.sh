@@ -63,7 +63,8 @@ brew install aws-sam-cli
 
 # Build and dev related
 brew install golang autoconf autoenv automake cmake go gcc make node hadolint pyenv \
-  rust ruby-completion shellcheck yq yarn jsonlint docker-credential-helper fnm
+  rust ruby-completion shellcheck yq yarn jsonlint docker-credential-helper fnm \
+  gnu-getopt
 
 npm install -G husky npm-check-updates eslint prettier aws-azure-login editorconfig
 

@@ -1,14 +1,16 @@
 #shellcheck disable=SC2148
 
-export PATH="/usr/local/bin:$PATH"
-
 #test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 # Uncomment below to enable debug timing
 #zprof
 
+export PATH="/usr/local/bin:$PATH"
+
 export PATH="/opt/homebrew/bin:$PATH"
 export PATH="/opt/homebrew/sbin:$PATH"
+
+export PATH="/opt/homebrew/opt/gnu-getopt/bin:$PATH"
 
 # Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
 export PATH="$PATH:$HOME/.rvm/bin"
@@ -22,6 +24,9 @@ export PATH="$PATH:$HOME/.local/bin"
 
 # added by Miniconda3 installer
 export PATH="/Users/samm/miniconda3/bin:$PATH"
+
+# override conda with python 3.10 as it doesn't support it ?
+export PATH="/opt/homebrew/opt/python@3.10/libexec/bin:$PATH"
 
 ### Kubernetes / k8s related exports ###
 
