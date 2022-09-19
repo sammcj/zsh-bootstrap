@@ -66,11 +66,14 @@ brew install golang autoconf autoenv automake cmake go gcc make node hadolint py
   rust ruby-completion shellcheck yq yarn jsonlint docker-credential-helper fnm \
   gnu-getopt
 
-npm install -G husky npm-check-updates eslint prettier aws-azure-login editorconfig
+npm install -G husky npm-check-updates eslint prettier aws-azure-login editorconfig \
+  @typescript-eslint/parser typescript vue-eslint-parser
 
 # Containers related
-brew install docker-slim podman docker lima colima kubernetes-cli docker-compose-completion \
-  dive helm k9s lens docker-compose
+brew install docker-slim podman docker lima colima docker-compose-completion dive docker-compose
+
+# K8s related
+brew install kubernetes-cli k9s lens helm
 
 # Other tools/apps
 brew install appcleaner launchcontrol stay drawio launchrocket qbittorrent osxfuse ncdu xz \
