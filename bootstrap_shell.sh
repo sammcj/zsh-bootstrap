@@ -66,6 +66,8 @@ brew install golang autoconf autoenv automake cmake go gcc make node hadolint py
   rust ruby-completion shellcheck yq yarn jsonlint docker-credential-helper fnm \
   gnu-getopt
 
+brew install noahgorstein/tap/jqp # https://github.com/noahgorstein/jqp
+
 npm install -G husky npm-check-updates eslint prettier aws-azure-login editorconfig \
   @typescript-eslint/parser typescript vue-eslint-parser
 
