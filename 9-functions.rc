@@ -8,7 +8,7 @@ function mkcd
 
 function yt
 {
- nohup youtube-dl --no-progress "$1" 2>&1 > /dev/null &
+  nohup youtube-dl --no-progress "$1" 2>&1 > /dev/null &
 }
 # change /dev/null to youtube-dl-"$(date +%Y%m%d-%H%M%S)".log if you want logging
 
@@ -22,55 +22,55 @@ function git_prompt_info() {
   fi
 }
 
-# Checks if working tree is dirty
-function parse_git_dirty() {
-  local STATUS=''
-  local FLAGS
-  FLAGS=('--porcelain')
-  if [[ "$(command git config --get oh-my-zsh.hide-dirty)" != "1" ]]; then
-    if [[ $POST_1_7_2_GIT -gt 0 ]]; then
-      FLAGS+='--ignore-submodules=dirty'
-    fi
-    if [[ "$DISABLE_UNTRACKED_FILES_DIRTY" == "true" ]]; then
-      FLAGS+='--untracked-files=no'
-    fi
-    STATUS=$(command git status ${FLAGS} 2> /dev/null | tail -n1)
-  fi
-  if [[ -n $STATUS ]]; then
-    echo "$ZSH_THEME_GIT_PROMPT_DIRTY"
-  else
-    echo "$ZSH_THEME_GIT_PROMPT_CLEAN"
-  fi
-}
+# # Checks if working tree is dirty
+# function parse_git_dirty() {
+#   local STATUS=''
+#   local FLAGS
+#   FLAGS=('--porcelain')
+#   if [[ "$(command git config --get oh-my-zsh.hide-dirty)" != "1" ]]; then
+#     if [[ $POST_1_7_2_GIT -gt 0 ]]; then
+#       FLAGS+='--ignore-submodules=dirty'
+#     fi
+#     if [[ "$DISABLE_UNTRACKED_FILES_DIRTY" == "true" ]]; then
+#       FLAGS+='--untracked-files=no'
+#     fi
+#     STATUS=$(command git status ${FLAGS} 2> /dev/null | tail -n1)
+#   fi
+#   if [[ -n $STATUS ]]; then
+#     echo "$ZSH_THEME_GIT_PROMPT_DIRTY"
+#   else
+#     echo "$ZSH_THEME_GIT_PROMPT_CLEAN"
+#   fi
+# }
 
-# Gets the difference between the local and remote branches
-function git_remote_status() {
-    local remote ahead behind git_remote_status git_remote_status_detailed
-    remote=${$(command git rev-parse --verify ${hook_com[branch]}@{upstream} --symbolic-full-name 2>/dev/null)/refs\/remotes\/}
-    if [[ -n ${remote} ]]; then
-        ahead=$(command git rev-list ${hook_com[branch]}@{upstream}..HEAD 2>/dev/null | wc -l)
-        behind=$(command git rev-list HEAD..${hook_com[branch]}@{upstream} 2>/dev/null | wc -l)
+# # Gets the difference between the local and remote branches
+# function git_remote_status() {
+#     local remote ahead behind git_remote_status git_remote_status_detailed
+#     remote=${$(command git rev-parse --verify ${hook_com[branch]@{upstream} --symbolic-full-name 2>/dev/null)/refs\/remotes\/}
+#     if [[ -n ${remote} ]]; then
+#         ahead=$(command git rev-list ${hook_com[branch]}@{upstream}..HEAD 2>/dev/null | wc -l)
+#         behind=$(command git rev-list HEAD..${hook_com[branch]}@{upstream} 2>/dev/null | wc -l)
 
-        if [[ $ahead -eq 0 ]] && [[ $behind -eq 0 ]]; then
-            git_remote_status="$ZSH_THEME_GIT_PROMPT_EQUAL_REMOTE"
-        elif [[ $ahead -gt 0 ]] && [[ $behind -eq 0 ]]; then
-            git_remote_status="$ZSH_THEME_GIT_PROMPT_AHEAD_REMOTE"
-            git_remote_status_detailed="$ZSH_THEME_GIT_PROMPT_AHEAD_REMOTE_COLOR$ZSH_THEME_GIT_PROMPT_AHEAD_REMOTE$((ahead))%{$reset_color%}"
-        elif [[ $behind -gt 0 ]] && [[ $ahead -eq 0 ]]; then
-            git_remote_status="$ZSH_THEME_GIT_PROMPT_BEHIND_REMOTE"
-            git_remote_status_detailed="$ZSH_THEME_GIT_PROMPT_BEHIND_REMOTE_COLOR$ZSH_THEME_GIT_PROMPT_BEHIND_REMOTE$((behind))%{$reset_color%}"
-        elif [[ $ahead -gt 0 ]] && [[ $behind -gt 0 ]]; then
-            git_remote_status="$ZSH_THEME_GIT_PROMPT_DIVERGED_REMOTE"
-            git_remote_status_detailed="$ZSH_THEME_GIT_PROMPT_AHEAD_REMOTE_COLOR$ZSH_THEME_GIT_PROMPT_AHEAD_REMOTE$((ahead))%{$reset_color%}$ZSH_THEME_GIT_PROMPT_BEHIND_REMOTE_COLOR$ZSH_THEME_GIT_PROMPT_BEHIND_REMOTE$((behind))%{$reset_color%}"
-        fi
+#         if [[ $ahead -eq 0 ]] && [[ $behind -eq 0 ]]; then
+#             git_remote_status="$ZSH_THEME_GIT_PROMPT_EQUAL_REMOTE"
+#         elif [[ $ahead -gt 0 ]] && [[ $behind -eq 0 ]]; then
+#             git_remote_status="$ZSH_THEME_GIT_PROMPT_AHEAD_REMOTE"
+#             git_remote_status_detailed="$ZSH_THEME_GIT_PROMPT_AHEAD_REMOTE_COLOR$ZSH_THEME_GIT_PROMPT_AHEAD_REMOTE$((ahead))%{$reset_color%}"
+#         elif [[ $behind -gt 0 ]] && [[ $ahead -eq 0 ]]; then
+#             git_remote_status="$ZSH_THEME_GIT_PROMPT_BEHIND_REMOTE"
+#             git_remote_status_detailed="$ZSH_THEME_GIT_PROMPT_BEHIND_REMOTE_COLOR$ZSH_THEME_GIT_PROMPT_BEHIND_REMOTE$((behind))%{$reset_color%}"
+#         elif [[ $ahead -gt 0 ]] && [[ $behind -gt 0 ]]; then
+#             git_remote_status="$ZSH_THEME_GIT_PROMPT_DIVERGED_REMOTE"
+#             git_remote_status_detailed="$ZSH_THEME_GIT_PROMPT_AHEAD_REMOTE_COLOR$ZSH_THEME_GIT_PROMPT_AHEAD_REMOTE$((ahead))%{$reset_color%}$ZSH_THEME_GIT_PROMPT_BEHIND_REMOTE_COLOR$ZSH_THEME_GIT_PROMPT_BEHIND_REMOTE$((behind))%{$reset_color%}"
+#         fi
 
-        if [[ -n $ZSH_THEME_GIT_PROMPT_REMOTE_STATUS_DETAILED ]]; then
-            git_remote_status="$ZSH_THEME_GIT_PROMPT_REMOTE_STATUS_PREFIX$remote$git_remote_status_detailed$ZSH_THEME_GIT_PROMPT_REMOTE_STATUS_SUFFIX"
-        fi
+#         if [[ -n $ZSH_THEME_GIT_PROMPT_REMOTE_STATUS_DETAILED ]]; then
+#             git_remote_status="$ZSH_THEME_GIT_PROMPT_REMOTE_STATUS_PREFIX$remote$git_remote_status_detailed$ZSH_THEME_GIT_PROMPT_REMOTE_STATUS_SUFFIX"
+#         fi
 
-        echo $git_remote_status
-    fi
-}
+#         echo $git_remote_status
+#     fi
+# }
 
 # Outputs the name of the current branch
 # Usage example: git pull origin $(git_current_branch)
@@ -87,6 +87,34 @@ function git_current_branch() {
   echo ${ref#refs/heads/}
 }
 
+function pr-checkout() {
+  local jq_template pr_number
+
+  jq_template='"'\
+'#\(.number) - \(.title)'\
+'\t'\
+'Author: \(.user.login)\n'\
+'Created: \(.created_at)\n'\
+'Updated: \(.updated_at)\n\n'\
+'\(.body)'\
+'"'
+
+  pr_number=$(
+    gh api 'repos/:owner/:repo/pulls' |
+    jq ".[] | $jq_template" |
+    sed -e 's/"\(.*\)"/\1/' -e 's/\\t/\t/' |
+    fzf \
+      --with-nth=1 \
+      --delimiter='\t' \
+      --preview='echo -e {2}' \
+      --preview-window=top:wrap |
+    sed 's/^#\([0-9]\+\).*/\1/'
+  )
+
+  if [ -n "$pr_number" ]; then
+    gh pr checkout "$pr_number"
+  fi
+}
 
 # Gets the number of commits ahead from remote
 function git_commits_ahead() {
@@ -311,17 +339,26 @@ function fcd() {
   done
 }
 
-# An improved version with softlinks - MAYBE?
-# function fcd() {
-#   local dir;
+# list env variables with fzf
+list_env() {
+  var=$(printenv | cut -d= -f1 | fzf) \
+    && echo "$var=$(printenv "$var")" \
+    && unset var
+}
 
-#   while true; do
-#     # exit with ^D
-#     dir="$(ls -a1F | grep '[/@]$' | grep -v '^./$' | sed 's/@$//' | fzf --height 40% --reverse --no-multi --preview 'pwd' --preview-window=up,1,border-none --no-info)"
-#     if [[ -z "${dir}" ]]; then
-#       break
-#     elif [[ -d "${dir}" ]]; then
-#       cd "${dir}"
-#     fi
-#   done
-# }
+conda_setup() {
+  # >>> conda initialize >>>
+  # !! Contents within this block are managed by 'conda init' !!
+  __conda_setup="$('/Users/samm/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+  if [ $? -eq 0 ]; then
+      eval "$__conda_setup"
+  else
+      if [ -f "/Users/samm/miniconda3/etc/profile.d/conda.sh" ]; then
+          . "/Users/samm/miniconda3/etc/profile.d/conda.sh"
+      else
+          export PATH="/Users/samm/miniconda3/bin:$PATH"
+      fi
+  fi
+  unset __conda_setup
+# <<< conda initialize <<<
+}

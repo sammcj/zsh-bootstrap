@@ -7,7 +7,7 @@ alias d="cd ~/Downloads"
 alias icloud_drive="cd ~/Library/Mobile\ Documents/com\~apple\~CloudDocs/"
 
 # IDE Projects
-alias zshconfig="code ~/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/" #TODO cleanup this, move stuff out of Dropbox\ Import
+alias zshconfig="cd ~/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/ && code ." #TODO cleanup this, move stuff out of Dropbox\ Import
 
 # Packages
 alias b="brew update; brew upgrade"
@@ -23,9 +23,9 @@ alias main="git checkout main && git pull"
 alias gitdiff="git diff --color-words --color=always"
 alias gitclean="git fetch -p; git remote prune origin; git repack -a -d -f --max-pack-size=10g --depth=500 --window=250; git gc --aggressive"
 #alias gitrb='for branch in `git branch -r --merged | grep -v HEAD`; do echo -e `git show --format="%ci %cr %an" $branch | head -n 1` \\t$branch; done | sort -r'
-alias gs="git status"
+alias gs="git --no-pager status"
 alias gbd="git branch -d"
-alias git-delete-local-branches="git for-each-ref --format '%(refname:short)' refs/heads | grep -v 'master\|main' | xargs git branch -D"
+alias git-delete-local-branches="git fetch --all --prune"
 alias githist="git log --graph --pretty=oneline --abbrev-commit"
 alias git-delete-remote-branch="git push origin --delete"
 alias gitwip="git add .; git commit -m 'WIP - will rebase'; git push"
@@ -37,6 +37,7 @@ alias gitweek="git diff HEAD 'HEAD@{1 week ago}'"
 alias gitprod="git checkout production"
 alias gitmaster="git checkout master"
 alias gitupdateallrepos="find . -name .git -type d | xargs -n1 -P4 -I% git --git-dir=% --work-tree=%/.. fetch --all --recurse-submodules"
+alias git-checkout-branch="git branch --sort=-committerdate | fzf --header 'Checkout Recent Branch' --preview 'git diff {1} --color=always' --pointer='>' | xargs git checkout"
 
 # GNU tools
 alias sed="gsed"
@@ -119,6 +120,9 @@ alias nvm='echo I think you meant FNM'
 # node / typescript
 # update all packages in package.json except @types/node
 alias ncu='ncu -u \!@types/node --deep'
+
+# nice JSON graphing / visulisation tool
+alias json-graph='colima start && docker run -p 8888:8080 jsonvisio && open http://localhost:8888/editor'
 
 # Backblaze
 alias backblaze_edit='code /Library/Backblaze.bzpkg/bzdata/bzexcluderules_editable.xml'
