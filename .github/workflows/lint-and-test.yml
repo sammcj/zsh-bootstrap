@@ -1,16 +1,15 @@
 name: Lint and Test
-on: 
+on:
   push:
   pull_request:
   workflow_dispatch:
 
 # Don't run more than one build per branch
-concurrency: 
+concurrency:
   group: ${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
 jobs:
-
   super-linter:
     # Name the Job
     name: super linter
@@ -27,4 +26,5 @@ jobs:
         env:
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: master
+          LOG_LEVEL: warn
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

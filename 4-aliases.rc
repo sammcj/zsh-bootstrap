@@ -7,7 +7,7 @@ alias d="cd ~/Downloads"
 alias icloud_drive="cd ~/Library/Mobile\ Documents/com\~apple\~CloudDocs/"
 
 # IDE Projects
-alias zshconfig="cd ~/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/ && code ." #TODO cleanup this, move stuff out of Dropbox\ Import
+alias zshconfig="cd ~/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/ && code ." #TODO: cleanup this, move stuff out of Dropbox\ Import
 
 # Packages
 alias b="brew update; brew upgrade"
@@ -23,7 +23,6 @@ alias main="git checkout main && git pull"
 alias gitdiff="git diff --color-words --color=always"
 alias gitclean="git fetch -p; git remote prune origin; git repack -a -d -f --max-pack-size=10g --depth=500 --window=250; git gc --aggressive"
 #alias gitrb='for branch in `git branch -r --merged | grep -v HEAD`; do echo -e `git show --format="%ci %cr %an" $branch | head -n 1` \\t$branch; done | sort -r'
-alias gs="git --no-pager status"
 alias gbd="git branch -d"
 alias git-delete-local-branches="git fetch --all --prune"
 alias githist="git log --graph --pretty=oneline --abbrev-commit"

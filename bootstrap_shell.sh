@@ -49,7 +49,7 @@ mas install 1532419400 904280696 1289583905 1166066070 937984704 425424353 12629
 # The following brew installs aren't required to bootstrap the shell
 
 # Git related
-brew install git-delta git-quick-stats git-secrets gitleaks gh icdiff pre-commit
+brew install git-delta git-quick-stats git-secrets gitleaks gh icdiff pre-commit detect-secrets
 
 pip3 install mu-repo
 
@@ -64,9 +64,12 @@ brew install aws-sam-cli
 # Build and dev related
 brew install golang autoconf autoenv automake cmake go gcc make node hadolint pyenv \
   rust ruby-completion shellcheck yq yarn jsonlint docker-credential-helper fnm \
-  gnu-getopt
+  gnu-getopt shfmt
 
 brew install noahgorstein/tap/jqp # https://github.com/noahgorstein/jqp
+
+# Ensure we don't have those pesky ^ in our package.json files
+npm config set save-exact=true
 
 npm install -G husky npm-check-updates eslint prettier aws-azure-login editorconfig \
   @typescript-eslint/parser typescript vue-eslint-parser
