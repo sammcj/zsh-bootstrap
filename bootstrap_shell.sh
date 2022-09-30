@@ -64,7 +64,7 @@ brew install aws-sam-cli
 # Build and dev related
 brew install golang autoconf autoenv automake cmake go gcc make node hadolint pyenv \
   rust ruby-completion shellcheck yq yarn jsonlint docker-credential-helper fnm \
-  gnu-getopt shfmt
+  gnu-getopt shfmt shottr
 
 brew install noahgorstein/tap/jqp # https://github.com/noahgorstein/jqp
 
