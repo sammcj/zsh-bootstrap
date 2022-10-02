@@ -346,6 +346,19 @@ list_env() {
     && unset var
 }
 
+# Encryption (using age)
+
+# File with generated password
+encrypt_file_pw() {
+  # Suggest installing age if not installed
+  if ! command -v age &> /dev/null; then
+    echo "age could not be found. Install it with 'brew install age'"
+    return
+  else
+    age -p "$1" -o "${1}.age"
+  fi
+}
+
 conda_setup() {
   # >>> conda initialize >>>
   # !! Contents within this block are managed by 'conda init' !!
