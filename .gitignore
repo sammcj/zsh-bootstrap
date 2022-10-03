@@ -166,6 +166,7 @@ Gemfile.lock
 
 # Bootstrap files
 *private*.rc
+git-config-private
 redo_aliases
 
 # Local .terraform directories
