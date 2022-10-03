@@ -1,0 +1,10 @@
+# Prevents accidental pushing to branches
+
+  [branch "master"]
+    pushRemote = no_push
+  [branch "main"]
+    pushRemote = no_push
+
+# this can be undone for a specific directory by running:
+# git config --worktree branch.main.pushRemote origin
+# git config --worktree branch.master.pushRemote origin

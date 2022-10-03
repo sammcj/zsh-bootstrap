@@ -7,6 +7,8 @@
 # - iCloud synced, internet access
 # - Homebrew, git installed
 
+THIS_REPO="${HOME}/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/"
+
 # Brew installs moved to Brewfile (brew bundle dump to generate)
 brew bundle
 
@@ -31,30 +33,49 @@ ln -sfn /opt/homebrew/opt/docker-compose/bin/docker-compose ~/.docker/cli-plugin
 
 ####
 
-grep -q -F '/usr/local/bin/zsh' /etc/shells || echo '/usr/local/bin/zsh' | sudo tee -a /etc/shells
+grep -q -F '/opt/homebrew/bin/zsh' /etc/shells || echo '/opt/homebrew/bin/zsh' | sudo tee -a /etc/shells
 
 if [ ! -d "${HOME}/.zgen" ]; then
-  git clone https://github.com/tarjoilija/zgen.git "${HOME}/.zgen"
+  git clone https://github.com/tarjoilija/zgen.git "${HOME}/.zgen" --depth=1
 fi
 
 if [ ! -d "${HOME}/.tmux/plugins/tpm" ]; then
-  mkdir -p "$HOME"/.tmux/plugins
-  git clone https://github.com/tmux-plugins/tpm "${HOME}/.tmux/plugins/tpm"
+  mkdir -p "${HOME}/.tmux/plugins"
+  git clone https://github.com/tmux-plugins/tpm "${HOME}/.tmux/plugins/tpm" --depth=1
 fi
 
-# Setup global gitignore file
-if [ ! -d "${HOME}/.gitignoreglobal" ]; then
-  ln -s "$HOME"/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/.gitignoreglobal "$HOME"/.gitignoreglobal
+# link global gitignore file
+if [ ! -f "${HOME}/.gitignoreglobal" ]; then
+  ln -s "${THIS_REPO}/.gitignoreglobal" "${HOME}/.gitignoreglobal"
   git config --global core.excludesfile ~/.gitignoreglobal
 fi
 
-rm -f "$HOME"/.zshrc
-ln -s "$HOME"/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/zshrc ~/.zshrc
+# link global gitconfig file
+if [ ! -f "${HOME}/.gitconfig" ]; then
+  ln -s "${THIS_REPO}/.gitconfig" "${HOME}/.gitconfig"
+fi
+
+# link global gitconfig for nopush branches
+if [ ! -f "${HOME}/.gitconfig_nopush" ]; then
+  ln -s "${THIS_REPO}/.gitconfig_nopush" "${HOME}/.gitconfig_nopush"
+fi
+
+# link private gitconfig file if it exists
+if [ ! -f "${HOME}/.gitconfig.private" ]; then
+  if [ ! -f ".gitconfig.private" ]; then
+    echo "Error: .gitconfig.private not found - won't link"
+  else
+    ln -s "${THIS_REPO}/.gitconfig.private" "${HOME}/.gitconfig.private"
+  fi
+fi
+
+rm -f "${HOME}/.zshrc"
+ln -s "${THIS_REPO}/zshrc" ~/.zshrc
 
 if [ ! -d "${ZDOTDIR:-$HOME}/.zprezto" ]; then
   rm -f ~/.zprezto
 
-  git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}/.zprezto"
+  git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}/.zprezto" --depth=1
 
   zsh
   setopt EXTENDED_GLOB
@@ -64,18 +85,11 @@ if [ ! -d "${ZDOTDIR:-$HOME}/.zprezto" ]; then
     ln -s "$rcfile" "${ZDOTDIR:-$HOME}/.${rcfile:t}"
   done
 
-  ln -s "$HOME"/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/zpreztorc ~/.zprezto
+  ln -s "${THIS_REPO}/zpreztorc" ~/.zprezto
 fi
-
-# Configure .gitconfig
-ln -sf ~/Library/Mobile\ Documents/com~apple~CloudDocs/Dropbox\ Import/dotfiles/gitconfig ~/.gitconfig
-ln -s ~/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/ ~/.gitconfig-no_push
 
 # Configure youtube-dl to always get the best video and audio quality
 mkdir -p .config/youtube-dl && echo "-f 'bestvideo+bestaudio'" >~/.config/youtube-dl/config
-
-# https://github.com/barthr/redo
-# go install github.com/barthr/redo@latest
 
 # 1Password CLI (not actually using this at the moment)
 # brew install --cask 1password/tap/1password-cli
