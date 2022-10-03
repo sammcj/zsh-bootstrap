@@ -1,23 +1,33 @@
-## zsh shell bootstrap
+# zsh shell bootstrap and dotfiles
 
-This git directory in my dropbox and can run the below install script to bootstrap my zsh configuration.
+This repository bootstraps my zsh shell, brew packages and dotfiles.
 
 [![Issue Count](https://codeclimate.com/github/sammcj/zsh-bootstrap/badges/issue_count.svg)](https://codeclimate.com/github/sammcj/zsh-bootstrap)
 
 ## Install
 
-`$HOME/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/bootstrap_shell.sh`
+```shell
+./bootstrap_shell.sh
+```
+
+## Update
+
+```shell
+# Make changes
+pre-commit install
+git add . && git commit -m "fix/feat/chore: commit message" && git push
+```
 
 ## Assumptions
 
-- iCloud Drive or some sort of syncing tool like Dropbox etc...
-- Internet access
-- [Homebrew](http://brew.sh/) is installed
-- Any private exports such as github API tokens etc... can be put in `11-tokens.rc` which is [ignored by git](.gitignore)
+- Internet access.
+- [Homebrew](https://brew.sh/) is installed.
+- Any private exports such as github API tokens etc... can be put in `*private*.rc` which are [ignored by git](.gitignore) and checked for in CI.
+- iCloud Drive setup (if you want to use the iCloud Drive dotfiles).
+- Signed in to the Apple App Store if you want to use the [mas](https://github.com/mas-cli/mas) package manager.
 
-## Tests
+## Files
 
-- Install shellcheck `brew install shellcheck`
-- `./run_tests.sh`
-
-And there is travis [![Build Status](https://travis-ci.org/sammcj/zsh-bootstrap.svg?branch=master)](https://travis-ci.org/sammcj/zsh-bootstrap)
+- [`bootstrap_shell.sh`](bootstrap_shell.sh) - Installs homebrew packages, sets up zsh, and symlinks dotfiles
+- [`Brewfile`](Brewfile) - Homebrew packages to install
+- [`commitlint.config.js`](commitlint.config.js) - Commitlint config
