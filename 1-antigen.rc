@@ -22,6 +22,7 @@ if ! zgen saved; then
   zgen load zsh-users/zsh-autosuggestions
   zgen load nnao45/zsh-kubectl-completion
   zgen load lukechilds/zsh-better-npm-completion
+  zgen load paulirish/git-open
 
   # Themes
   # zgen load dracula/zsh

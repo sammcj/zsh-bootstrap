@@ -19,7 +19,7 @@ pip3 install mu-repo
 npm config set save-exact=true
 
 npm install -G husky npm-check-updates eslint prettier aws-azure-login editorconfig \
-  @typescript-eslint/parser typescript vue-eslint-parser
+  @typescript-eslint/parser typescript
 
 go install github.com/rhysd/actionlint/cmd/actionlint@latest
 
