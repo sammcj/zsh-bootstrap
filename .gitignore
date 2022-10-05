@@ -18,6 +18,7 @@
 
 # NodeJS
 **/node_modules
+node_modules/**
 
 # Test and coverage output
 **/coverage/
