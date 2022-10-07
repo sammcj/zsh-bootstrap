@@ -10,3 +10,6 @@ source $HOME/.rvm/scripts/rvm
 # Node / Javascript
 # Note: If this doesn't work, make sure you've cleaned up nvm directories and related PATHs
 eval "$(/opt/homebrew/bin/fnm env --use-on-cd)"
+
+# Thefuck
+eval "$(thefuck --alias)"

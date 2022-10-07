@@ -13,7 +13,7 @@ THIS_REPO="${HOME}/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Impo
 brew bundle
 
 # Git related
-pip3 install mu-repo
+pip3 install -U mu-repo
 
 # Ensure we don't have those pesky ^ in our package.json files
 npm config set save-exact=true
@@ -25,6 +25,9 @@ go install github.com/rhysd/actionlint/cmd/actionlint@latest
 
 ##### End installs #####
 
+# Completion plugins
+gh completion -s zsh >/usr/local/share/zsh/site-functions/_gh
+
 # Docker compose v2
 
 mkdir -p ~/.docker/cli-plugins/
@@ -35,34 +38,34 @@ ln -sfn /opt/homebrew/opt/docker-compose/bin/docker-compose ~/.docker/cli-plugin
 
 grep -q -F '/opt/homebrew/bin/zsh' /etc/shells || echo '/opt/homebrew/bin/zsh' | sudo tee -a /etc/shells
 
-if [ ! -d "${HOME}/.zgen" ]; then
+if [[ ! -d "${HOME}/.zgen" ]]; then
   git clone https://github.com/tarjoilija/zgen.git "${HOME}/.zgen" --depth=1
 fi
 
-if [ ! -d "${HOME}/.tmux/plugins/tpm" ]; then
+if [[ ! -d "${HOME}/.tmux/plugins/tpm" ]]; then
   mkdir -p "${HOME}/.tmux/plugins"
   git clone https://github.com/tmux-plugins/tpm "${HOME}/.tmux/plugins/tpm" --depth=1
 fi
 
 # link global gitignore file
-if [ ! -f "${HOME}/.gitignoreglobal" ]; then
+if [[ ! -f "${HOME}/.gitignoreglobal" ]]; then
   ln -s "${THIS_REPO}/.gitignoreglobal" "${HOME}/.gitignoreglobal"
   git config --global core.excludesfile ~/.gitignoreglobal
 fi
 
 # link global gitconfig file
-if [ ! -f "${HOME}/.gitconfig" ]; then
+if [[ ! -f "${HOME}/.gitconfig" ]]; then
   ln -s "${THIS_REPO}/.gitconfig" "${HOME}/.gitconfig"
 fi
 
 # link global gitconfig for nopush branches
-if [ ! -f "${HOME}/.gitconfig_nopush" ]; then
+if [[ ! -f "${HOME}/.gitconfig_nopush" ]]; then
   ln -s "${THIS_REPO}/.gitconfig_nopush" "${HOME}/.gitconfig_nopush"
 fi
 
 # link private gitconfig file if it exists
-if [ ! -f "${HOME}/.gitconfig.private" ]; then
-  if [ ! -f ".gitconfig.private" ]; then
+if [[ ! -f "${HOME}/.gitconfig.private" ]]; then
+  if [[ ! -f ".gitconfig.private" ]]; then
     echo "Error: .gitconfig.private not found - won't link"
   else
     ln -s "${THIS_REPO}/.gitconfig.private" "${HOME}/.gitconfig.private"
@@ -72,7 +75,7 @@ fi
 rm -f "${HOME}/.zshrc"
 ln -s "${THIS_REPO}/zshrc" ~/.zshrc
 
-if [ ! -d "${ZDOTDIR:-$HOME}/.zprezto" ]; then
+if [[ ! -d "${ZDOTDIR:-$HOME}/.zprezto" ]]; then
   rm -f ~/.zprezto
 
   git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}/.zprezto" --depth=1

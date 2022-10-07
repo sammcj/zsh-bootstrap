@@ -17,3 +17,6 @@ Session.vim
 
 # node
 #node_modules
+
+# Trunk linter for vscode (can be included per repo)
+.trunk

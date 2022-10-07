@@ -16,7 +16,7 @@ autoload -U +X compinit && compinit
 
 ## Source all configs
 
-if [ -d $HOME/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config ]; then
+if [[ -d $HOME/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config ]]; then
   for file in $HOME/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/*.rc; do
     source $file
   done
@@ -34,6 +34,3 @@ source /opt/homebrew/Cellar/fzf/*/shell/key-bindings.zsh
 # https://users.aalto.fi/~saarit2/deoxy/gz_howy.htm
 
 # CONDA - is managed via a function when needed (conda_setup)
-
-# Thefuck
-eval "$(thefuck --alias)"
