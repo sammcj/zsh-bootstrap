@@ -6,6 +6,9 @@
 # autoload run-help
 # HELPDIR=/usr/local/share/zsh/help
 
+# Useful for moving / renaming files with glob patterns
+# e.g. zmv -W '**/*.js' '**/*.ts' # recursively move anything matching the first pattern to the second pattern
+autoload -Uz zmv
 
 # Keep echo "station" > station from clobbering station
 setopt NO_CLOBBER

@@ -73,7 +73,7 @@ alias cpuinfo="sysctl -n machdep.cpu.brand_string"
 alias psql="/Applications/Postgres.app/Contents/Versions/latest/bin/psql"
 alias fastmail_you_there_bro="openssl s_client -connect imap.fastmail.com:993 -crlf"
 
-#alias yt='youtube-dl'
+alias zmv='noglob zmv -W'
 
 # MacOS shortcuts
 # alias delete-all-local-snapshots='for d in $(tmutil listlocalsnapshotdates | grep -v "Snapshot dates for all disks"); do sudo tmutil deletelocalsnapshots $d; done'
