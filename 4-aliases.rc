@@ -19,6 +19,7 @@ alias pa"pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip in
 # Second homebrew install with x86 arch
 alias brew86="arch -x86_64 /usr/local/homebrew/bin/brew"
 alias brewbackup="brew bundle dump --force --file=~/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/Brewfile"
+alias brewbackupmba="brew bundle dump --force --file=~/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/Brewfile-MBA"
 
 # Git
 alias main="git checkout main && git pull"
