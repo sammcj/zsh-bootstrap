@@ -168,7 +168,7 @@ bindkey -s '^l' 'redo^M'
 
 ### Autocompletion ###
 # Autosuggest highlight colour
-export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#ff00ff,bg=cyan,bold,underline"
+export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#7c4fef,bold,underline"
 
 # Autosuggestions from history, if none use the completion engine.
 export ZSH_AUTOSUGGEST_STRATEGY=(history completion)
