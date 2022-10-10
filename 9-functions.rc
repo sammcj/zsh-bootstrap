@@ -290,6 +290,27 @@ function mv() {
   mv -v "$1" "$newfilename"
 }
 
+
+_force_rehash() {
+  (( CURRENT == 1 )) && rehash
+  return 1  # Because we didn't really complete anything
+}
+
+edit-command-output() {
+ BUFFER=$(eval $BUFFER)
+ CURSOR=0
+}
+zle -N edit-command-output
+
+__mkdir() { if [[ ! -d $1 ]]; then mkdir -p $1; fi }
+
+tch() {
+  for x in "$@"; do
+    __mkdir "${x:h}"
+  done
+  touch "$@"
+}
+
 # AWS Azure AD login
 function aws-azure-login() {
   command aws-azure-login --no-prompt --profile "$@"

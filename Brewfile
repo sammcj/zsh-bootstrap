@@ -330,6 +330,7 @@ mas "myTuner Radio Pro", id: 808285143
 mas "NepTunes", id: 1006739057
 mas "Numbers", id: 409203825
 mas "NZB Control", id: 1048732801
+mas "NZBVortex 3", id: 914250185
 mas "Okta Verify", id: 490179405
 mas "Pages", id: 409201541
 mas "Parcel", id: 639968404
@@ -339,8 +340,8 @@ mas "Raivo OTP", id: 1498497896
 mas "Reeder", id: 1529448980
 mas "ScreenBrush", id: 1233965871
 mas "Slack", id: 803453959
-mas "Strongbox", id: 897283731
 mas "Strongbox", id: 1270075435
+mas "Strongbox", id: 897283731
 mas "Table Tool", id: 1122008420
 mas "Tailscale", id: 1475387142
 mas "Telegram", id: 747648890

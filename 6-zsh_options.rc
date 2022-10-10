@@ -10,6 +10,8 @@
 # e.g. zmv -W '**/*.js' '**/*.ts' # recursively move anything matching the first pattern to the second pattern
 autoload -Uz zmv
 
+zmodload  zsh/complist
+
 # Keep echo "station" > station from clobbering station
 setopt NO_CLOBBER
 
@@ -30,6 +32,11 @@ setopt PUSHD_MINUS
 
 bindkey -M viins '\C-i' complete-word
 
+zstyle ':zle:*-word-shell' word-style shell
+
+zle -N forward-word-shell forward-word-match
+zle -N backward-word-shell backward-word-match
+
 # Faster! (?)
 zstyle ':completion::complete:*' use-cache 1
 
@@ -47,6 +54,16 @@ zstyle ':completion:*:messages' format '%d'
 zstyle ':completion:*:warnings' format 'No matches for: %d'
 zstyle ':completion:*' group-name ''
 
+# Note these need functions to be defined, see functions.rc
+zstyle ':completion:*' completer _oldlist _expand _force_rehash _complete
+zstyle ':completion:*' completer _expand _force_rehash _complete _ignored
+
+zstyle ':completion:*:*:docker:*' option-stacking yes
+zstyle ':completion:*:*:docker-*:*' option-stacking yes
+
+# Group completions by type (file, external command, etc)
+zstyle ':completion:*:matches'  group 'yes'
+
 # don't mess up url passing as arguments
 zstyle ':urlglobber' url-other-schema
 
@@ -58,6 +75,7 @@ zstyle ':completion:*:default' list-prompt '%S%M matches%s'
 
 # Don't prompt for a huge list, menu it!
 zstyle ':completion:*:default' menu 'select=0'
+
 
 # Have the newer files last so I see them first
 zstyle ':completion:*' file-sort modification reverse
@@ -74,8 +92,7 @@ setopt  COMPLETE_IN_WORD
 # Separate man page sections.  Neat.
 zstyle ':completion:*:manuals' separate-sections true
 
-# Egomaniac!
-zstyle ':completion:*' list-separator 'fREW'
+zstyle ':completion:*' list-separator '»»'
 
 # complete with a menu for xwindow ids
 zstyle ':completion:*:windows' menu on=0
@@ -86,6 +103,8 @@ zstyle ':completion:*:approximate:*' max-errors "reply=(  $((  ($#PREFIX+$#SUFFI
 
 # Errors format
 zstyle ':completion:*:corrections' format '%B%d (errors %e)%b'
+zstyle ':completion:*:correct:*' insert-unambiguous true
+zstyle ':completion:*:correct:*' original true
 
 # Don't complete stuff already on the line
 zstyle ':completion::*:(rm|vi):*' ignore-line true
@@ -94,6 +113,28 @@ zstyle ':completion::*:(rm|vi):*' ignore-line true
 zstyle ':completion:*' ignore-parents parent pwd
 
 zstyle ':completion::approximate*:*' prefix-needed false
+
+# make kill way awesome
+zstyle ':completion:*:processes' command 'ps -au$USER -o pid,time,cmd|grep -v "ps -au$USER -o pid,time,cmd"'
+zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)[ 0-9:]#([^ ]#)*=01;30=01;31=01;38'
+
+### Auto Suggest Settings ###
+# Autosuggest highlight colour
+export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#7c4fef,bold,underline"
+
+# Autosuggestions from history, if none use the completion engine.
+export ZSH_AUTOSUGGEST_STRATEGY=(history completion)
+
+# Accept autosuggestion with shift+tab
+bindkey '^I'   complete-word       # tab          | complete
+bindkey '^[[Z' autosuggest-accept  # shift + tab  | autosuggest
+
+# Autocomplete kubectl for k alias
+complete -F __start_kubectl k
+compdef __start_kubectl k
+
+### END Autocompletion ###
+
 
 ### Key bindings ###
 
@@ -131,6 +172,9 @@ bindkey "5D" backward-word        #control right
 bindkey "^[[A" history-search-backward  # Search history with up arrow
 bindkey "^[[B" history-search-forward  # Search history with up arrow
 
+# gross.  Makes Meta-' write '\'' for you
+bindkey -s \\e\' \'\\\\\'\'
+
 # bindkey "^[[3~"   delete-char # delete keys
 # bindkey "^[3;5~"  delete-char # delete keys
 
@@ -138,6 +182,9 @@ bindkey -M emacs '^H' backward-kill-word # backwards delete word
 
 # it's like, space AND completion.  Gnarlbot.
 bindkey -M viins ' ' magic-space
+
+# Push your line to the stack and run another command then pop it back
+bindkey -M vicmd "^q" push-line
 
 # rvm compat
 unsetopt auto_name_dirs
@@ -159,16 +206,5 @@ zstyle :bracketed-paste-magic paste-init pasteinit
 zstyle :bracketed-paste-magic paste-finish pastefinish
 ### Fix slowness of pastes
 
-# Autocomplete kubectl for k alias
-complete -F __start_kubectl k
-compdef __start_kubectl k
-
 # zsh CTRL+e summons redo
 bindkey -s '^l' 'redo^M'
-
-### Autocompletion ###
-# Autosuggest highlight colour
-export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#7c4fef,bold,underline"
-
-# Autosuggestions from history, if none use the completion engine.
-export ZSH_AUTOSUGGEST_STRATEGY=(history completion)

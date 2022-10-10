@@ -12,6 +12,7 @@ if ! zgen saved; then
   zgen oh-my-zsh plugins/docker
   zgen oh-my-zsh plugins/docker-compose
   # zgen oh-my-zsh plugins/git #trying git fast
+  zgen oh-my-zsh docker-completion
   zgen oh-my-zsh plugins/gitfast
   # zgen oh-my-zsh plugins/gcloud
   zgen oh-my-zsh plugins/aws
@@ -20,7 +21,6 @@ if ! zgen saved; then
   zgen oh-my-zsh plugins/fnm
   zgen oh-my-zsh plugins/fzf
   zgen oh-my-zsh plugins/nmap
-
 
   # load plugins
   zgen load zdharma-continuum/fast-syntax-highlighting
