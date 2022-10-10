@@ -11,9 +11,16 @@ if ! zgen saved; then
   zgen oh-my-zsh plugins/macos
   zgen oh-my-zsh plugins/docker
   zgen oh-my-zsh plugins/docker-compose
-  zgen oh-my-zsh plugins/git
+  # zgen oh-my-zsh plugins/git #trying git fast
+  zgen oh-my-zsh plugins/gitfast
   # zgen oh-my-zsh plugins/gcloud
   zgen oh-my-zsh plugins/aws
+  zgen oh-my-zsh plugins/colored-man-pages
+  zgen oh-my-zsh plugins/command-not-found
+  zgen oh-my-zsh plugins/fnm
+  zgen oh-my-zsh plugins/fzf
+  zgen oh-my-zsh plugins/nmap
+
 
   # load plugins
   zgen load zdharma-continuum/fast-syntax-highlighting
@@ -23,6 +30,10 @@ if ! zgen saved; then
   zgen load nnao45/zsh-kubectl-completion
   zgen load lukechilds/zsh-better-npm-completion
   zgen load paulirish/git-open
+  zgen load peterhurford/git-it-on.zsh
+
+  # git add/commit/push shortcuts
+  zgen load robertzk/send.zsh
 
   # Themes
   # zgen load dracula/zsh

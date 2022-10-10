@@ -72,6 +72,16 @@ if [[ ! -f "${HOME}/.gitconfig.private" ]]; then
   fi
 fi
 
+# link dircolours
+if [[ ! -f "${HOME}/.dircolors" ]]; then
+  ln -s "${THIS_REPO}/dircolors" "${HOME}/.dircolors"
+fi
+
+# link tmux config
+if [[ ! -f "${HOME}/.tmux.conf" ]]; then
+  ln -s "${THIS_REPO}/tmux.conf" "${HOME}/.tmux.conf"
+fi
+
 rm -f "${HOME}/.zshrc"
 ln -s "${THIS_REPO}/zshrc" ~/.zshrc
 
