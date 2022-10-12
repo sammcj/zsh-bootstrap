@@ -2,10 +2,10 @@
 
 # iTerm2 Shell integration
 # https://www.iterm2.com/documentation-shell-integration.html
-source $HOME/.iterm2_shell_integration.zsh
+source "$HOME"/.iterm2_shell_integration.zsh
 
 # RVM
-source $HOME/.rvm/scripts/rvm
+source "$HOME"/.rvm/scripts/rvm
 
 # Node / Javascript
 # Note: If this doesn't work, make sure you've cleaned up nvm directories and related PATHs

@@ -39,6 +39,7 @@ alias gitweek="git diff HEAD 'HEAD@{1 week ago}'"
 alias gitupdateallrepos="find . -name .git -type d | xargs -n1 -P4 -I% git --git-dir=% --work-tree=%/.. fetch --all --recurse-submodules"
 alias git-checkout-branch="git branch --sort=-committerdate | fzf --header 'Checkout Recent Branch' --preview 'git diff {1} --color=always' --pointer='>' | xargs git checkout"
 alias gco="git checkout"
+alias p="git pull"
 
 # GNU tools
 alias sed="gsed"

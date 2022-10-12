@@ -20,33 +20,27 @@ if ! zgen saved; then
   zgen oh-my-zsh plugins/fnm
   zgen oh-my-zsh plugins/fzf
   zgen oh-my-zsh plugins/nmap
+  zgen oh-my-zsh plugins/gh
 
   # load plugins
   zgen load zdharma-continuum/fast-syntax-highlighting
   zgen load ascii-soup/zsh-url-highlighter
-  zgen load olivierverdier/zsh-git-prompt
   zgen load zsh-users/zsh-autosuggestions
   zgen load nnao45/zsh-kubectl-completion
   zgen load lukechilds/zsh-better-npm-completion
-  zgen load paulirish/git-open
-  zgen load peterhurford/git-it-on.zsh
+  zgen load MichaelAquilina/zsh-you-should-use
 
-  # git add/commit/push shortcuts
+  # git related
+  zgen load paulirish/git-open
+  zgen load olivierverdier/zsh-git-prompt
+  zgen load peterhurford/git-it-on.zsh
   zgen load robertzk/send.zsh
+
+  # nice SSH tui using fzf
+  zgen load sunlei/zsh-ssh
 
   # Themes
   # zgen load dracula/zsh
-
-  # disabled plugins
-  # zgen oh-my-zsh plugins/colored-man-pages
-  # zgen oh-my-zsh plugins/command-not-found
-  # zgen oh-my-zsh plugins/brew
-  # zgen load zsh-navigation-tools
-  # zgen load zsh-users/zsh-completions
-  # zgen load MichaelAquilina/zsh-you-should-use
-  # zgen load trapd00r/zsh-syntax-highlighting-filetypes
-  # zgen load smallhadroncollider/antigen-git-rebase
-  # zgen load zsh-users/zsh-history-substring-search
 
   zgen save
 fi
