@@ -1,11 +1,15 @@
 #!/usr/bin/env bash
 
-# Sets up my zsh shell just the way I like it
+# Sets up my:
+# - zsh shell
+# - dotfiles
+# - packages
 #
 # Requirements:
-#
+# - macOS
 # - iCloud synced, internet access
 # - Homebrew, git installed
+# - Probably some other things I've forgotten
 
 THIS_REPO="${HOME}/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/"
 
@@ -25,88 +29,50 @@ go install github.com/rhysd/actionlint/cmd/actionlint@latest
 
 ##### End installs #####
 
+## Local functions ##
+function link_dotfile() {
+  if [[ -f "$1" ]]; then
+    echo "File $1 already exists"
+    read -r -p "Do you want to replace it with a symlink to the file in this repo? [y/N] " response
+    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+      rm -f "$1"
+      ln -s "${THIS_REPO}/$1" "${HOME}/$1"
+    fi
+  else
+    echo "No changes made to $1"
+  fi
+}
+
+function clone_repo() {
+  if [[ -d "$1" ]]; then
+    echo "Directory $1 already exists"
+    read -r -p "Do you want to replace it with a clone of the repo $2? [y/N] " response
+    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+      rm -rf "$1"
+      git clone "$2" "$1" --depth=1
+    fi
+  else
+    echo "No changes made to $1"
+  fi
+}
+## End local functions ##
+
 # Completion plugins
 gh completion -s zsh >/usr/local/share/zsh/site-functions/_gh
 
 # Docker compose v2
-
 mkdir -p ~/.docker/cli-plugins/
 chmod +x ~/.docker/cli-plugins/docker-compose
-ln -sfn /opt/homebrew/opt/docker-compose/bin/docker-compose ~/.docker/cli-plugins/docker-compose
-
+ln -sfn /opt/homebrew/opt/docker-compose/bin/docker-compose "${HOME}/.docker/cli-plugins/docker-compose"
 ####
 
 grep -q -F '/opt/homebrew/bin/zsh' /etc/shells || echo '/opt/homebrew/bin/zsh' | sudo tee -a /etc/shells
 
-if [[ ! -d "${HOME}/.zgen" ]]; then
-  git clone https://github.com/tarjoilija/zgen.git "${HOME}/.zgen" --depth=1
-fi
+clone_repo "${HOME}/.zgen" "https://github.com/tarjoilija/zgen.git"
+clone_repo "${HOME}/.tmux/plugins/tpm" "https://github.com/tmux-plugins/tpm"
 
-if [[ ! -d "${HOME}/.tmux/plugins/tpm" ]]; then
-  mkdir -p "${HOME}/.tmux/plugins"
-  git clone https://github.com/tmux-plugins/tpm "${HOME}/.tmux/plugins/tpm" --depth=1
-fi
-
-# link global gitignore file
-if [[ ! -f "${HOME}/.gitignoreglobal" ]]; then
-  ln -s "${THIS_REPO}/.gitignoreglobal" "${HOME}/.gitignoreglobal"
-  git config --global core.excludesfile ~/.gitignoreglobal
-fi
-
-# link global gitconfig file
-if [[ ! -f "${HOME}/.gitconfig" ]]; then
-  ln -s "${THIS_REPO}/.gitconfig" "${HOME}/.gitconfig"
-fi
-
-# link global gitconfig for nopush branches
-if [[ ! -f "${HOME}/.gitconfig_nopush" ]]; then
-  ln -s "${THIS_REPO}/.gitconfig_nopush" "${HOME}/.gitconfig_nopush"
-fi
-
-# link private gitconfig file if it exists
-if [[ ! -f "${HOME}/.gitconfig.private" ]]; then
-  if [[ ! -f ".gitconfig.private" ]]; then
-    echo "Error: .gitconfig.private not found - won't link"
-  else
-    ln -s "${THIS_REPO}/.gitconfig.private" "${HOME}/.gitconfig.private"
-  fi
-fi
-
-# link dircolours
-if [[ ! -f "${HOME}/.dircolors" ]]; then
-  ln -s "${THIS_REPO}/dircolors" "${HOME}/.dircolors"
-fi
-
-# link tmux config
-if [[ ! -f "${HOME}/.tmux.conf" ]]; then
-  ln -s "${THIS_REPO}/tmux.conf" "${HOME}/.tmux.conf"
-fi
-
-rm -f "${HOME}/.zshrc"
-ln -s "${THIS_REPO}/zshrc" ~/.zshrc
-
-if [[ ! -d "${ZDOTDIR:-$HOME}/.zprezto" ]]; then
-  rm -f ~/.zprezto
-
-  git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}/.zprezto" --depth=1
-
-  zsh
-  setopt EXTENDED_GLOB
-
-  # shellcheck disable=SC2043
-  for rcfile in "${ZDOTDIR:-$HOME}"/.zprezto/runcoms/^README.md\(.N\); do
-    ln -s "$rcfile" "${ZDOTDIR:-$HOME}/.${rcfile:t}"
-  done
-
-  ln -s "${THIS_REPO}/zpreztorc" ~/.zprezto
-fi
-
-# Configure youtube-dl to always get the best video and audio quality
-mkdir -p .config/youtube-dl && echo "-f 'bestvideo+bestaudio'" >~/.config/youtube-dl/config
-
-# 1Password CLI (not actually using this at the moment)
-# brew install --cask 1password/tap/1password-cli
-
-# link main zshrc
-rm -f ~/.zshrc
-ln -s /Users/samm/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/zshrc ~/.zshrc
+# Link dotfiles
+dotfiles=(".gitignoreglobal" ".gitconfig" ".vimrc" ".gitconfig_nopush" ".gitconfig.private" ".dircolors" ".tmux.conf" ".zshrc")
+for dotfile in "${dotfiles[@]}"; do
+  link_dotfile "$dotfile"
+done
