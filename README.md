@@ -31,3 +31,11 @@ git add . && git commit -m "fix/feat/chore: commit message" && git push
 - [`bootstrap_shell.sh`](bootstrap_shell.sh) - Installs homebrew packages, sets up zsh, and symlinks dotfiles
 - [`Brewfile`](Brewfile) - Homebrew packages to install
 - [`commitlint.config.js`](commitlint.config.js) - Commitlint config
+
+## Tools
+
+Generate completions for commands that don't have them:
+
+```shell
+gencomp ggrep
+```

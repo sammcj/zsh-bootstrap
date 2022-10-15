@@ -3,17 +3,17 @@
 # load zgen
 source "${HOME}/.zgen/zgen.zsh"
 
-if ! zgen saved; then
-  # Load the oh-my-zsh's library.
-  zgen oh-my-zsh
+export ZGEN_RESET_ON_CHANGE="${HOME}/.zshrc"
 
-  # load specific oh-my-zsh plugins
+if ! zgen saved; then
+  echo "Creating a zgen save"
+
+  # load omz plugins
+  zgen oh-my-zsh
   zgen oh-my-zsh plugins/macos
   zgen oh-my-zsh plugins/docker
   zgen oh-my-zsh plugins/docker-compose
-  # zgen oh-my-zsh plugins/git #trying git fast
   zgen oh-my-zsh plugins/gitfast
-  # zgen oh-my-zsh plugins/gcloud
   zgen oh-my-zsh plugins/aws
   zgen oh-my-zsh plugins/colored-man-pages
   zgen oh-my-zsh plugins/command-not-found
@@ -22,25 +22,33 @@ if ! zgen saved; then
   zgen oh-my-zsh plugins/nmap
   zgen oh-my-zsh plugins/gh
 
-  # load plugins
-  zgen load zdharma-continuum/fast-syntax-highlighting
-  zgen load ascii-soup/zsh-url-highlighter
-  zgen load zsh-users/zsh-autosuggestions
-  zgen load nnao45/zsh-kubectl-completion
-  zgen load lukechilds/zsh-better-npm-completion
-  zgen load MichaelAquilina/zsh-you-should-use
+  # load normal plugins
+  zgen loadall <<EOPLUGINS
+    RobSis/zsh-completion-generator
+    zdharma-continuum/fast-syntax-highlighting
+    ascii-soup/zsh-url-highlighter
+    zsh-users/zsh-autosuggestions
+    lukechilds/zsh-better-npm-completion
+    MichaelAquilina/zsh-you-should-use
+    3v1n0/zsh-bash-completions-fallback
 
-  # git related
-  zgen load paulirish/git-open
-  zgen load olivierverdier/zsh-git-prompt
-  zgen load peterhurford/git-it-on.zsh
-  zgen load robertzk/send.zsh
+    # git related
+    paulirish/git-open
+    olivierverdier/zsh-git-prompt
+    peterhurford/git-it-on.zsh
+    robertzk/send.zsh
 
-  # nice SSH tui using fzf
-  zgen load sunlei/zsh-ssh
+    # fzf wrappers
+    sunlei/zsh-ssh
+    torifat/npms
+EOPLUGINS
 
-  # Themes
-  # zgen load dracula/zsh
+  # Not in use at present
+  # nnao45/zsh-kubectl-completion
+  # trejo08/kubecolor-zsh
+
+  # source completions
+  zgen load zsh-users/zsh-completions src
 
   zgen save
 fi

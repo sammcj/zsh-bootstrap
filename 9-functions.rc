@@ -3,13 +3,9 @@
 function mkcd
 {
   dir="$*";
-  mkdir -p "$dir" && cd "$dir";
+  mkdir -p "$dir" && cd "$dir" || exit;
 }
 
-function yt
-{
-  nohup youtube-dl --no-progress "$1" 2>&1 > /dev/null &
-}
 # change /dev/null to youtube-dl-"$(date +%Y%m%d-%H%M%S)".log if you want logging
 
 # Outputs current branch info in prompt format
@@ -84,7 +80,7 @@ function git_current_branch() {
     [[ $ret == 128 ]] && return  # no git repo.
     ref=$(command git rev-parse --short HEAD 2> /dev/null) || return
   fi
-  echo ${ref#refs/heads/}
+  echo "${ref#refs/heads/}"
 }
 
 function pr-checkout() {
@@ -216,7 +212,7 @@ function git_prompt_status() {
   if $(echo "$INDEX" | grep '^## [^ ]\+ .*diverged' &> /dev/null); then
     STATUS="$ZSH_THEME_GIT_PROMPT_DIVERGED$STATUS"
   fi
-  echo $STATUS
+  echo "$STATUS"
 }
 
 # Compares the provided version of git to the version installed and on path
@@ -262,7 +258,7 @@ unfunction git_compare_version
 
 pdfcompress ()
 {
-  gs -q -dNOPAUSE -dBATCH -dSAFER -sDEVICE=pdfwrite -dCompatibilityLevel=1.3 -dPDFSETTINGS=/screen -dEmbedAllFonts=true -dSubsetFonts=true -dColorImageDownsampleType=/Bicubic -dColorImageResolution=144 -dGrayImageDownsampleType=/Bicubic -dGrayImageResolution=144 -dMonoImageDownsampleType=/Bicubic -dMonoImageResolution=144 -sOutputFile=$1.compressed.pdf $1;
+  gs -q -dNOPAUSE -dBATCH -dSAFER -sDEVICE=pdfwrite -dCompatibilityLevel=1.3 -dPDFSETTINGS=/screen -dEmbedAllFonts=true -dSubsetFonts=true -dColorImageDownsampleType=/Bicubic -dColorImageResolution=144 -dGrayImageDownsampleType=/Bicubic -dGrayImageResolution=144 -dMonoImageDownsampleType=/Bicubic -dMonoImageResolution=144 -sOutputFile="$1".compressed.pdf "$1";
 }
 
 function gitlazy() {
@@ -297,12 +293,12 @@ _force_rehash() {
 }
 
 edit-command-output() {
- BUFFER=$(eval $BUFFER)
+ BUFFER=$(eval "$BUFFER")
  CURSOR=0
 }
 zle -N edit-command-output
 
-__mkdir() { if [[ ! -d $1 ]]; then mkdir -p $1; fi }
+__mkdir() { if [[ ! -d $1 ]]; then mkdir -p "$1"; fi }
 
 tch() {
   for x in "$@"; do
@@ -322,8 +318,8 @@ function aws-azure-login() {
 # Deletes workflow logs from a given repo older than 1 month
 # e.g. USER=myuser REPO=myrepo ghac
 function ghac() {
-  DATE=$(date -v "-1m" +"%Y-%m-%d") gh api repos/$USER/$REPO/actions/runs --paginate -q '.workflow_runs[] | select (.run_started_at  <= "env.DATE") | (.id)' \
-    | xargs -n1 -I % gh api repos/$USER/$REPO/actions/runs/% -X DELETE
+  DATE=$(date -v "-1m" +"%Y-%m-%d") gh api repos/"$USER"/"$REPO"/actions/runs --paginate -q '.workflow_runs[] | select (.run_started_at  <= "env.DATE") | (.id)' \
+    | xargs -n1 -I % gh api repos/"$USER"/"$REPO"/actions/runs/% -X DELETE
 }
 
 # Git checkout new branch, git add, git commit, git push in all subdirectories matching a pattern
@@ -355,7 +351,7 @@ function fcd() {
     if [[ -z "${dir}" ]]; then
       break
     else
-      cd "${dir}"
+      cd "${dir}" || exit
     fi
   done
 }

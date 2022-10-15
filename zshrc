@@ -12,7 +12,7 @@
 #source "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc"
 
 autoload -U +X bashcompinit && bashcompinit
-autoload -U +X compinit && compinit
+# autoload -U +X compinit && compinit #zgen does this now
 
 ## Source all configs
 

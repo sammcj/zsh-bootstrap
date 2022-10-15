@@ -12,8 +12,9 @@ alias zshconfigd="pushd ~/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbo
 
 # Packages
 alias b="brew update; brew upgrade"
-alias ba="omz update; brew update; brew upgrade; pip install -U pip; pip3 install -U pip; zgen selfupdate; zgen update; vim +PluginUpdate +qall; \ncu --global; mas upgrade"
+alias ba="omz update; brew update; brew upgrade; pip install -U pip; pip3 install -U pip; zgen selfupdate; zgen update; vim +PluginUpdate +qall; \ncu --global; mas upgrade; gup update"
 alias app_store_upgrade_mmas="mas upgrade"
+alias go_update_all="gup update"
 alias pa"pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U"
 
 # Second homebrew install with x86 arch
@@ -60,9 +61,8 @@ alias tree="tree -ChF"
 alias mtr="sudo mtr"
 alias iftop="sudo iftop -i en0"
 alias plint="puppet-lint --with-filename --no-documentation-check --no-arrow_alignment-check --no-hard_tabs-check --no-80chars-check"
-alias ls='ls -G'
+alias ls='gls --color=auto -lAHhF' #--group-directories-first
 alias updatedb='sudo /usr/libexec/locate.updatedb'
-alias rake='noglob rake'
 alias netwatch='lsof -i'
 alias flushdns='sudo discoveryutil udnsflushcaches'
 alias httpserver='sudo python3 -m http.server 80'

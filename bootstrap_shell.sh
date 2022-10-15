@@ -13,6 +13,8 @@
 
 THIS_REPO="${HOME}/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/"
 
+# TODO: clean up installers / create a pattern
+
 # Brew installs moved to Brewfile (brew bundle dump to generate)
 brew bundle
 
@@ -26,6 +28,13 @@ npm install -G husky npm-check-updates eslint prettier aws-azure-login editorcon
   @typescript-eslint/parser typescript
 
 go install github.com/rhysd/actionlint/cmd/actionlint@latest
+go install github.com/nao1215/gup@latest # gup update to update go packages
+go install github.com/jesseduffield/lazydocker@latest
+go install github.com/rs/dnstrace@latest
+
+# Install lazycli for building TUIs
+# Requires rust's cargo, either via homebrew rust / rust-up
+cargo install --locked lazycli
 
 ##### End installs #####
 

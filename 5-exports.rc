@@ -6,7 +6,9 @@ export HOMEBREW_NO_ANALYTICS=1
 export DO_NOT_TRACK=1
 export SAM_CLI_TELEMETRY=0 # AWS SAM
 export GREP_OPTIONS="--color"
-export LSCOLORS=ExFxCxDxBxegedabagacad
+# export LSCOLORS="ExFxCxDxBxegedabagacad"
+export LS_COLORS="$(vivid generate dracula)"
+export CLICOLOR=1
 export GOPATH="${HOME}/go"
 export XZ_OPT="--threads=8"
 export MU_REPO_SERIAL=false
