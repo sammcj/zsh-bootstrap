@@ -19,8 +19,7 @@ alias pa"pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip in
 
 # Second homebrew install with x86 arch
 alias brew86="arch -x86_64 /usr/local/homebrew/bin/brew"
-alias brewbackup="brew bundle dump --force --file=~/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/Brewfile"
-alias brewbackupmba="brew bundle dump --force --file=~/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/Brewfile-MBA"
+alias brewbackup="brew bundle dump --force --file=~/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/Brewfile-${HOST}"
 
 # Git
 alias main="git checkout main && git pull"
@@ -37,10 +36,14 @@ alias amend="git commit --amend --no-edit"
 alias gitlast="git add .;git commit --amend -C HEAD ; git push"
 alias gitday="git diff HEAD 'HEAD@{1 day ago}'"
 alias gitweek="git diff HEAD 'HEAD@{1 week ago}'"
+alias gitmonth="git diff HEAD 'HEAD@{1 month ago}'"
+alias git-my-recent-branches="git reflog show --pretty=format:'%gs ~ %gd' --date=relative | grep 'checkout:' | grep -oE '[^ ]+ ~ .*' | awk -F~ '!seen[$1]++' | head -n 10 | awk -F' ~ HEAD@{' '{printf(" %12s:\t%s\n", substr($2, 1, length($2) - 1), $1)}'"
 alias gitupdateallrepos="find . -name .git -type d | xargs -n1 -P4 -I% git --git-dir=% --work-tree=%/.. fetch --all --recurse-submodules"
-alias git-checkout-branch="git branch --sort=-committerdate | fzf --header 'Checkout Recent Branch' --preview 'git diff {1} --color=always' --pointer='>' | xargs git checkout"
+alias git-checkout-branch="git branch --sort=-committerdate | fzf --header 'Checkout Recent Branch' --preview 'git diff --color=always {1}' --pointer='>' | xargs git checkout"
+alias git-remove-untracked-branches="git fetch -p; git branch --merged main | egrep -v '^\s*\*?\s*main$' | xargs -r git branch -d" #and re-run with -D if required
 alias gco="git checkout"
 alias p="git pull"
+alias P="git push"
 
 # GNU tools
 alias sed="gsed"
@@ -61,7 +64,7 @@ alias tree="tree -ChF"
 alias mtr="sudo mtr"
 alias iftop="sudo iftop -i en0"
 alias plint="puppet-lint --with-filename --no-documentation-check --no-arrow_alignment-check --no-hard_tabs-check --no-80chars-check"
-alias ls='gls --color=auto -lAHhF' #--group-directories-first
+alias ls='gls --color=auto -AHhF --group-directories-first'
 alias updatedb='sudo /usr/libexec/locate.updatedb'
 alias netwatch='lsof -i'
 alias flushdns='sudo discoveryutil udnsflushcaches'
@@ -70,8 +73,6 @@ alias cc='colorize.py'
 alias rmid="ssh-keygen -R"
 alias aria="aria2c -s 5 -j 5 -x 5 -c --enable-http-pipelining=true --http-accept-gzip=true"
 alias dmesg="dmesg -LT"
-alias ps-mem="ps xu --sort %mem | sed -e :a -e '1p;\$q;N;6,\$D;ba'" #show top memory hogs - linux only
-#alias history="fc -li 1000"
 alias cpuinfo="sysctl -n machdep.cpu.brand_string"
 alias psql="/Applications/Postgres.app/Contents/Versions/latest/bin/psql"
 alias fastmail_you_there_bro="openssl s_client -connect imap.fastmail.com:993 -crlf"
@@ -99,9 +100,6 @@ alias merge='diff --line-format %L'
 alias t='terraform'
 alias tf='terraform'
 alias tfn='terraform'
-
-# GCP
-alias glogin='gcloud auth login --no-launch-browser'
 
 # DNS benchmarking using https://github.com/redsift/dnstrace
 alias dnsbenchmark='dnstrace -n 10 -c 10 --server 192.168.0.1 --recurse microsoft.com'

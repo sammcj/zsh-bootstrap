@@ -1,11 +1,10 @@
 # shellcheck disable=SC2148
 
 case $HOST in
-samm-mb*)
+samm-digio*)
   # placeholder
   ;;
 Sams-Air*)
-  alias docker=podman
   # placeholder
   ;;
 *)
