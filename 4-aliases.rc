@@ -1,5 +1,8 @@
 #shellcheck disable=SC2148
 
+#TODO: cleanup this, move stuff out of Dropbox\ Import
+THIS_DIRECTORY="/Users/samm/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/"
+
 ### Aliases ###
 
 # Directory Jumps
@@ -7,19 +10,23 @@ alias d="cd ~/Downloads"
 alias icloud_drive="cd ~/Library/Mobile\ Documents/com\~apple\~CloudDocs/"
 
 # IDE Projects
-alias zshconfig="pushd ~/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/ && code ." #TODO: cleanup this, move stuff out of Dropbox\ Import
-alias zshconfigd="pushd ~/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/"          #TODO: cleanup this, move stuff out of Dropbox\ Import
+#shellcheck disable=SC2139
+alias zshconfig="code ${THIS_DIRECTORY}"
+#shellcheck disable=SC2139
+alias zshconfigd="cd ${THIS_DIRECTORY}"
 
 # Packages
 alias b="brew update; brew upgrade"
 alias ba="omz update; brew update; brew upgrade; pip install -U pip; pip3 install -U pip; zgen selfupdate; zgen update; vim +PluginUpdate +qall; \ncu --global; mas upgrade; gup update"
 alias app_store_upgrade_mmas="mas upgrade"
 alias go_update_all="gup update"
-alias pa"pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U"
+alias pa="pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U"
 
 # Second homebrew install with x86 arch
 alias brew86="arch -x86_64 /usr/local/homebrew/bin/brew"
-alias brewbackup="brew bundle dump --force --file=~/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/Brewfile-${HOST}"
+
+#shellcheck disable=SC2139
+alias brewbackup="brew bundle dump --force --file=${THIS_DIRECTORY}/Brewfile-${HOST}"
 
 # Git
 alias main="git checkout main && git pull"
@@ -121,7 +128,7 @@ alias nvm='echo I think you meant FNM'
 # update all packages in package.json except @types/node
 alias ncu='ncu -u \!@types/node --deep'
 
-# nice JSON graphing / visulisation tool
+# nice JSON graphing / visualisation tool
 alias json-graph='colima start && docker run -p 8888:8080 jsonvisio && open http://localhost:8888/editor'
 
 # Backblaze
