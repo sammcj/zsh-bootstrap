@@ -13,3 +13,6 @@ eval "$(/opt/homebrew/bin/fnm env --use-on-cd)"
 
 # Thefuck
 eval "$(thefuck --alias)"
+
+#saml2aws
+eval "$(saml2aws --completion-script-zsh)"

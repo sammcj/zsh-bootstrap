@@ -132,6 +132,7 @@ brew "rsync"
 brew "ruby-completion"
 brew "rust"
 brew "s3cmd"
+brew "saml2aws"
 brew "shellcheck"
 brew "shfmt"
 brew "siege"
@@ -191,6 +192,7 @@ cask "gitahead"
 cask "handbrake"
 cask "hot"
 cask "iterm2"
+cask "kekaexternalhelper"
 cask "knockknock"
 cask "latest"
 cask "launchcontrol"
@@ -237,6 +239,7 @@ mas "Disk Speed Test", id: 425264550
 mas "GarageBand", id: 682658836
 mas "iA Writer", id: 775737590
 mas "iMovie", id: 408981434
+mas "Keka", id: 470158793
 mas "Keynote", id: 409183694
 mas "Kindle", id: 405399194
 mas "Lensa", id: 1436732536
@@ -263,7 +266,6 @@ mas "Slack", id: 803453959
 mas "Strongbox", id: 897283731
 mas "Table Tool", id: 1122008420
 mas "Textual IRC Client", id: 1262957439
-mas "The Unarchiver", id: 425424353
 mas "Things", id: 904280696
 mas "WhatsApp", id: 1147396723
 mas "WireGuard", id: 1451685025

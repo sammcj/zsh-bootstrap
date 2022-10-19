@@ -76,6 +76,7 @@ brew "cdrtools"
 brew "certbot"
 brew "cfn-lint"
 brew "cheat"
+brew "checkov"
 brew "circumflex"
 brew "cjson"
 brew "cli53"
@@ -277,6 +278,7 @@ cask "gramps"
 cask "hot"
 cask "inkscape"
 cask "keepassxc"
+cask "kekaexternalhelper"
 cask "kindle"
 cask "kindle-previewer"
 cask "knockknock"
@@ -330,6 +332,7 @@ mas "Disk Speed Test", id: 425264550
 mas "Duplicate File Finder", id: 1032755628
 mas "iA Writer", id: 775737590
 mas "iMovie", id: 408981434
+mas "Keka", id: 470158793
 mas "Keynote", id: 409183694
 mas "Kindle", id: 405399194
 mas "Lensa", id: 1436732536
@@ -353,14 +356,13 @@ mas "Raivo OTP", id: 1498497896
 mas "Reeder", id: 1529448980
 mas "ScreenBrush", id: 1233965871
 mas "Slack", id: 803453959
-mas "Strongbox", id: 1270075435
 mas "Strongbox", id: 897283731
+mas "Strongbox", id: 1270075435
 mas "Table Tool", id: 1122008420
 mas "Tailscale", id: 1475387142
 mas "Telegram", id: 747648890
 mas "TestFlight", id: 899247664
 mas "Textual IRC Client", id: 1262957439
-mas "The Unarchiver", id: 425424353
 mas "Things", id: 904280696
 mas "WhatsApp", id: 1147396723
 mas "Xcode", id: 497799835

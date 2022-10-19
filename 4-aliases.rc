@@ -156,3 +156,8 @@ alias ip6="curl -s 6.ipquail.com/ip"
 alias ip4="curl -s 4.ipquail.com/ip"
 alias ptr6="curl -s 6.ipquail.com/ptr"
 alias ptr4="curl -s 4.ipquail.com/ptr"
+
+# AWS
+# shellcheck disable=SC2139
+# alias s2a="function(){eval $($(command saml2aws) script --shell=bash --profile=$@);}"
+function s2a { eval $($(which saml2aws) script --shell=bash --profile=$@); }
