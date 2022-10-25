@@ -394,3 +394,34 @@ conda_setup() {
   unset __conda_setup
 # <<< conda initialize <<<
 }
+
+function update_asdf() {
+  asdf update
+  asdf plugin-update --all
+}
+
+# saml2aws
+aad(){
+  INPUT_PROFILE=$(echo "$1" | sed -e 's/dosa/kis/g;s/cust/klue/g')
+  local IDPPW=$(keychain_password awsazurepw)
+  saml2aws login -a "$INPUT_PROFILE" --skip-prompt --password="$IDPPW" --profile="$INPUT_PROFILE" && export AWS_PROFILE="$INPUT_PROFILE" && export AWSCLIPARAMS="--profile=$INPUT_PROFILE"
+  aws --profile "$AWS_PROFILE" sts get-caller-identity
+}
+
+# function that reads a password from keychain and outputs it
+# usage: keychain_password <service> <account>
+keychain_password() {
+  security find-generic-password -s "$1" -a "$(whoami)" -w
+}
+
+# a function that prompts for a name and a password and stores it in keychain
+keychain_password_prompt() {
+  echo "Enter a name for the password:"
+  read -r name
+  echo "Enter the password:"
+  # disable echoing the password
+  stty -echo
+  read -r password
+  security add-generic-password -s "$name" -a "$(whoami)" -w "$password"
+}
+

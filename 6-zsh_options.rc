@@ -54,6 +54,9 @@ zstyle ':completion:*:messages' format '%d'
 zstyle ':completion:*:warnings' format 'No matches for: %d'
 zstyle ':completion:*' group-name ''
 
+# AWS specific
+zstyle ':completion:*:*:aws' fzf-search-display true
+
 # Note these need functions to be defined, see functions.rc
 zstyle ':completion:*' completer _oldlist _expand _force_rehash _complete
 zstyle ':completion:*' completer _expand _force_rehash _complete _ignored
@@ -187,7 +190,7 @@ bindkey -M viins ' ' magic-space
 bindkey -M vicmd "^q" push-line
 
 # rvm compat
-unsetopt auto_name_dirs
+# unsetopt auto_name_dirs
 # alias .='pwd'
 
 # cd into a directory when you type its name

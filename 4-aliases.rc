@@ -51,6 +51,8 @@ alias git-remove-untracked-branches="git fetch -p; git branch --merged main | eg
 alias gco="git checkout"
 alias p="git pull"
 alias P="git push"
+alias a="git add ."
+alias c="git commit -m"
 
 # GNU tools
 alias sed="gsed"
@@ -110,9 +112,6 @@ alias tfn='terraform'
 
 # DNS benchmarking using https://github.com/redsift/dnstrace
 alias dnsbenchmark='dnstrace -n 10 -c 10 --server 192.168.0.1 --recurse microsoft.com'
-
-# modern unix command replacements
-alias c='bat'
 
 # Docker
 # podman machine init --cpus=3 --disk-size=30 --memory=3192 podman-machine-default

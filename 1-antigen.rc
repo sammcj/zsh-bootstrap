@@ -41,6 +41,9 @@ if ! zgen saved; then
     # fzf wrappers
     sunlei/zsh-ssh
     torifat/npms
+
+    # AWS
+    devndive/zsh-saml2aws-auto
 EOPLUGINS
 
   # Not in use at present

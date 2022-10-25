@@ -5,7 +5,7 @@
 source "$HOME"/.iterm2_shell_integration.zsh
 
 # RVM
-source "$HOME"/.rvm/scripts/rvm
+#source "$HOME"/.rvm/scripts/rvm
 
 # Node / Javascript
 # Note: If this doesn't work, make sure you've cleaned up nvm directories and related PATHs
@@ -16,3 +16,6 @@ eval "$(thefuck --alias)"
 
 #saml2aws
 eval "$(saml2aws --completion-script-zsh)"
+
+#asdf
+. /opt/homebrew/opt/asdf/libexec/asdf.sh

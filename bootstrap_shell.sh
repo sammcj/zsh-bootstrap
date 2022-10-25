@@ -36,6 +36,36 @@ go install github.com/rs/dnstrace@latest
 # Requires rust's cargo, either via homebrew rust / rust-up
 cargo install --locked lazycli
 
+Get install path to source
+
+### asdf ###
+
+## install plugins
+# languages
+asdf plugin-add nodejs https://github.com/asdf-vm/asdf-nodejs.git
+asdf plugin-add yarn https://github.com/twuni/asdf-yarn.git
+asdf plugin-add python https://github.com/danhper/asdf-python.git
+asdf plugin-add golang https://github.com/kennyp/asdf-golang.git
+# asdf plugin-add bundler https://github.com/jonathanmorley/asdf-bundler.git
+asdf plugin-add ruby https://github.com/asdf-vm/asdf-ruby.git
+asdf plugin-add rust https://github.com/code-lever/asdf-rust.git
+# Tools that are only available via asdf
+asdf plugin-add action-validator https://github.com/mpalmer/action-validator.git
+asdf plugin-add semver https://github.com/mathew-fleisch/asdf-semver.git
+# # Terraform
+# asdf plugin-add tfenv https://github.com/carlduevel/asdf-tfenv.git
+# asdf plugin-add tfsec https://github.com/woneill/asdf-tfsec.git
+# asdf plugin-add terraform https://github.com/asdf-community/asdf-hashicorp.git
+# asdf plugin-add terraform-ls https://github.com/asdf-community/asdf-hashicorp.git
+# asdf plugin-add terraform-validator https://github.com/asdf-community/asdf-hashicorp.git
+# asdf plugin-add tfupdate https://github.com/yuokada/asdf-tfupdate.git
+# asdf plugin-add tfstate-lookup https://github.com/carnei-ro/asdf-tfstate-lookup.git
+
+# Install all asdf plugins
+asdf plugin-update --all
+
+### End asdf ###
+
 ##### End installs #####
 
 ## Local functions ##
@@ -81,7 +111,7 @@ clone_repo "${HOME}/.zgen" "https://github.com/tarjoilija/zgen.git"
 clone_repo "${HOME}/.tmux/plugins/tpm" "https://github.com/tmux-plugins/tpm"
 
 # Link dotfiles
-dotfiles=(".gitignoreglobal" ".gitconfig" ".vimrc" ".gitconfig_nopush" ".gitconfig.private" ".dircolors" ".tmux.conf" ".zshrc")
+dotfiles=(".gitignoreglobal" ".gitconfig" ".vimrc" ".gitconfig_nopush" ".gitconfig.private" ".dircolors" ".tmux.conf" ".zshrc" ".asdfrc")
 for dotfile in "${dotfiles[@]}"; do
   link_dotfile "$dotfile"
 done
