@@ -21,11 +21,14 @@ brew bundle
 # Git related
 pip3 install -U mu-repo
 
+# Markdown link checker
+pip3 install linkcheckmd
+
 # Ensure we don't have those pesky ^ in our package.json files
 npm config set save-exact=true
 
 npm install -G husky npm-check-updates eslint prettier aws-azure-login editorconfig \
-  @typescript-eslint/parser typescript
+  @typescript-eslint/parser typescript ts-node
 
 go install github.com/rhysd/actionlint/cmd/actionlint@latest
 go install github.com/nao1215/gup@latest # gup update to update go packages
