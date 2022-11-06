@@ -26,7 +26,6 @@ if ! zgen saved; then
   zgen loadall <<EOPLUGINS
     RobSis/zsh-completion-generator
     zdharma-continuum/fast-syntax-highlighting
-    ascii-soup/zsh-url-highlighter
     zsh-users/zsh-autosuggestions
     lukechilds/zsh-better-npm-completion
     MichaelAquilina/zsh-you-should-use
@@ -36,7 +35,6 @@ if ! zgen saved; then
     paulirish/git-open
     olivierverdier/zsh-git-prompt
     peterhurford/git-it-on.zsh
-    robertzk/send.zsh
 
     # fzf wrappers
     sunlei/zsh-ssh
@@ -49,6 +47,7 @@ EOPLUGINS
   # Not in use at present
   # nnao45/zsh-kubectl-completion
   # trejo08/kubecolor-zsh
+  # ascii-soup/zsh-url-highlighter
 
   # source completions
   zgen load zsh-users/zsh-completions src
