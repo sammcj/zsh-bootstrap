@@ -18,6 +18,24 @@ function git_prompt_info() {
   fi
 }
 
+function gco(){
+  if [[ -n $1 ]]; then
+    git checkout "$@"
+  else
+    git branch --sort=-committerdate | fzf --header 'Checkout Recent Branch' --preview 'git diff --color=always {1}' --pointer='>' | xargs git checkout
+  fi
+}
+
+function gbd(){
+  if [[ -n $* ]]; then
+    git branch -d "$@"
+  else
+    git branch --sort=-committerdate | fzf --header 'Delete Git Branch' --preview 'git diff --color=always {1}' --pointer='>' | xargs git branch delete
+    # The same as above but allow selecting multiple items and prompt for confirmation
+    # git branch --sort=-committerdate | fzf --header 'Delete Git Branch' --preview 'git diff --color=always {1}' --pointer='>' | xargs -n1 -I{} git branch -d {}
+  fi
+}
+
 # # Checks if working tree is dirty
 # function parse_git_dirty() {
 #   local STATUS=''
