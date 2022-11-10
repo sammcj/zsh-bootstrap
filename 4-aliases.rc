@@ -34,6 +34,12 @@ alias gitdiff="git diff --color-words --color=always"
 alias gitclean="git fetch -p; git remote prune origin; git repack -a -d -f --max-pack-size=10g --depth=500 --window=250; git gc --aggressive"
 #alias gitrb='for branch in `git branch -r --merged | grep -v HEAD`; do echo -e `git show --format="%ci %cr %an" $branch | head -n 1` \\t$branch; done | sort -r'
 # alias gbd="git branch -d" Moved to functions
+alias ch="commit-hotfix"
+alias cj="commit-jira"
+alias jira="checkout-jira"
+alias j="checkout-jira"
+alias hotfix="checkout-hotfix"
+alias minor="git commit -m 'chore: minor tweaks [skip ci]"
 alias git-delete-local-branches="git fetch --all --prune"
 alias githist="git log --graph --pretty=oneline --abbrev-commit"
 alias git-delete-remote-branch="git push origin --delete"

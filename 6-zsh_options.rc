@@ -189,10 +189,6 @@ bindkey -M viins ' ' magic-space
 # Push your line to the stack and run another command then pop it back
 bindkey -M vicmd "^q" push-line
 
-# rvm compat
-# unsetopt auto_name_dirs
-# alias .='pwd'
-
 # cd into a directory when you type its name
 setopt autocd
 

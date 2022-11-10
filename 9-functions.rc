@@ -35,6 +35,24 @@ function gbd(){
     # git branch --sort=-committerdate | fzf --header 'Delete Git Branch' --preview 'git diff --color=always {1}' --pointer='>' | xargs -n1 -I{} git branch -d {}
   fi
 }
+function checkout-hotfix() {
+  git checkout -b "Hotfix-$(date +%Y-%m-%d)-${USER}"
+}
+
+function commit-hotfix() {
+  git add .
+  git commit -m "Hotfix-$(date +%Y/%m/%d): $*"
+}
+
+function checkout-jira() {
+  git checkout -b "IF-${1}-${USER}-$(date +%Y-%m-%d)"
+}
+
+function commit-jira(){
+  # Use the JIRA number from the start of the branch name for the commit message (e.g. IF-1234 from the branch IF-1234-feature-name)
+  git add .
+  git commit -m "$(git rev-parse --abbrev-ref HEAD | cut -d'-' -f1 -f2) -- $*"
+}
 
 # # Checks if working tree is dirty
 # function parse_git_dirty() {

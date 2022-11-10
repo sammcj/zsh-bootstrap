@@ -50,7 +50,7 @@ asdf plugin-add yarn https://github.com/twuni/asdf-yarn.git
 asdf plugin-add python https://github.com/danhper/asdf-python.git
 asdf plugin-add golang https://github.com/kennyp/asdf-golang.git
 # asdf plugin-add bundler https://github.com/jonathanmorley/asdf-bundler.git
-asdf plugin-add ruby https://github.com/asdf-vm/asdf-ruby.git
+# asdf plugin-add ruby https://github.com/asdf-vm/asdf-ruby.git
 asdf plugin-add rust https://github.com/code-lever/asdf-rust.git
 # Tools that are only available via asdf
 asdf plugin-add action-validator https://github.com/mpalmer/action-validator.git
@@ -73,15 +73,32 @@ asdf plugin-update --all
 
 ## Local functions ##
 function link_dotfile() {
-  if [[ -f "$1" ]]; then
-    echo "File $1 already exists"
+  # Error if there are more than two arguments
+  if [[ $# -gt 2 ]]; then
+    echo "Too many arguments"
+    return 1
+  fi
+  # Check if there is a second argument, if so, use it as the destination file name otherwise use the source file name
+  if [ -z "$2" ]; then
+    local DEST="${HOME}/${1}"
+  else
+    local DEST="${HOME}/${2}"
+    # Check if the directories up to the destination file exist, if not, create them
+    if [ ! -d "$(dirname "${DEST}")" ]; then
+      mkdir -p "$(dirname "${DEST}")"
+    fi
+  fi
+  if [[ -f "$DEST" ]]; then
+    echo "File $DEST already exists"
     read -r -p "Do you want to replace it with a symlink to the file in this repo? [y/N] " response
     if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
-      rm -f "$1"
-      ln -s "${THIS_REPO}/$1" "${HOME}/$1"
+      rm -f "$DEST"
+      ln -s "${THIS_REPO}/$1" "${HOME}/${DEST}"
+    else
+      exit 1
+      echo "No changes made to ${DEST}"
     fi
-  else
-    echo "No changes made to $1"
+
   fi
 }
 
@@ -118,3 +135,5 @@ dotfiles=(".gitignoreglobal" ".gitconfig" ".vimrc" ".gitconfig_nopush" ".gitconf
 for dotfile in "${dotfiles[@]}"; do
   link_dotfile "$dotfile"
 done
+
+link_dotfile "bat-config" "/Users/samm/.config/bat/config"
