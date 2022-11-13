@@ -22,6 +22,9 @@ if [[ -d $HOME/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/d
   done
 fi
 
+## Add ssh keys to agent if not already added
+ssh-add-keys
+
 ### Below are items added by installer scripts (usually homebrew) ####
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

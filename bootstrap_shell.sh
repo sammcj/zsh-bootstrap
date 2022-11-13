@@ -13,7 +13,10 @@
 
 THIS_REPO="${HOME}/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/"
 
-# TODO: clean up installers / create a pattern
+# If ssh keys are not already added, add them
+if ! ssh-add -l | grep -e 'ED25519\|RSA'; then
+  ssh-add --apple-use-keychain ~/.ssh/id_*.key
+fi
 
 # Brew installs moved to Brewfile (brew bundle dump to generate)
 brew bundle
@@ -21,8 +24,8 @@ brew bundle
 # Git related
 pip3 install -U mu-repo
 
-# Markdown link checker
-pip3 install linkcheckmd
+# # Markdown link checker
+# pip3 install linkcheckmd
 
 # Ensure we don't have those pesky ^ in our package.json files
 npm config set save-exact=true

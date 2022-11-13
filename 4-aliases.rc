@@ -144,7 +144,7 @@ alias scripts='cd ~/git/scripts'
 ### Suffix Aliases ###
 
 # VSCode
-alias -s {ts,md,js,json,py,yaml,rb,css,rc,yml}=code
+alias -s {ts,js,json,py,yaml,rb,css,rc,yml}=code
 
 # Firefox
 alias -s html=/Applications/Firefox.app
@@ -155,14 +155,12 @@ alias -s {mkv,mp4,m4v,avi,mpg,mpeg}=vlc
 # Preview
 alias -s {jpg,jpeg,png,gif,bmp,ico,svg,webp}=open
 
+# Glow for Markdown
+alias -s md=glow
+
 # Networking
 
 alias ip6="curl -s 6.ipquail.com/ip"
 alias ip4="curl -s 4.ipquail.com/ip"
 alias ptr6="curl -s 6.ipquail.com/ptr"
 alias ptr4="curl -s 4.ipquail.com/ptr"
-
-# AWS
-# shellcheck disable=SC2139
-# alias s2a="function(){eval $($(command saml2aws) script --shell=bash --profile=$@);}"
-function s2a { eval $($(which saml2aws) script --shell=bash --profile=$@); }
