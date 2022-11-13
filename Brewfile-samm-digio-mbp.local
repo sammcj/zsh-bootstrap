@@ -69,6 +69,7 @@ brew "aws-nuke"
 brew "aws-okta"
 brew "aws-shell"
 brew "aws-sso-util"
+brew "libidn"
 brew "awscli"
 brew "bash"
 brew "bash-completion"
@@ -172,7 +173,6 @@ brew "lazygit"
 brew "lftp"
 brew "libcroco"
 brew "libheif"
-brew "libidn"
 brew "libmagic"
 brew "libmaxminddb"
 brew "librtlsdr"
@@ -209,7 +209,6 @@ brew "pyqt@5"
 brew "python@3.8"
 brew "rsync"
 brew "rtmpdump"
-brew "ruby-completion"
 brew "rust"
 brew "rustup-init"
 brew "s3cmd"
@@ -244,7 +243,6 @@ brew "wimlib"
 brew "winetricks"
 brew "wireguard-go"
 brew "wireguard-tools"
-brew "wireshark"
 brew "xmrig"
 brew "yarn"
 brew "yasm"
@@ -265,7 +263,7 @@ brew "derailed/popeye/popeye"
 brew "git-chglog/git-chglog/git-chglog"
 brew "ibotta/public/sopstool"
 brew "kubecolor/tap/kubecolor"
-brew "lindell/multi-gitter/multi-gitter", link: false
+brew "lindell/multi-gitter/multi-gitter"
 brew "noahgorstein/tap/jqp"
 brew "qmk/qmk/qmk"
 brew "rs/tap/dnstrace"
@@ -274,7 +272,6 @@ brew "slp/krun/buildah"
 brew "slp/krun/krunvm"
 cask "apparency"
 cask "appcleaner"
-cask "bettertouchtool"
 cask "calibre"
 cask "cubicsdr"
 cask "drawio"
@@ -316,7 +313,6 @@ cask "qmk-toolbox"
 cask "sdrdx"
 cask "secretive"
 cask "sekey"
-cask "send-to-kindle"
 cask "serial"
 cask "session-manager-plugin"
 cask "shortcat"
@@ -330,9 +326,7 @@ cask "utterly"
 cask "vlc"
 cask "webpquicklook"
 cask "wine-stable"
-cask "wireshark"
 cask "xld"
-mas "1Password 7", id: 1333542190
 mas "1Password for Safari", id: 1569813296
 mas "Amphetamine", id: 937984704
 mas "Apple Configurator", id: 1037126344
@@ -343,6 +337,7 @@ mas "Bumpr", id: 1166066070
 mas "DaisyDisk", id: 411643860
 mas "Disk Speed Test", id: 425264550
 mas "Duplicate File Finder", id: 1032755628
+mas "Home Assistant", id: 1099568401
 mas "iA Writer", id: 775737590
 mas "iMovie", id: 408981434
 mas "Keka", id: 470158793
@@ -367,8 +362,8 @@ mas "Pixelmator Pro", id: 1289583905
 mas "Reeder", id: 1529448980
 mas "ScreenBrush", id: 1233965871
 mas "Slack", id: 803453959
-mas "Strongbox", id: 1270075435
 mas "Strongbox", id: 897283731
+mas "Strongbox", id: 1270075435
 mas "Table Tool", id: 1122008420
 mas "Tailscale", id: 1475387142
 mas "TestFlight", id: 899247664

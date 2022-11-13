@@ -43,6 +43,7 @@ Plugin 'github/copilot.vim'
 Plugin 'preservim/nerdtree'
 Plugin 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plugin 'ryanoasis/vim-devicons'
+Plugin 'robertbasic/vim-hugo-helper'
 Plugin 'junegunn/fzf', { 'do': { -> fzf#install() } }
 call vundle#end()
 " Plugins END

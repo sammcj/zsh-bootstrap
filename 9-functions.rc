@@ -352,6 +352,9 @@ function aws-azure-login() {
   export AWSCLIPARAMS="--profile=$@"
 }
 
+# shellcheck disable=SC2068 disable=SC2046 disable=SC2145
+function s2a { eval $($(which saml2aws) script --shell=bash --profile=$@); }
+
 # Github
 # Deletes workflow logs from a given repo older than 1 month
 # e.g. USER=myuser REPO=myrepo ghac
@@ -475,4 +478,11 @@ keychain_password_prompt() {
   stty -echo
   read -r password
   security add-generic-password -s "$name" -a "$(whoami)" -w "$password"
+}
+
+# A function that checks ssh-add and adds my keys if they're not already added
+function ssh-add-keys() {
+  if ! ssh-add -l|grep -e 'ED25519\|RSA'; then
+    ssh-add --apple-use-keychain ~/.ssh/id_*.key
+  fi
 }
