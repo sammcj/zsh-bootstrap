@@ -482,7 +482,7 @@ keychain_password_prompt() {
 
 # A function that checks ssh-add and adds my keys if they're not already added
 function ssh-add-keys() {
-  if ! ssh-add -l|grep -e 'ED25519\|RSA'; then
+  if ! ssh-add -l|grep -qe 'ED25519\|RSA'; then
     ssh-add --apple-use-keychain ~/.ssh/id_*.key
   fi
 }
