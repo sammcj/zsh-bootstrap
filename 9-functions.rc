@@ -20,7 +20,17 @@ function git_prompt_info() {
 
 function gco(){
   if [[ -n $1 ]]; then
-    git checkout "$@"
+    if [[ $1 == "-b" ]]; then
+      # shift to remove -b from args
+      shift 1
+    fi
+    # check to see if the branch exists, if it doesn't offer to create it and check it out otherwise just check it out
+    if git branch -a | grep -q "remotes/origin/$1"; then
+      git checkout "$1"
+    else
+      echo "Creating branch $1"
+      git checkout -b "$1"
+    fi
   else
     git branch --sort=-committerdate | fzf --header 'Checkout Recent Branch' --preview 'git diff --color=always {1}' --pointer='>' | xargs git checkout
   fi
@@ -30,9 +40,7 @@ function gbd(){
   if [[ -n $* ]]; then
     git branch -d "$@"
   else
-    git branch --sort=-committerdate | fzf --header 'Delete Git Branch' --preview 'git diff --color=always {1}' --pointer='>' | xargs git branch delete
-    # The same as above but allow selecting multiple items and prompt for confirmation
-    # git branch --sort=-committerdate | fzf --header 'Delete Git Branch' --preview 'git diff --color=always {1}' --pointer='>' | xargs -n1 -I{} git branch -d {}
+    git branch --sort=-committerdate | fzf --header 'Delete Git Branch' --preview 'git diff --color=always {1}' --pointer='>' | xargs git branch -d
   fi
 }
 function checkout-hotfix() {
@@ -41,7 +49,7 @@ function checkout-hotfix() {
 
 function commit-hotfix() {
   git add .
-  git commit -m "Hotfix-$(date +%Y/%m/%d): $*"
+  git commit -m "Hotfix-$(date +%Y/%m/%d) -- $*"
 }
 
 function checkout-jira() {
@@ -253,6 +261,7 @@ function git_prompt_status() {
   echo "$STATUS"
 }
 
+#  TODO: replace this with something more standard, this was a temporary workaround for poor performance of the stock oh-my-zsh git plugin
 # Compares the provided version of git to the version installed and on path
 # Outputs -1, 0, or 1 if the installed version is less than, equal to, or
 # greater than the input version, respectively.
@@ -287,8 +296,6 @@ function git_current_user_email() {
   command git config user.email 2>/dev/null
 }
 
-# This is unlikely to change so make it all statically assigned
-POST_1_7_2_GIT=$(git_compare_version "1.7.2")
 # Clean up the namespace slightly by removing the checker function
 unfunction git_compare_version
 
@@ -299,11 +306,8 @@ pdfcompress ()
   gs -q -dNOPAUSE -dBATCH -dSAFER -sDEVICE=pdfwrite -dCompatibilityLevel=1.3 -dPDFSETTINGS=/screen -dEmbedAllFonts=true -dSubsetFonts=true -dColorImageDownsampleType=/Bicubic -dColorImageResolution=144 -dGrayImageDownsampleType=/Bicubic -dGrayImageResolution=144 -dMonoImageDownsampleType=/Bicubic -dMonoImageResolution=144 -sOutputFile="$1".compressed.pdf "$1";
 }
 
-function gitlazy() {
-  git add .
-  git commit -a -m "$1"
-  git push
-}
+
+
 
 # Usage: mv oldfilename
 # If you call mv without the second parameter it will prompt you to edit the filename on command line.
@@ -359,8 +363,8 @@ function s2a { eval $($(which saml2aws) script --shell=bash --profile=$@); }
 # Deletes workflow logs from a given repo older than 1 month
 # e.g. USER=myuser REPO=myrepo ghac
 function ghac() {
-  DATE=$(date -v "-1m" +"%Y-%m-%d") gh api repos/"$USER"/"$REPO"/actions/runs --paginate -q '.workflow_runs[] | select (.run_started_at  <= "env.DATE") | (.id)' \
-    | xargs -n1 -I % gh api repos/"$USER"/"$REPO"/actions/runs/% -X DELETE
+  DATE=$(date -v "-1m" +"%Y-%m-%d") gh api "repos/${USER}/${REPO}/actions/runs" --paginate -q '.workflow_runs[] | select (.run_started_at  <= "env.DATE") | (.id)' \
+    | xargs -n1 -I % gh api "repos/${USER}/${REPO}/actions/runs"/% -X DELETE
 }
 
 # Git checkout new branch, git add, git commit, git push in all subdirectories matching a pattern
@@ -368,9 +372,9 @@ function git_add_commit_push(){
   if [[ -z $1 ]] || [[ -z "$2" ]] || [[ -z "$3" ]]; then
     echo 'You must pass three paramters, branchname, commit message, dir match - e.g. "my-branch" "commit message" ABC*';
   fi
-  BRANCHNAME=$1
-  COMMITNAME=$2
-  MATCHDIRS=$3
+  BRANCHNAME="$1"
+  COMMITNAME="$2"
+  MATCHDIRS="$3"
   for dir in $MATCHDIRS;
     do (
       cd "$dir" &&
@@ -485,4 +489,13 @@ function ssh-add-keys() {
   if ! ssh-add -l|grep -qe 'ED25519\|RSA'; then
     ssh-add --apple-use-keychain ~/.ssh/id_*.key
   fi
+}
+
+clean_string() {
+    # Escape special characters in a string such as $, ", ', `, \, and newline.
+    # Usage: escape_string "string to escape"
+    local string="${1}"
+    local escaped_string
+    escaped_string=$(printf '%q' "${string}")
+    echo "${escaped_string}"
 }

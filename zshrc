@@ -4,8 +4,11 @@
 # There is an alias to jump to the directory with the various
 # included zsh configs, simply type `zshconfig` at the prompt.
 
-# Uncomment below AND zprof at the end of this file to debug timing
-#zmodload zsh/zprof
+####### PROFILING #######
+# Uncomment below to enable debug timing
+# zmodload zsh/zprof
+# Remember to uncomment zprof at the end of the file!
+#### END PROFILING ######
 
 # Source google-cloud-sdk (breaks if you source later)
 #source "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc"
@@ -37,3 +40,8 @@ source /opt/homebrew/Cellar/fzf/*/shell/key-bindings.zsh
 # https://users.aalto.fi/~saarit2/deoxy/gz_howy.htm
 
 # CONDA - is managed via a function when needed (conda_setup)
+
+####### PROFILING #######
+# Uncomment below to enable debug timing
+# zprof
+#### END PROFILING ######

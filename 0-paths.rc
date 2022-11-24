@@ -2,9 +2,6 @@
 
 #test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
-# Uncomment below to enable debug timing
-#zprof
-
 export PATH="/usr/local/bin:$PATH"
 
 export PATH="/opt/homebrew/bin:$PATH"
