@@ -69,7 +69,6 @@ brew "aws-nuke"
 brew "aws-okta"
 brew "aws-shell"
 brew "aws-sso-util"
-brew "libidn"
 brew "awscli"
 brew "bash"
 brew "bash-completion"
@@ -129,12 +128,14 @@ brew "fzf"
 brew "gawk"
 brew "gcc"
 brew "gh"
+brew "libidn"
 brew "git"
 brew "git-delta"
 brew "git-lfs"
 brew "git-quick-stats"
 brew "git-secrets"
 brew "gitleaks"
+brew "gitui"
 brew "glow"
 brew "gnu-getopt"
 brew "gnu-sed"
@@ -149,6 +150,7 @@ brew "go"
 brew "govendor"
 brew "graphviz"
 brew "grep"
+brew "gron"
 brew "hadolint"
 brew "helm"
 brew "htop"
@@ -157,6 +159,7 @@ brew "hyperfine"
 brew "icdiff"
 brew "iperf3"
 brew "jansson"
+brew "jc"
 brew "jemalloc"
 brew "jq"
 brew "jsonlint"
@@ -165,6 +168,7 @@ brew "jupyterlab"
 brew "k3d"
 brew "k9s"
 brew "kind"
+brew "kompose"
 brew "ksh93"
 brew "kubernetes-cli"
 brew "kube-ps1"
@@ -200,7 +204,7 @@ brew "parallel"
 brew "platformio"
 brew "podman"
 brew "popt"
-brew "pre-commit"
+brew "pre-commit", link: false
 brew "prettier"
 brew "protobuf"
 brew "pyenv"
@@ -310,6 +314,7 @@ cask "qbittorrent"
 cask "qlstephen"
 cask "qlvideo"
 cask "qmk-toolbox"
+cask "scratch"
 cask "sdrdx"
 cask "secretive"
 cask "sekey"
@@ -346,7 +351,6 @@ mas "Kindle", id: 405399194
 mas "Lensa", id: 1436732536
 mas "MeetingBar", id: 1532419400
 mas "Meme Generator", id: 483350546
-mas "Messenger", id: 1480068668
 mas "Micro Snitch", id: 972028355
 mas "Music Tag Edit", id: 999242964
 mas "MusicHarbor", id: 1440405750
@@ -357,13 +361,13 @@ mas "NZB Control", id: 1048732801
 mas "NZBVortex 3", id: 914250185
 mas "Pages", id: 409201541
 mas "Parcel", id: 639968404
+mas "PastePal", id: 1503446680
 mas "Peek", id: 1554235898
 mas "Pixelmator Pro", id: 1289583905
 mas "Reeder", id: 1529448980
 mas "ScreenBrush", id: 1233965871
 mas "Slack", id: 803453959
 mas "Strongbox", id: 897283731
-mas "Strongbox", id: 1270075435
 mas "Table Tool", id: 1122008420
 mas "Tailscale", id: 1475387142
 mas "TestFlight", id: 899247664

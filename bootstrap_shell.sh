@@ -37,6 +37,7 @@ go install github.com/rhysd/actionlint/cmd/actionlint@latest
 go install github.com/nao1215/gup@latest # gup update to update go packages
 go install github.com/jesseduffield/lazydocker@latest
 go install github.com/rs/dnstrace@latest
+go install github.com/projectdiscovery/katana/cmd/katana@latest
 
 # Install lazycli for building TUIs
 # Requires rust's cargo, either via homebrew rust / rust-up
