@@ -39,3 +39,7 @@ Generate completions for commands that don't have them:
 ```shell
 gencomp ggrep
 ```
+
+## SSH Configuration
+
+See [Mozilla's SSH Client Configuration Guide](https://infosec.mozilla.org/guidelines/openssh#key-generation) for more information on best practices.
