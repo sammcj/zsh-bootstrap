@@ -31,7 +31,7 @@ pip3 install -U mu-repo
 npm config set save-exact=true
 
 npm install -G husky npm-check-updates eslint prettier aws-azure-login editorconfig \
-  @typescript-eslint/parser typescript ts-node
+  @typescript-eslint/parser typescript ts-node bash-language-server
 
 go install github.com/rhysd/actionlint/cmd/actionlint@latest
 go install github.com/nao1215/gup@latest # gup update to update go packages
@@ -100,6 +100,7 @@ function link_dotfile() {
       ln -s "${THIS_REPO}/$1" "${HOME}/${DEST}"
     else
       exit 1
+      #shellcheck disable=SC2317
       echo "No changes made to ${DEST}"
     fi
 

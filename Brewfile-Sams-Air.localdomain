@@ -56,7 +56,9 @@ brew "gnutls"
 brew "qemu"
 brew "lima"
 brew "colima", args: ["HEAD"]
+brew "cowsay"
 brew "ctop"
+brew "deno"
 brew "detect-secrets"
 brew "dive"
 brew "docker"
@@ -134,7 +136,7 @@ brew "pandoc"
 brew "parallel"
 brew "pillow"
 brew "pinentry-mac"
-brew "pre-commit"
+brew "pre-commit", link: false
 brew "prettier"
 brew "pyenv"
 brew "rclone"
@@ -214,11 +216,12 @@ cask "lens"
 cask "macdown"
 cask "macfuse"
 cask "mailtrackerblocker"
+cask "microsoft-teams"
 cask "monodraw"
 cask "mountain-duck"
 cask "ngrok"
 cask "onyx"
-cask "paw"
+cask "pdf-squeezer"
 cask "pdfshaver"
 cask "qbittorrent"
 cask "qlcolorcode"
@@ -227,6 +230,7 @@ cask "qlstephen"
 cask "qlvideo"
 cask "qmk-toolbox"
 cask "quicklook-json"
+cask "rapidapi"
 cask "send-to-kindle"
 cask "serial"
 cask "shortcat"
@@ -248,6 +252,7 @@ mas "AudioBookBinder", id: 413969927
 mas "Bear", id: 1091189122
 mas "Bumpr", id: 1166066070
 mas "DaisyDisk", id: 411643860
+mas "Developer", id: 640199958
 mas "Disk Speed Test", id: 425264550
 mas "GarageBand", id: 682658836
 mas "iA Writer", id: 775737590
@@ -269,16 +274,20 @@ mas "NZBin", id: 979608899
 mas "NZBVortex 3", id: 914250185
 mas "Pages", id: 409201541
 mas "Parcel", id: 639968404
+mas "PastePal", id: 1503446680
 mas "Peek", id: 1554235898
 mas "Pixelmator Pro", id: 1289583905
 mas "Poolsuite FM", id: 1514817810
 mas "Reeder", id: 1529448980
 mas "Remote Desktop", id: 409907375
 mas "Slack", id: 803453959
-mas "Strongbox", id: 897283731
+mas "Swiftify for Xcode", id: 1183412116
 mas "Table Tool", id: 1122008420
+mas "Tailscale", id: 1475387142
+mas "TestFlight", id: 899247664
 mas "Textual IRC Client", id: 1262957439
 mas "Things", id: 904280696
 mas "WhatsApp", id: 1147396723
 mas "WireGuard", id: 1451685025
+mas "Xcode", id: 497799835
 mas "Yomu", id: 562211012
