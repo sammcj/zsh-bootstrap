@@ -48,6 +48,7 @@ brew "age"
 brew "amazon-ecs-cli"
 brew "libyaml"
 brew "ansible"
+brew "lz4"
 brew "aom"
 brew "arduino-cli"
 brew "aria2"
@@ -59,7 +60,6 @@ brew "coreutils"
 brew "libtool"
 brew "asdf"
 brew "autoenv"
-brew "lz4"
 brew "libusb"
 brew "libusb-compat"
 brew "c-ares"
@@ -82,6 +82,7 @@ brew "cabextract"
 brew "cdrtools"
 brew "certbot"
 brew "cfn-lint"
+brew "chain-bench"
 brew "cheat"
 brew "checkov"
 brew "circumflex"
@@ -112,6 +113,7 @@ brew "dash"
 brew "dav1d"
 brew "detect-secrets"
 brew "dfu-util"
+brew "diff-so-fancy"
 brew "direnv"
 brew "dive"
 brew "docker"
@@ -154,6 +156,7 @@ brew "go"
 brew "graphviz"
 brew "grep"
 brew "gron"
+brew "gtk+3"
 brew "hadolint"
 brew "helm"
 brew "htop"
@@ -171,7 +174,6 @@ brew "k3d"
 brew "k9s"
 brew "kind"
 brew "kompose"
-brew "ksh93"
 brew "kubernetes-cli"
 brew "kube-ps1"
 brew "lazydocker"
@@ -210,6 +212,7 @@ brew "pre-commit", link: false
 brew "prettier"
 brew "pyenv"
 brew "pygitup"
+brew "pygobject3"
 brew "pyqt@5"
 brew "python@3.8"
 brew "rsync"
@@ -243,6 +246,7 @@ brew "ttyd"
 brew "typescript"
 brew "vagrant-completion"
 brew "vivid"
+brew "weasyprint"
 brew "wget"
 brew "whalebrew"
 brew "wimlib"
@@ -285,7 +289,6 @@ cask "etrecheckpro"
 cask "fedora-media-writer"
 cask "font-blex-mono-nerd-font"
 cask "font-hack-nerd-font"
-cask "fsnotes"
 cask "gitahead"
 cask "gqrx"
 cask "gramps"
@@ -302,11 +305,14 @@ cask "lens"
 cask "libreoffice"
 cask "losslesscut"
 cask "macdown"
+cask "macfuse"
+cask "meshlab"
 cask "microsoft-teams"
 cask "monodraw"
 cask "ngrok"
 cask "onyx"
 cask "openconnect-gui"
+cask "openscad"
 cask "pdfshaver"
 cask "plug"
 cask "qbittorrent"
@@ -325,6 +331,7 @@ cask "shottr"
 cask "sloth"
 cask "soulseek"
 cask "stay"
+cask "superslicer"
 cask "unofficial-wineskin"
 cask "utm"
 cask "utterly"
@@ -341,7 +348,9 @@ mas "Bitdefender Virus Scanner", id: 500154009
 mas "Brother P-touch Editor", id: 1453365242
 mas "Bumpr", id: 1166066070
 mas "DaisyDisk", id: 411643860
+mas "Depot", id: 1569814452
 mas "Disk Speed Test", id: 425264550
+mas "Draw Things", id: 6444050820
 mas "Duplicate File Finder", id: 1032755628
 mas "Home Assistant", id: 1099568401
 mas "iA Writer", id: 775737590
@@ -351,7 +360,6 @@ mas "Keynote", id: 409183694
 mas "Lensa", id: 1436732536
 mas "MeetingBar", id: 1532419400
 mas "Meme Generator", id: 483350546
-mas "Messenger", id: 1480068668
 mas "Micro Snitch", id: 972028355
 mas "Music Tag Edit", id: 999242964
 mas "MusicHarbor", id: 1440405750
@@ -362,7 +370,6 @@ mas "NZB Control", id: 1048732801
 mas "NZBVortex 3", id: 914250185
 mas "Pages", id: 409201541
 mas "Parcel", id: 639968404
-mas "PastePal", id: 1503446680
 mas "Peek", id: 1554235898
 mas "Pixelmator Pro", id: 1289583905
 mas "Reeder", id: 1529448980

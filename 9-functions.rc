@@ -43,8 +43,14 @@ function gbd(){
     git branch --sort=-committerdate | fzf --header 'Delete Git Branch' --preview 'git diff --color=always {1}' --pointer='>' | xargs git branch -d
   fi
 }
+
 function checkout-hotfix() {
-  git checkout -b "Hotfix-$(date +%Y-%m-%d)-${USER}"
+  HOTFIX_BRANCH="Hotfix-$(date +%Y-%m-%d)-${USER}"
+  # If the hotfix branch already exists, append the current time to the branch name
+  if git branch -a | grep -q "remotes/origin/$HOTFIX_BRANCH"; then
+    HOTFIX_BRANCH="${HOTFIX_BRANCH}-$(date +%H-%M-%S)"
+  fi
+  git checkout -b "${HOTFIX_BRANCH}"
 }
 
 function commit-hotfix() {
@@ -53,7 +59,12 @@ function commit-hotfix() {
 }
 
 function checkout-jira() {
-  git checkout -b "IF-${1}-${USER}-$(date +%Y-%m-%d)"
+  JIRA_BRANCH="IF-${1}-${USER}-$(date +%Y-%m-%d)"
+  # If the JIRA branch already exists, append the current time to the branch name
+  if git branch -a | grep -q "remotes/origin/$JIRA_BRANCH"; then
+    JIRA_BRANCH="${JIRA_BRANCH}-$(date +%H-%M-%S)"
+  fi
+  git checkout -b "${JIRA_BRANCH}"
 }
 
 function commit-jira(){
@@ -448,4 +459,41 @@ clean_string() {
     local escaped_string
     escaped_string=$(printf '%q' "${string}")
     echo "${escaped_string}"
+}
+
+docker_login_ghcr(){
+  # Dependencies: gh
+  set -e
+
+  if [ ! -f ~/.docker/config.json ]; then
+    echo '{"credsStore": "desktop","credHelpers": {"docker.pkg.github.com": "gh","ghcr.io": "gh"}}' > ~/.docker/config.json
+  fi
+
+  cmd="${1}"
+  if [ "erase" = "${cmd}" ]; then
+    cat - >/dev/null
+    exit 0
+  fi
+  if [ "store" = "${cmd}" ]; then
+    cat - >/dev/null
+    exit 0
+  fi
+  if [ "get" != "${cmd}" ]; then
+    exit 1
+  fi
+
+
+  host="$(cat -)"
+  host="${host#https://}"
+  host="${host%/}"
+  if [ "${host}" != "ghcr.io" ] && [ "${host}" != "docker.pkg.github.com" ]; then
+    exit 1
+  fi
+
+  token="$(gh config get -h github.com oauth_token)"
+  if [ -z "${token}" ]; then
+    exit 1
+  fi
+
+  printf '{"Username":"%s", "Secret":"%s"}\n' "$(gh config get -h github.com user)" "${token}"
 }

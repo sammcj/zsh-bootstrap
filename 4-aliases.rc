@@ -57,6 +57,7 @@ alias p="git pull"
 alias P="git push"
 alias a="git add ."
 alias c="git commit -m"
+alias m="git checkout main"
 alias h="hugo serve --disableFastRender --buildDrafts"
 
 # GNU tools
@@ -138,12 +139,16 @@ alias json-graph='colima start && docker run -p 8888:8080 jsonvisio && open http
 # Backblaze
 alias backblaze_edit='code /Library/Backblaze.bzpkg/bzdata/bzexcluderules_editable.xml'
 
+# 3D printing (cura etc...)
+alias cura='open -a /Applications/Ultimaker-Cura.app'
+alias cura-backup='cp -r ~/Library/Application\ Support/cura/*.zip ~/Library/Mobile\ Documents/com~apple~CloudDocs/Backups/3dprinting/cura/'
+
 alias scripts='cd ~/git/scripts'
 
 ### Suffix Aliases ###
 
 # VSCode
-alias -s {ts,js,json,py,yaml,rb,css,rc,yml}=code
+alias -s {ts,json,yaml,css,yml}=code
 
 # Firefox
 alias -s html=/Applications/Firefox.app
@@ -163,3 +168,11 @@ alias ip6="curl -s 6.ipquail.com/ip"
 alias ip4="curl -s 4.ipquail.com/ip"
 alias ptr6="curl -s 6.ipquail.com/ptr"
 alias ptr4="curl -s 4.ipquail.com/ptr"
+
+# Find files modified today
+alias modified-today="mdfind 'kMDItemFSContentChangeDate>\$time.today'"
+
+# If running on macOS replace lsusb with ioreg -p IOUSB -l -w 0
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  alias lsusb='ioreg -p IOUSB -l -w 0'
+fi

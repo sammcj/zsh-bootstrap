@@ -44,6 +44,8 @@ brew "awscli"
 brew "bash"
 brew "bash-completion"
 brew "bat"
+brew "bats-core"
+brew "binutils"
 brew "cabextract"
 brew "glib"
 brew "python@3.9"
@@ -55,7 +57,8 @@ brew "cmake"
 brew "gnutls"
 brew "qemu"
 brew "lima"
-brew "colima", args: ["HEAD"]
+brew "colima"
+brew "conda-zsh-completion"
 brew "cowsay"
 brew "ctop"
 brew "deno"
@@ -120,10 +123,11 @@ brew "kubernetes-cli"
 brew "kube-ps1"
 brew "lazydocker"
 brew "lazygit"
+brew "lerna", link: false
 brew "lftp"
 brew "libplist"
 brew "links"
-brew "localstack"
+brew "llama"
 brew "make"
 brew "mas"
 brew "miller"
@@ -165,6 +169,7 @@ brew "thefuck"
 brew "tldr"
 brew "tmux"
 brew "ttyd"
+brew "typescript"
 brew "vhs"
 brew "vivid"
 brew "wget"
@@ -172,6 +177,7 @@ brew "whalebrew"
 brew "wireguard-tools"
 brew "wireshark", link: false
 brew "xmrig"
+brew "xsv"
 brew "yarn", link: false
 brew "ykman"
 brew "ykpers"
@@ -210,9 +216,9 @@ cask "iterm2"
 cask "kekaexternalhelper"
 cask "knockknock"
 cask "latest"
-cask "launchcontrol"
 cask "launchrocket"
 cask "lens"
+cask "losslesscut"
 cask "macdown"
 cask "macfuse"
 cask "mailtrackerblocker"
@@ -238,7 +244,6 @@ cask "shottr"
 cask "sloth"
 cask "soulseek"
 cask "stay"
-cask "tunnelblick"
 cask "utm"
 cask "vlc"
 cask "webpquicklook"
@@ -250,11 +255,14 @@ mas "Amphetamine", id: 937984704
 mas "Apple Configurator", id: 1037126344
 mas "AudioBookBinder", id: 413969927
 mas "Bear", id: 1091189122
+mas "Bitdefender Virus Scanner", id: 500154009
 mas "Bumpr", id: 1166066070
 mas "DaisyDisk", id: 411643860
 mas "Developer", id: 640199958
 mas "Disk Speed Test", id: 425264550
 mas "GarageBand", id: 682658836
+mas "Health Auto Export", id: 1115567069
+mas "Home Assistant", id: 1099568401
 mas "iA Writer", id: 775737590
 mas "iMovie", id: 408981434
 mas "Keka", id: 470158793
@@ -274,7 +282,6 @@ mas "NZBin", id: 979608899
 mas "NZBVortex 3", id: 914250185
 mas "Pages", id: 409201541
 mas "Parcel", id: 639968404
-mas "PastePal", id: 1503446680
 mas "Peek", id: 1554235898
 mas "Pixelmator Pro", id: 1289583905
 mas "Poolsuite FM", id: 1514817810
@@ -287,6 +294,7 @@ mas "Tailscale", id: 1475387142
 mas "TestFlight", id: 899247664
 mas "Textual IRC Client", id: 1262957439
 mas "Things", id: 904280696
+mas "Webcam Settings", id: 533696630
 mas "WhatsApp", id: 1147396723
 mas "WireGuard", id: 1451685025
 mas "Xcode", id: 497799835
