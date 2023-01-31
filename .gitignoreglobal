@@ -2,7 +2,7 @@
 **/.dccache
 # allow recommending extensions in repos
 !.vscode/extensions.json
-.vscode
+.vscode/*
 .idea
 *.swp
 *.swo
