@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+# This script can be run as a pre-push hook locally on repositories to add messages / ensure we're not pushing to the wrong branch etc...
+
+branch_name=$(git symbolic-ref --short HEAD)
+if [ "$branch_name" == "main" ] || [ "$branch_name" == "master" ]; then
+  echo "WARNING: You are pushing to the $branch_name branch!"
+  read -r -p "Are you sure you want to push to $branch_name? [y/N] " response
+  if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+    echo "Pushing to $branch_name"
+  else
+    echo "Aborting push"
+    exit 1
+  fi
+fi

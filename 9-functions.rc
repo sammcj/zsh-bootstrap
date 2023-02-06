@@ -117,6 +117,45 @@ function pr-checkout() {
   fi
 }
 
+function git_add_global_prepush_hook() {
+  local repo_path=$1
+  local branch_name=$2
+  local hooks_path="$repo_path/.git/hooks"
+
+  # Check if the repo_path is a Git repository
+  if [ ! -d "$repo_path/.git" ]; then
+    echo "$repo_path is not a Git repository"
+    return 1
+  fi
+
+  # Create the pre-push hook if it doesn't exist
+  if [ ! -f "$hooks_path/pre-push" ]; then
+    touch "$hooks_path/pre-push"
+    chmod +x "$hooks_path/pre-push"
+  fi
+
+  # Add the code to the pre-push hook
+  cat << EOF >> "$hooks_path/pre-push"
+#!/usr/bin/env bash
+
+# This script can be run as a pre-push hook locally on repositories to add messages / ensure we're not pushing to the wrong branch etc...
+
+branch_name=$(git symbolic-ref --short HEAD)
+if [ "$branch_name" == "main" ] || [ "$branch_name" == "master" ]; then
+  echo "WARNING: You are pushing to the $branch_name branch!"
+  read -r -p "Are you sure you want to push to $branch_name? [y/N] " response
+  if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+    echo "$response - Pushing to $branch_name"
+  else
+    echo "Aborting push"
+    exit 1
+  fi
+fi
+EOF
+
+  echo "Global pre-push hook added to $repo_path"
+}
+
 # Gets the number of commits ahead from remote
 function git_commits_ahead() {
   if command git rev-parse --git-dir &>/dev/null; then
@@ -496,4 +535,22 @@ docker_login_ghcr(){
   fi
 
   printf '{"Username":"%s", "Secret":"%s"}\n' "$(gh config get -h github.com user)" "${token}"
+}
+
+
+# 3D Printing
+function cura-backup(){
+  # Zip up the latest cura config from the newest number cura config directory (~/Library/Application\ Support/cura/(number.number) (e.g. 4.8)
+  # and copy it to the cloud backup folder
+  local cura_base_dir="${HOME}/Library/Application Support/cura"
+  local destination="${HOME}/Library/Mobile Documents/com~apple~CloudDocs/Backups/3dprinting/cura"
+  local latest_version_dir="$(ls -d ${cura_base_dir}/*/ | tail -n1)"
+
+  # zip it up with the date
+  local date="$(date +%Y-%m-%d)"
+  local zip_file="${destination}/cura-${date}.zip"
+  zip -r "${zip_file}" "${latest_version_dir}"
+  echo "Created ${zip_file}"
+
+
 }

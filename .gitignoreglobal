@@ -1,6 +1,7 @@
 # Editors
 **/.dccache
 # allow recommending extensions in repos
+!**/.vscode/extensions.json
 !.vscode/extensions.json
 .vscode/*
 .idea

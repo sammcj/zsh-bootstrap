@@ -139,10 +139,6 @@ alias json-graph='colima start && docker run -p 8888:8080 jsonvisio && open http
 # Backblaze
 alias backblaze_edit='code /Library/Backblaze.bzpkg/bzdata/bzexcluderules_editable.xml'
 
-# 3D printing (cura etc...)
-alias cura='open -a /Applications/Ultimaker-Cura.app'
-alias cura-backup='cp -r ~/Library/Application\ Support/cura/*.zip ~/Library/Mobile\ Documents/com~apple~CloudDocs/Backups/3dprinting/cura/'
-
 alias scripts='cd ~/git/scripts'
 
 ### Suffix Aliases ###
@@ -176,3 +172,11 @@ alias modified-today="mdfind 'kMDItemFSContentChangeDate>\$time.today'"
 if [[ "$OSTYPE" == "darwin"* ]]; then
   alias lsusb='ioreg -p IOUSB -l -w 0'
 fi
+
+# 3D Printing
+
+alias cura='open -a /Applications/Ultimaker-Cura.app'
+alias cura-backup='cp -r ~/Library/Application\ Support/cura/*.zip ~/Library/Mobile\ Documents/com~apple~CloudDocs/Backups/3dprinting/cura/'
+
+alias backup-models="rsync -avr --partial '/Users/samm/Library/Mobile Documents/com~apple~CloudDocs/3D Printing/Models' root@nas:/mnt/raid/3dprinting/"
+alias backup-models-delete="rsync -avr --partial '/Users/samm/Library/Mobile Documents/com~apple~CloudDocs/3D Printing/Models' root@nas:/mnt/raid/3dprinting/ --delete"
