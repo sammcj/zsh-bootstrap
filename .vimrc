@@ -212,6 +212,9 @@ map <F5> :GitGutterAll<CR>:redraw!<CR>
 " Fix current word with first spelling suggestion.
 map Z 1z=
 
+" Enable incremental search
+set is hls
+
 
 "" FUNCTIONS
 " RemoveFancyCharacters COMMAND

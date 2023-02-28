@@ -551,6 +551,54 @@ function cura-backup(){
   local zip_file="${destination}/cura-${date}.zip"
   zip -r "${zip_file}" "${latest_version_dir}"
   echo "Created ${zip_file}"
-
-
 }
+
+# ML / Github Copilot
+copilot_what-the-shell () {
+  TMPFILE=$(mktemp);
+  trap 'rm -f $TMPFILE' EXIT;
+  if /Users/samm/Library/Caches/fnm_multishells/86793_1677532119189/bin/github-copilot-cli what-the-shell "$@" --shellout $TMPFILE; then
+    if [ -e "$TMPFILE" ]; then
+      FIXED_CMD=$(cat $TMPFILE);
+
+      eval "$FIXED_CMD"
+    else
+      echo "Apologies! Extracting command failed"
+    fi
+  else
+    return 1
+  fi
+};
+
+copilot_git-assist () {
+  TMPFILE=$(mktemp);
+  trap 'rm -f $TMPFILE' EXIT;
+  if /Users/samm/Library/Caches/fnm_multishells/86793_1677532119189/bin/github-copilot-cli git-assist "$@" --shellout $TMPFILE; then
+    if [ -e "$TMPFILE" ]; then
+      FIXED_CMD=$(cat $TMPFILE);
+
+      eval "$FIXED_CMD"
+    else
+      echo "Apologies! Extracting command failed"
+    fi
+  else
+    return 1
+  fi
+};
+
+copilot_gh-assist () {
+  TMPFILE=$(mktemp);
+  trap 'rm -f $TMPFILE' EXIT;
+  if /Users/samm/Library/Caches/fnm_multishells/86793_1677532119189/bin/github-copilot-cli gh-assist "$@" --shellout $TMPFILE; then
+    if [ -e "$TMPFILE" ]; then
+      FIXED_CMD=$(cat $TMPFILE);
+
+      eval "$FIXED_CMD"
+    else
+      echo "Apologies! Extracting command failed"
+    fi
+  else
+    return 1
+  fi
+};
+

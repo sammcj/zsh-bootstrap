@@ -174,9 +174,19 @@ if [[ "$OSTYPE" == "darwin"* ]]; then
 fi
 
 # 3D Printing
-
-alias cura='open -a /Applications/Ultimaker-Cura.app'
+alias rockpi='ssh root@rockpi'
+alias cura='open -a /Applications/UltiMaker Cura.app'
 alias cura-backup='cp -r ~/Library/Application\ Support/cura/*.zip ~/Library/Mobile\ Documents/com~apple~CloudDocs/Backups/3dprinting/cura/'
 
 alias backup-models="rsync -avr --partial '/Users/samm/Library/Mobile Documents/com~apple~CloudDocs/3D Printing/Models' root@nas:/mnt/raid/3dprinting/"
 alias backup-models-delete="rsync -avr --partial '/Users/samm/Library/Mobile Documents/com~apple~CloudDocs/3D Printing/Models' root@nas:/mnt/raid/3dprinting/ --delete"
+
+# ML / Github Copilot
+alias copilot="github-copilot-cli what-the-shell"
+alias copilot-git="github-copilot-cli git-assist"
+alias git-copilot='copilot-git'
+alias gh-cli-copilot="github-copilot-cli gh-assist"
+alias '??'='copilot_what-the-shell'  # function
+alias 'git?'='copilot_git-assist'    # function
+alias 'gh?'='copilot_gh-assist'      # function
+alias 'wts'='copilot_what-the-shell' # function
