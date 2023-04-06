@@ -1,12 +1,10 @@
-# Public Git Config - Private config stored elsewhere and sourced by this config.
-
 [credential]
   helper = store
 
 [core]
-  pager = delta
+	pager = diff-so-fancy | less --tabs=2 -RFX
   excludesfile = ~/.gitignoreglobal
-  ignorecase = false
+  ignorecase = true
 
 [include]
     path = ~/.gitconfig.private
@@ -25,7 +23,25 @@
   tree = log --graph --decorate --pretty=oneline --abbrev-commit
   squash-all = "!f(){ git reset $(git commit-tree HEAD^{tree} -m \"${1:-A new start}\");};f"
   scrub = reset --hard @{upstream}
+  recentb = "!r() { refbranch=$1 count=$2; git for-each-ref --sort=-committerdate refs/heads --format='%(refname:short)|%(HEAD)%(color:yellow)%(refname:short)|%(color:bold green)%(committerdate:relative)|%(color:blue)%(subject)|%(color:magenta)%(authorname)%(color:reset)' --color=always --count=${count:-20} | while read line; do branch=$(echo \"$line\" | awk 'BEGIN { FS = \"|\" }; { print $1 }' | tr -d '*'); ahead=$(git rev-list --count \"${refbranch:-origin/master}..${branch}\"); behind=$(git rev-list --count \"${branch}..${refbranch:-origin/master}\"); colorline=$(echo \"$line\" | sed 's/^[^|]*|//'); echo \"$ahead|$behind|$colorline\" | awk -F'|' -vOFS='|' '{$5=substr($5,1,70)}1' ; done | ( echo \"ahead|behind||branch|lastcommit|message|author\\n\" && cat) | column -ts'|';}; r"
+  # https://github.com/nedbat/watchgha
+  runs = "!f() { \
+      watch_gha_runs \
+          \"$(git remote get-url origin)\" \
+          \"$(git rev-parse --abbrev-ref HEAD)\"; \
+  }; f"
 
+# *********************
+# Rebase workflow
+  mainbranch = "!git remote show origin | sed -n '/HEAD branch/s/.*: //p'"
+  synced = "!git pull origin $(git mainbranch) --rebase"
+  update = "!git pull origin $(git rev-parse --abbrev-ref HEAD) --rebase"
+  squash = "!git rebase -v -i $(git mainbranch)"
+  publish = push origin HEAD --force-with-lease
+  pub = publish
+  ammend = commit --amend
+  amend = commit --amend
+# *********************
 
 ## Behaviour
 [init]
@@ -39,6 +55,7 @@
   autosquash = true
 [diff]
   colorMoved = default
+	submodule = log
 [difftool]
   prompt = false
 [merge]
@@ -60,7 +77,7 @@
 
 # Delta diff-tool
 [delta]
-  side-by-side = true
+  side-by-side = false
   navigate = true
   features = decorations
   features = unobtrusive-line-numbers
@@ -95,3 +112,12 @@
 [mergetool "Kaleidoscope"]
   cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
   trustExitCode = true
+
+[safe]
+	directory = /github/workspace
+[interactive]
+	diffFilter = diff-so-fancy --patch
+[diff-so-fancy]
+	changeHunkIndicators = true
+[status]
+	submodulesummary = 1

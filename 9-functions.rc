@@ -602,3 +602,41 @@ copilot_gh-assist () {
   fi
 };
 
+
+function ripSearch(){
+  # 1. Search for text in files using Ripgrep
+  # 2. Interactively narrow down the list using fzf
+  # 3. Open the file in vscode
+
+  while getopts n OPTION
+  do
+    case "${OPTION}" in
+      n) NEW_WINDOW="--new-window";;
+      *) echo "ERROR: we only support -n" && exit 1;;
+    esac
+  done
+  shift $((OPTIND-1))
+
+  : "${NEW_WINDOW:=""}"
+
+  # Allow the function to be cancelled with Ctrl-C, but don't exit the shell
+  trap 'return 1' INT
+
+  ARGLIST=""
+  while IFS=: read -rA SELECTED; do
+    if [ "${#SELECTED[@]}" -gt 0 ]; then
+      ARGLIST+="--goto ${SELECTED[0]}:${SELECTED[1]} "
+    fi
+  done < <(
+    rg --color=always --line-number --no-heading --smart-case "${*:-}" |
+      fzf --ansi \
+          --color "hl:-1:underline,hl+:-1:underline:reverse" \
+          --delimiter : \
+          --multi \
+          --preview 'bat --color=always {1} --highlight-line {2} --style=header,grid {}' \
+          --preview-window 'right,60%,border-bottom,+{2}+3/3,~3'
+  )
+  if [ -n "${ARGLIST}" ]; then
+    code "${NEW_WINDOW}" "${ARGLIST}"
+  fi
+}
