@@ -53,6 +53,22 @@ function checkout-hotfix() {
   git checkout -b "${HOTFIX_BRANCH}"
 }
 
+function checkout-hotfix() {
+  local PREFIX="hotfix-${USER}"
+  local DATESTAMP=$(date +%Y-%m-%d)
+  # If the hotfix branch already exists, append a number to the branch name, if the number already exists increment it
+  if git branch -a | grep -q "$PREFIX-$DATESTAMP"; then
+    local COUNT=1
+    while git branch -a | grep -q "$PREFIX-$DATESTAMP-$COUNT"; do
+      COUNT=$((COUNT+1))
+    done
+    git checkout -b "${PREFIX}-${DATESTAMP}-${COUNT}"
+  else
+    git checkout -b "${PREFIX}-${DATESTAMP}"
+  fi
+}
+
+
 function commit-hotfix() {
   git add .
   git commit -m "Hotfix-$(date +%Y/%m/%d) -- $*"
@@ -155,6 +171,8 @@ EOF
 
   echo "Global pre-push hook added to $repo_path"
 }
+
+
 
 # Gets the number of commits ahead from remote
 function git_commits_ahead() {
@@ -307,8 +325,6 @@ pdfcompress ()
 }
 
 
-
-
 # Usage: mv oldfilename
 # If you call mv without the second parameter it will prompt you to edit the filename on command line.
 # Original mv is called when it's called with more than one argument.
@@ -366,6 +382,16 @@ function ghac() {
   DATE=$(date -v "-1m" +"%Y-%m-%d") gh api "repos/${USER}/${REPO}/actions/runs" --paginate -q '.workflow_runs[] | select (.run_started_at  <= "env.DATE") | (.id)' \
     | xargs -n1 -I % gh api "repos/${USER}/${REPO}/actions/runs"/% -X DELETE
 }
+
+function github_actions_watcher() {
+  # https://github.com/nedbat/watchgha
+  TOKEN_BACKUP=$GITHUB_TOKEN
+  unset GITHUB_TOKEN
+  watch_gha_runs "$@" \
+      "$(git remote get-url origin)" \
+      "$(git rev-parse --abbrev-ref HEAD)"
+  GITHUB_TOKEN=$TOKEN_BACKUP
+};
 
 # Git checkout new branch, git add, git commit, git push in all subdirectories matching a pattern
 function git_add_commit_push(){

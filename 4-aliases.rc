@@ -33,17 +33,25 @@ alias gitdiff="git diff --color-words --color=always"
 alias gitclean="git fetch -p; git remote prune origin; git repack -a -d -f --max-pack-size=10g --depth=500 --window=250; git gc --aggressive"
 #alias gitrb='for branch in `git branch -r --merged | grep -v HEAD`; do echo -e `git show --format="%ci %cr %an" $branch | head -n 1` \\t$branch; done | sort -r'
 # alias gbd="git branch -d" Moved to functions
+alias commit="git commit -m"
 alias ch="commit-hotfix"
+alias hotfix-commit="commit-hotfix"
+alias jira-commit="commit-jira"
 alias cj="commit-jira"
 alias jira="checkout-jira"
+alias jira-checkout="checkout-jira"
 alias j="checkout-jira"
 alias hotfix="checkout-hotfix"
+alias hotfix-checkout="checkout-hotfix"
 alias minor="git commit -m 'chore: minor tweaks [skip ci]"
 alias git-delete-local-branches="git fetch --all --prune"
 alias githist="git log --graph --pretty=oneline --abbrev-commit"
 alias git-delete-remote-branch="git push origin --delete"
 alias gitwip="git add .; git commit -m 'WIP - will rebase'; git push"
 alias gitamendrebase="GIT_SEQUENCE_EDITOR=\"sed -i -re 's/^pick /e /'\"; git rebase -i"
+alias bfg="java -jar ~/bin/bfg.jar"
+alias git-cleanup-repack="bfg"
+alias github-runs="github_actions_watcher"
 alias amend="git commit --amend --no-edit"
 alias gitlast="git add .;git commit --amend -C HEAD ; git push"
 alias gitday="git diff HEAD 'HEAD@{1 day ago}'"
@@ -182,6 +190,10 @@ alias backup-models="rsync -avr --partial '/Users/samm/Library/Mobile Documents/
 alias backup-models-delete="rsync -avr --partial '/Users/samm/Library/Mobile Documents/com~apple~CloudDocs/3D Printing/Models' root@nas:/mnt/raid/3dprinting/ --delete"
 
 alias creality='/Users/samm/git/sammcj/ender-configs/creality-sonic-pad/login.exp'
+
+# pip install git+https://github.com/ChristophSchranz/Tweaker-3.git
+alias rotate='tweaker3 -vb -x -i'
+alias rotate_min_supports='tweaker3 -vb -x -min sur -i'
 
 # ML / Github Copilot
 alias copilot="github-copilot-cli what-the-shell"

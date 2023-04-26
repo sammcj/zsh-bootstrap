@@ -16,3 +16,8 @@ eval "$(saml2aws --completion-script-zsh)"
 
 #asdf
 . /opt/homebrew/opt/asdf/libexec/asdf.sh
+
+#pyenv
+export PYENV_ROOT="$HOME/.pyenv"
+command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init -)"
