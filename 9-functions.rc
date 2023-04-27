@@ -1,9 +1,8 @@
 #shellcheck disable=SC2148
 
-function mkcd
-{
-  dir="$*";
-  mkdir -p "$dir" && cd "$dir" || exit;
+function mkcd {
+  dir="$*"
+  mkdir -p "$dir" && cd "$dir" || exit
 }
 
 # change /dev/null to youtube-dl-"$(date +%Y%m%d-%H%M%S)".log if you want logging
@@ -12,13 +11,13 @@ function mkcd
 function git_prompt_info() {
   local ref
   if [[ "$(command git config --get oh-my-zsh.hide-status 2>/dev/null)" != "1" ]]; then
-    ref=$(command git symbolic-ref HEAD 2> /dev/null) || \
-    ref=$(command git rev-parse --short HEAD 2> /dev/null) || return 0
+    ref=$(command git symbolic-ref HEAD 2>/dev/null) ||
+      ref=$(command git rev-parse --short HEAD 2>/dev/null) || return 0
     echo "$ZSH_THEME_GIT_PROMPT_PREFIX${ref#refs/heads/}$(parse_git_dirty)$ZSH_THEME_GIT_PROMPT_SUFFIX"
   fi
 }
 
-function gco(){
+function gco() {
   if [[ -n $1 ]]; then
     if [[ $1 == "-b" ]]; then
       # shift to remove -b from args
@@ -36,7 +35,7 @@ function gco(){
   fi
 }
 
-function gbd(){
+function gbd() {
   if [[ -n $* ]]; then
     git branch -d "$@"
   else
@@ -60,7 +59,7 @@ function checkout-hotfix() {
   if git branch -a | grep -q "$PREFIX-$DATESTAMP"; then
     local COUNT=1
     while git branch -a | grep -q "$PREFIX-$DATESTAMP-$COUNT"; do
-      COUNT=$((COUNT+1))
+      COUNT=$((COUNT + 1))
     done
     git checkout -b "${PREFIX}-${DATESTAMP}-${COUNT}"
   else
@@ -68,10 +67,16 @@ function checkout-hotfix() {
   fi
 }
 
-
 function commit-hotfix() {
+  # Add -n if it's passed as an argument
+  local ARGS=""
+  if [[ -n $* ]]; then
+    local ARGS="-n"
+    # shift to remove the first argument from the list of arguments
+    shift 1
+  fi
   git add .
-  git commit -m "Hotfix-$(date +%Y/%m/%d) -- $*"
+  git commit "$ARGS" -m "Hotfix-$(date +%Y/%m/%d) -- $*"
 }
 
 function checkout-jira() {
@@ -83,10 +88,18 @@ function checkout-jira() {
   git checkout -b "${JIRA_BRANCH}"
 }
 
-function commit-jira(){
+function commit-jira() {
   # Use the JIRA number from the start of the branch name for the commit message (e.g. IF-1234 from the branch IF-1234-feature-name)
+
+  # Add -n if it's passed as an argument
+  local ARGS=""
+  if [[ -n $* ]]; then
+    local ARGS="-n"
+    # shift to remove the first argument from the list of arguments
+    shift 1
+  fi
   git add .
-  git commit -m "$(git rev-parse --abbrev-ref HEAD | cut -d'-' -f1 -f2) -- $*"
+  git commit "$ARGS" -m "$(git rev-parse --abbrev-ref HEAD | cut -d'-' -f1 -f2) -- $*"
 }
 
 # Outputs the name of the current branch
@@ -95,11 +108,11 @@ function commit-jira(){
 # it's not a symbolic ref, but in a Git repo.
 function git_current_branch() {
   local ref
-  ref=$(command git symbolic-ref --quiet HEAD 2> /dev/null)
+  ref=$(command git symbolic-ref --quiet HEAD 2>/dev/null)
   local ret=$?
   if [[ $ret != 0 ]]; then
-    [[ $ret == 128 ]] && return  # no git repo.
-    ref=$(command git rev-parse --short HEAD 2> /dev/null) || return
+    [[ $ret == 128 ]] && return # no git repo.
+    ref=$(command git rev-parse --short HEAD 2>/dev/null) || return
   fi
   echo "${ref#refs/heads/}"
 }
@@ -107,25 +120,18 @@ function git_current_branch() {
 function pr-checkout() {
   local jq_template pr_number
 
-  jq_template='"'\
-'#\(.number) - \(.title)'\
-'\t'\
-'Author: \(.user.login)\n'\
-'Created: \(.created_at)\n'\
-'Updated: \(.updated_at)\n\n'\
-'\(.body)'\
-'"'
+  jq_template='"''#\(.number) - \(.title)''\t''Author: \(.user.login)\n''Created: \(.created_at)\n''Updated: \(.updated_at)\n\n''\(.body)''"'
 
   pr_number=$(
     gh api 'repos/:owner/:repo/pulls' |
-    jq ".[] | $jq_template" |
-    sed -e 's/"\(.*\)"/\1/' -e 's/\\t/\t/' |
-    fzf \
-      --with-nth=1 \
-      --delimiter='\t' \
-      --preview='echo -e {2}' \
-      --preview-window=top:wrap |
-    sed 's/^#\([0-9]\+\).*/\1/'
+      jq ".[] | $jq_template" |
+      sed -e 's/"\(.*\)"/\1/' -e 's/\\t/\t/' |
+      fzf \
+        --with-nth=1 \
+        --delimiter='\t' \
+        --preview='echo -e {2}' \
+        --preview-window=top:wrap |
+      sed 's/^#\([0-9]\+\).*/\1/'
   )
 
   if [ -n "$pr_number" ]; then
@@ -151,7 +157,7 @@ function git_add_global_prepush_hook() {
   fi
 
   # Add the code to the pre-push hook
-  cat << EOF >> "$hooks_path/pre-push"
+  cat <<EOF >>"$hooks_path/pre-push"
 #!/usr/bin/env bash
 
 # This script can be run as a pre-push hook locally on repositories to add messages / ensure we're not pushing to the wrong branch etc...
@@ -171,8 +177,6 @@ EOF
 
   echo "Global pre-push hook added to $repo_path"
 }
-
-
 
 # Gets the number of commits ahead from remote
 function git_commits_ahead() {
@@ -198,21 +202,21 @@ function git_commits_behind() {
 
 # Outputs if current branch is ahead of remote
 function git_prompt_ahead() {
-  if [[ -n "$(command git rev-list origin/"$(git_current_branch)"..HEAD 2> /dev/null)" ]]; then
+  if [[ -n "$(command git rev-list origin/"$(git_current_branch)"..HEAD 2>/dev/null)" ]]; then
     echo "$ZSH_THEME_GIT_PROMPT_AHEAD"
   fi
 }
 
 # Outputs if current branch is behind remote
 function git_prompt_behind() {
-  if [[ -n "$(command git rev-list HEAD..origin/"$(git_current_branch)" 2> /dev/null)" ]]; then
+  if [[ -n "$(command git rev-list HEAD..origin/"$(git_current_branch)" 2>/dev/null)" ]]; then
     echo "$ZSH_THEME_GIT_PROMPT_BEHIND"
   fi
 }
 
 # Outputs if current branch exists on remote or not
 function git_prompt_remote() {
-  if [[ -n "$(command git show-ref origin/"$(git_current_branch)" 2> /dev/null)" ]]; then
+  if [[ -n "$(command git show-ref origin/"$(git_current_branch)" 2>/dev/null)" ]]; then
     echo "$ZSH_THEME_GIT_PROMPT_REMOTE_EXISTS"
   else
     echo "$ZSH_THEME_GIT_PROMPT_REMOTE_MISSING"
@@ -222,85 +226,88 @@ function git_prompt_remote() {
 # Formats prompt string for current git commit short SHA
 function git_prompt_short_sha() {
   local SHA
-  SHA=$(command git rev-parse --short HEAD 2> /dev/null) && echo "$ZSH_THEME_GIT_PROMPT_SHA_BEFORE$SHA$ZSH_THEME_GIT_PROMPT_SHA_AFTER"
+  SHA=$(command git rev-parse --short HEAD 2>/dev/null) && echo "$ZSH_THEME_GIT_PROMPT_SHA_BEFORE$SHA$ZSH_THEME_GIT_PROMPT_SHA_AFTER"
 }
 
 # Formats prompt string for current git commit long SHA
 function git_prompt_long_sha() {
   local SHA
-  SHA=$(command git rev-parse HEAD 2> /dev/null) && echo "$ZSH_THEME_GIT_PROMPT_SHA_BEFORE$SHA$ZSH_THEME_GIT_PROMPT_SHA_AFTER"
+  SHA=$(command git rev-parse HEAD 2>/dev/null) && echo "$ZSH_THEME_GIT_PROMPT_SHA_BEFORE$SHA$ZSH_THEME_GIT_PROMPT_SHA_AFTER"
 }
 
 # Get the status of the working tree
 function git_prompt_status() {
   local INDEX STATUS
-  INDEX=$(command git status --porcelain -b 2> /dev/null)
+  INDEX=$(command git status --porcelain -b 2>/dev/null)
   STATUS=""
-  if eval "$(echo "$INDEX" | command grep -E '^\?\? ' &> /dev/null)"; then
+  if eval "$(echo "$INDEX" | command grep -E '^\?\? ' &>/dev/null)"; then
     STATUS="$ZSH_THEME_GIT_PROMPT_UNTRACKED$STATUS"
   fi
-  if eval "$(echo "$INDEX" | grep '^A  ' &> /dev/null)"; then
+  if eval "$(echo "$INDEX" | grep '^A  ' &>/dev/null)"; then
     STATUS="$ZSH_THEME_GIT_PROMPT_ADDED$STATUS"
-  elif eval "$(echo "$INDEX" | grep '^M  ' &> /dev/null)"; then
+  elif eval "$(echo "$INDEX" | grep '^M  ' &>/dev/null)"; then
     STATUS="$ZSH_THEME_GIT_PROMPT_ADDED$STATUS"
   fi
-  if eval "$(echo "$INDEX" | grep '^ M ' &> /dev/null)"; then
+  if eval "$(echo "$INDEX" | grep '^ M ' &>/dev/null)"; then
     STATUS="$ZSH_THEME_GIT_PROMPT_MODIFIED$STATUS"
-  elif eval "$(echo "$INDEX" | grep '^AM ' &> /dev/null)"; then
+  elif eval "$(echo "$INDEX" | grep '^AM ' &>/dev/null)"; then
     STATUS="$ZSH_THEME_GIT_PROMPT_MODIFIED$STATUS"
-  elif eval "$(echo "$INDEX" | grep '^ T ' &> /dev/null)"; then
+  elif eval "$(echo "$INDEX" | grep '^ T ' &>/dev/null)"; then
     STATUS="$ZSH_THEME_GIT_PROMPT_MODIFIED$STATUS"
   fi
-  if eval "$(echo "$INDEX" | grep '^R  ' &> /dev/null)"; then
+  if eval "$(echo "$INDEX" | grep '^R  ' &>/dev/null)"; then
     STATUS="$ZSH_THEME_GIT_PROMPT_RENAMED$STATUS"
   fi
-  if eval "$(echo "$INDEX" | grep '^ D ' &> /dev/null)"; then
+  if eval "$(echo "$INDEX" | grep '^ D ' &>/dev/null)"; then
     STATUS="$ZSH_THEME_GIT_PROMPT_DELETED$STATUS"
-  elif eval "$(echo "$INDEX" | grep '^D  ' &> /dev/null)"; then
+  elif eval "$(echo "$INDEX" | grep '^D  ' &>/dev/null)"; then
     STATUS="$ZSH_THEME_GIT_PROMPT_DELETED$STATUS"
-  elif eval "$(echo "$INDEX" | grep '^AD ' &> /dev/null)"; then
+  elif eval "$(echo "$INDEX" | grep '^AD ' &>/dev/null)"; then
     STATUS="$ZSH_THEME_GIT_PROMPT_DELETED$STATUS"
   fi
   if eval "$(command git rev-parse --verify refs/stash >/dev/null 2>&1)"; then
     STATUS="$ZSH_THEME_GIT_PROMPT_STASHED$STATUS"
   fi
-  if eval "$(echo "$INDEX" | grep '^UU ' &> /dev/null)"; then
+  if eval "$(echo "$INDEX" | grep '^UU ' &>/dev/null)"; then
     STATUS="$ZSH_THEME_GIT_PROMPT_UNMERGED$STATUS"
   fi
-  if eval "$(echo "$INDEX" | grep '^## [^ ]\+ .*ahead' &> /dev/null)"; then
+  if eval "$(echo "$INDEX" | grep '^## [^ ]\+ .*ahead' &>/dev/null)"; then
     STATUS="$ZSH_THEME_GIT_PROMPT_AHEAD$STATUS"
   fi
-  if eval "$(echo "$INDEX" | grep '^## [^ ]\+ .*behind' &> /dev/null)"; then
+  if eval "$(echo "$INDEX" | grep '^## [^ ]\+ .*behind' &>/dev/null)"; then
     STATUS="$ZSH_THEME_GIT_PROMPT_BEHIND$STATUS"
   fi
-  if eval "$(echo "$INDEX" | grep '^## [^ ]\+ .*diverged' &> /dev/null)"; then
+  if eval "$(echo "$INDEX" | grep '^## [^ ]\+ .*diverged' &>/dev/null)"; then
     STATUS="$ZSH_THEME_GIT_PROMPT_DIVERGED$STATUS"
   fi
   echo "$STATUS"
 }
 
-#  TODO: replace this with something more standard, this was a temporary workaround for poor performance of the stock oh-my-zsh git plugin
-# Compares the provided version of git to the version installed and on path
-# Outputs -1, 0, or 1 if the installed version is less than, equal to, or
-# greater than the input version, respectively.
-function git_compare_version() {
-  local INPUT_GIT_VERSION INSTALLED_GIT_VERSION
-  INPUT_GIT_VERSION=(${(s/./)1})
-  INSTALLED_GIT_VERSION=($(command git --version 2>/dev/null))
-  INSTALLED_GIT_VERSION=(${(s/./)INSTALLED_GIT_VERSION[3]})
+# #  TODO: replace this with something more standard, this was a temporary workaround for poor performance of the stock oh-my-zsh git plugin
+# # Compares the provided version of git to the version installed and on path
+# # Outputs -1, 0, or 1 if the installed version is less than, equal to, or
+# # greater than the input version, respectively.
+# function git_compare_version() {
+#   local INPUT_GIT_VERSION INSTALLED_GIT_VERSION
+#   # shellcheck disable=SC2206,SC2207,SC2296
+#   INPUT_GIT_VERSION=(${(s/./)1})
+#   # shellcheck disable=SC2206,SC2207,SC2296
+#   INSTALLED_GIT_VERSION=($(command git --version 2>/dev/null))
+#   # shellcheck disable=SC2206,SC2207,SC2296
+#   INSTALLED_GIT_VERSION=(${(s/./)INSTALLED_GIT_VERSION[3]})
 
-  for i in {1..3}; do
-    if [[ ${INSTALLED_GIT_VERSION[$i]} -gt ${INPUT_GIT_VERSION[$i]} ]]; then
-      echo 1
-      return 0
-    fi
-    if [[ ${INSTALLED_GIT_VERSION[$i]} -lt ${INPUT_GIT_VERSION[$i]} ]]; then
-      echo -1
-      return 0
-    fi
-  done
-  echo 0
-}
+#   for i in {1..3}; do
+#     if [[ ${INSTALLED_GIT_VERSION[$i]} -gt ${INPUT_GIT_VERSION[$i]} ]]; then
+#       echo 1
+#       return 0
+#     fi
+#     if [[ ${INSTALLED_GIT_VERSION[$i]} -lt ${INPUT_GIT_VERSION[$i]} ]]; then
+#       echo -1
+#       return 0
+#     fi
+#   done
+#   echo 0
+# }
 
 # Outputs the name of the current user
 # Usage example: $(git_current_user_name)
@@ -315,15 +322,13 @@ function git_current_user_email() {
 }
 
 # Clean up the namespace slightly by removing the checker function
-unfunction git_compare_version
+# unfunction git_compare_version
 
 #source /usr/local/etc/profile.d/autojump.sh
 
-pdfcompress ()
-{
-  gs -q -dNOPAUSE -dBATCH -dSAFER -sDEVICE=pdfwrite -dCompatibilityLevel=1.3 -dPDFSETTINGS=/screen -dEmbedAllFonts=true -dSubsetFonts=true -dColorImageDownsampleType=/Bicubic -dColorImageResolution=144 -dGrayImageDownsampleType=/Bicubic -dGrayImageResolution=144 -dMonoImageDownsampleType=/Bicubic -dMonoImageResolution=144 -sOutputFile="$1".compressed.pdf "$1";
+pdfcompress() {
+  gs -q -dNOPAUSE -dBATCH -dSAFER -sDEVICE=pdfwrite -dCompatibilityLevel=1.3 -dPDFSETTINGS=/screen -dEmbedAllFonts=true -dSubsetFonts=true -dColorImageDownsampleType=/Bicubic -dColorImageResolution=144 -dGrayImageDownsampleType=/Bicubic -dGrayImageResolution=144 -dMonoImageDownsampleType=/Bicubic -dMonoImageResolution=144 -sOutputFile="$1".compressed.pdf "$1"
 }
-
 
 # Usage: mv oldfilename
 # If you call mv without the second parameter it will prompt you to edit the filename on command line.
@@ -344,19 +349,18 @@ function mv() {
   mv -v "$1" "$newfilename"
 }
 
-
 _force_rehash() {
-  (( CURRENT == 1 )) && rehash
-  return 1  # Because we didn't really complete anything
+  ((CURRENT == 1)) && rehash
+  return 1 # Because we didn't really complete anything
 }
 
 edit-command-output() {
- BUFFER=$(eval "$BUFFER")
- CURSOR=0
+  BUFFER=$(eval "$BUFFER")
+  CURSOR=0
 }
 zle -N edit-command-output
 
-__mkdir() { if [[ ! -d $1 ]]; then mkdir -p "$1"; fi }
+__mkdir() { if [[ ! -d $1 ]]; then mkdir -p "$1"; fi; }
 
 tch() {
   for x in "$@"; do
@@ -379,8 +383,8 @@ function s2a { eval $($(which saml2aws) script --shell=bash --profile=$@); }
 # Deletes workflow logs from a given repo older than 1 month
 # e.g. USER=myuser REPO=myrepo ghac
 function ghac() {
-  DATE=$(date -v "-1m" +"%Y-%m-%d") gh api "repos/${USER}/${REPO}/actions/runs" --paginate -q '.workflow_runs[] | select (.run_started_at  <= "env.DATE") | (.id)' \
-    | xargs -n1 -I % gh api "repos/${USER}/${REPO}/actions/runs"/% -X DELETE
+  DATE=$(date -v "-1m" +"%Y-%m-%d") gh api "repos/${USER}/${REPO}/actions/runs" --paginate -q '.workflow_runs[] | select (.run_started_at  <= "env.DATE") | (.id)' |
+    xargs -n1 -I % gh api "repos/${USER}/${REPO}/actions/runs"/% -X DELETE
 }
 
 function github_actions_watcher() {
@@ -388,33 +392,33 @@ function github_actions_watcher() {
   TOKEN_BACKUP=$GITHUB_TOKEN
   unset GITHUB_TOKEN
   watch_gha_runs "$@" \
-      "$(git remote get-url origin)" \
-      "$(git rev-parse --abbrev-ref HEAD)"
+    "$(git remote get-url origin)" \
+    "$(git rev-parse --abbrev-ref HEAD)"
   GITHUB_TOKEN=$TOKEN_BACKUP
-};
+}
 
 # Git checkout new branch, git add, git commit, git push in all subdirectories matching a pattern
-function git_add_commit_push(){
+function git_add_commit_push() {
   if [[ -z $1 ]] || [[ -z "$2" ]] || [[ -z "$3" ]]; then
-    echo 'You must pass three paramters, branchname, commit message, dir match - e.g. "my-branch" "commit message" ABC*';
+    echo 'You must pass three paramters, branchname, commit message, dir match - e.g. "my-branch" "commit message" ABC*'
   fi
   BRANCHNAME="$1"
   COMMITNAME="$2"
   MATCHDIRS="$3"
-  for dir in $MATCHDIRS;
-    do (
+  for dir in $MATCHDIRS; do
+    (
       cd "$dir" &&
-      git checkout -b "$BRANCHNAME" &&
-      git add . &&
-      git commit -n -m "$COMMITNAME" &&
-      git push
-      )
-    done
+        git checkout -b "$BRANCHNAME" &&
+        git add . &&
+        git commit -n -m "$COMMITNAME" &&
+        git push
+    )
+  done
 }
 
 # Interactive cd using fzf
 function fcd() {
-  local dir;
+  local dir
 
   while true; do
     # exit with ^D
@@ -429,9 +433,9 @@ function fcd() {
 
 # list env variables with fzf
 list_env() {
-  var=$(printenv | cut -d= -f1 | fzf) \
-    && echo "$var=$(printenv "$var")" \
-    && unset var
+  var=$(printenv | cut -d= -f1 | fzf) &&
+    echo "$var=$(printenv "$var")" &&
+    unset var
 }
 
 # Encryption (using age)
@@ -439,7 +443,7 @@ list_env() {
 # File with generated password
 encrypt_file_pw() {
   # Suggest installing age if not installed
-  if ! command -v age &> /dev/null; then
+  if ! command -v age &>/dev/null; then
     echo "age could not be found. Install it with 'brew install age'"
     return
   else
@@ -450,18 +454,18 @@ encrypt_file_pw() {
 conda_setup() {
   # >>> conda initialize >>>
   # !! Contents within this block are managed by 'conda init' !!
-  __conda_setup="$('/Users/samm/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+  __conda_setup="$('/Users/samm/miniconda3/bin/conda' 'shell.zsh' 'hook' 2>/dev/null)"
   if [ $? -eq 0 ]; then
-      eval "$__conda_setup"
+    eval "$__conda_setup"
   else
-      if [ -f "/Users/samm/miniconda3/etc/profile.d/conda.sh" ]; then
-          . "/Users/samm/miniconda3/etc/profile.d/conda.sh"
-      else
-          export PATH="/Users/samm/miniconda3/bin:$PATH"
-      fi
+    if [ -f "/Users/samm/miniconda3/etc/profile.d/conda.sh" ]; then
+      . "/Users/samm/miniconda3/etc/profile.d/conda.sh"
+    else
+      export PATH="/Users/samm/miniconda3/bin:$PATH"
+    fi
   fi
   unset __conda_setup
-# <<< conda initialize <<<
+  # <<< conda initialize <<<
 }
 
 function update_asdf() {
@@ -470,9 +474,9 @@ function update_asdf() {
 }
 
 # saml2aws
-aad(){
+aad() {
   INPUT_PROFILE=$(echo "$1" | sed -e 's/dosa/kis/g;s/cust/klue/g') # Specific to a project I'm working on.
-  local IDPPW=$(keychain_password awsazurepw) # requires mfa and keychain authentication
+  local IDPPW=$(keychain_password awsazurepw)                      # requires mfa and keychain authentication
   saml2aws login -a "$INPUT_PROFILE" --skip-prompt --password="$IDPPW" --profile="$INPUT_PROFILE" && export AWS_PROFILE="$INPUT_PROFILE" && export AWSCLIPARAMS="--profile=$INPUT_PROFILE"
   unset IDPPW
   aws --profile "$AWS_PROFILE" sts get-caller-identity
@@ -486,7 +490,6 @@ function awslogin() {
     aws configure list --profile "${1}" && eval $(saml2aws script --profile "${1}")
   fi
 }
-
 
 # Reads a password from keychain and outputs it
 # usage: keychain_password <service name to match on> <account>
@@ -512,26 +515,26 @@ keychain_password_prompt() {
 
 # A function that checks ssh-add and adds my keys if they're not already added
 function ssh-add-keys() {
-  if ! ssh-add -l|grep -qe 'ED25519\|RSA'; then
+  if ! ssh-add -l | grep -qe 'ED25519\|RSA'; then
     ssh-add --apple-use-keychain ~/.ssh/id_*.key
   fi
 }
 
 clean_string() {
-    # Escape special characters in a string such as $, ", ', `, \, and newline.
-    # Usage: escape_string "string to escape"
-    local string="${1}"
-    local escaped_string
-    escaped_string=$(printf '%q' "${string}")
-    echo "${escaped_string}"
+  # Escape special characters in a string such as $, ", ', `, \, and newline.
+  # Usage: escape_string "string to escape"
+  local string="${1}"
+  local escaped_string
+  escaped_string=$(printf '%q' "${string}")
+  echo "${escaped_string}"
 }
 
-docker_login_ghcr(){
+docker_login_ghcr() {
   # Dependencies: gh
   set -e
 
   if [ ! -f ~/.docker/config.json ]; then
-    echo '{"credsStore": "desktop","credHelpers": {"docker.pkg.github.com": "gh","ghcr.io": "gh"}}' > ~/.docker/config.json
+    echo '{"credsStore": "desktop","credHelpers": {"docker.pkg.github.com": "gh","ghcr.io": "gh"}}' >~/.docker/config.json
   fi
 
   cmd="${1}"
@@ -546,7 +549,6 @@ docker_login_ghcr(){
   if [ "get" != "${cmd}" ]; then
     exit 1
   fi
-
 
   host="$(cat -)"
   host="${host#https://}"
@@ -563,9 +565,8 @@ docker_login_ghcr(){
   printf '{"Username":"%s", "Secret":"%s"}\n' "$(gh config get -h github.com user)" "${token}"
 }
 
-
 # 3D Printing
-function cura-backup(){
+function cura-backup() {
   # Zip up the latest cura config from the newest number cura config directory (~/Library/Application\ Support/cura/(number.number) (e.g. 4.8)
   # and copy it to the cloud backup folder
   local cura_base_dir="${HOME}/Library/Application Support/cura"
@@ -580,12 +581,12 @@ function cura-backup(){
 }
 
 # ML / Github Copilot
-copilot_what-the-shell () {
-  TMPFILE=$(mktemp);
-  trap 'rm -f $TMPFILE' EXIT;
+copilot_what-the-shell() {
+  TMPFILE=$(mktemp)
+  trap 'rm -f $TMPFILE' EXIT
   if /Users/samm/Library/Caches/fnm_multishells/86793_1677532119189/bin/github-copilot-cli what-the-shell "$@" --shellout $TMPFILE; then
     if [ -e "$TMPFILE" ]; then
-      FIXED_CMD=$(cat $TMPFILE);
+      FIXED_CMD=$(cat $TMPFILE)
 
       eval "$FIXED_CMD"
     else
@@ -594,14 +595,14 @@ copilot_what-the-shell () {
   else
     return 1
   fi
-};
+}
 
-copilot_git-assist () {
-  TMPFILE=$(mktemp);
-  trap 'rm -f $TMPFILE' EXIT;
+copilot_git-assist() {
+  TMPFILE=$(mktemp)
+  trap 'rm -f $TMPFILE' EXIT
   if /Users/samm/Library/Caches/fnm_multishells/86793_1677532119189/bin/github-copilot-cli git-assist "$@" --shellout $TMPFILE; then
     if [ -e "$TMPFILE" ]; then
-      FIXED_CMD=$(cat $TMPFILE);
+      FIXED_CMD=$(cat $TMPFILE)
 
       eval "$FIXED_CMD"
     else
@@ -610,14 +611,14 @@ copilot_git-assist () {
   else
     return 1
   fi
-};
+}
 
-copilot_gh-assist () {
-  TMPFILE=$(mktemp);
-  trap 'rm -f $TMPFILE' EXIT;
+copilot_gh-assist() {
+  TMPFILE=$(mktemp)
+  trap 'rm -f $TMPFILE' EXIT
   if /Users/samm/Library/Caches/fnm_multishells/86793_1677532119189/bin/github-copilot-cli gh-assist "$@" --shellout $TMPFILE; then
     if [ -e "$TMPFILE" ]; then
-      FIXED_CMD=$(cat $TMPFILE);
+      FIXED_CMD=$(cat $TMPFILE)
 
       eval "$FIXED_CMD"
     else
@@ -626,22 +627,20 @@ copilot_gh-assist () {
   else
     return 1
   fi
-};
+}
 
-
-function ripSearch(){
+function ripSearch() {
   # 1. Search for text in files using Ripgrep
   # 2. Interactively narrow down the list using fzf
   # 3. Open the file in vscode
 
-  while getopts n OPTION
-  do
+  while getopts n OPTION; do
     case "${OPTION}" in
-      n) NEW_WINDOW="--new-window";;
-      *) echo "ERROR: we only support -n" && exit 1;;
+    n) NEW_WINDOW="--new-window" ;;
+    *) echo "ERROR: we only support -n" && exit 1 ;;
     esac
   done
-  shift $((OPTIND-1))
+  shift $((OPTIND - 1))
 
   : "${NEW_WINDOW:=""}"
 
@@ -656,11 +655,11 @@ function ripSearch(){
   done < <(
     rg --color=always --line-number --no-heading --smart-case "${*:-}" |
       fzf --ansi \
-          --color "hl:-1:underline,hl+:-1:underline:reverse" \
-          --delimiter : \
-          --multi \
-          --preview 'bat --color=always {1} --highlight-line {2} --style=header,grid {}' \
-          --preview-window 'right,60%,border-bottom,+{2}+3/3,~3'
+        --color "hl:-1:underline,hl+:-1:underline:reverse" \
+        --delimiter : \
+        --multi \
+        --preview 'bat --color=always {1} --highlight-line {2} --style=header,grid {}' \
+        --preview-window 'right,60%,border-bottom,+{2}+3/3,~3'
   )
   if [ -n "${ARGLIST}" ]; then
     code "${NEW_WINDOW}" "${ARGLIST}"

@@ -43,8 +43,9 @@ brew "sqlite"
 brew "xz"
 brew "python@3.9"
 brew "cairo"
-brew "gdk-pixbuf"
 brew "lz4"
+brew "libtiff"
+brew "gdk-pixbuf"
 brew "librsvg"
 brew "age"
 brew "amazon-ecs-cli"
@@ -78,10 +79,13 @@ brew "bats-core"
 brew "bdw-gc"
 brew "binutils"
 brew "blueutil"
+brew "c-blosc"
 brew "cabextract"
 brew "cdrtools"
+brew "cereal"
 brew "certbot"
 brew "cfn-lint"
+brew "cgal"
 brew "chain-bench"
 brew "cheat"
 brew "checkov"
@@ -104,7 +108,6 @@ brew "unbound"
 brew "gnutls"
 brew "libslirp"
 brew "libssh"
-brew "guile"
 brew "colima"
 brew "libev"
 brew "comby"
@@ -146,6 +149,7 @@ brew "gitui"
 brew "glow"
 brew "gnu-getopt"
 brew "gnu-sed"
+brew "guile"
 brew "libgpg-error"
 brew "libassuan"
 brew "libgcrypt"
@@ -161,6 +165,7 @@ brew "gtk+3"
 brew "hadolint"
 brew "helm"
 brew "htop"
+brew "hub"
 brew "hugo"
 brew "hyperfine"
 brew "icdiff"
@@ -200,7 +205,9 @@ brew "mtr"
 brew "nasm"
 brew "ncdu"
 brew "nghttp2"
+brew "nlopt"
 brew "nmap"
+brew "openblas"
 brew "nushell"
 brew "openconnect"
 brew "openjdk"
@@ -218,6 +225,7 @@ brew "pygitup"
 brew "pygobject3"
 brew "pyqt@5"
 brew "python@3.8"
+brew "ripgrep"
 brew "rsync"
 brew "rtmpdump"
 brew "rust"
@@ -230,6 +238,7 @@ brew "shfmt"
 brew "siege"
 brew "sops"
 brew "speedtest-cli"
+brew "tbb"
 brew "tcping"
 brew "telnet"
 brew "terraform-docs"
@@ -257,6 +266,7 @@ brew "wimlib"
 brew "winetricks"
 brew "wireguard-go"
 brew "wireguard-tools"
+brew "wxwidgets"
 brew "yarn"
 brew "yasm"
 brew "ykman"
@@ -318,7 +328,6 @@ cask "macdown"
 cask "macfuse"
 cask "mambaforge"
 cask "meshlab"
-cask "microsoft-teams"
 cask "monodraw"
 cask "mqttx"
 cask "ngrok"
@@ -344,6 +353,7 @@ cask "sloth"
 cask "soulseek"
 cask "stay"
 cask "superslicer"
+cask "timemachineeditor"
 cask "unofficial-wineskin"
 cask "utm"
 cask "vorta"
@@ -354,12 +364,11 @@ mas "1Password for Safari", id: 1569813296
 mas "Amphetamine", id: 937984704
 mas "Apple Configurator", id: 1037126344
 mas "AudioBookBinder", id: 413969927
-mas "Bear", id: 1091189122
 mas "Bitdefender Virus Scanner", id: 500154009
 mas "Brother P-touch Editor", id: 1453365242
 mas "Bumpr", id: 1166066070
 mas "DaisyDisk", id: 411643860
-mas "Depot", id: 1569814452
+mas "DevCleaner", id: 1388020431
 mas "Disk Speed Test", id: 425264550
 mas "Draw Things", id: 6444050820
 mas "Duplicate File Finder", id: 1032755628
@@ -384,8 +393,8 @@ mas "Parcel", id: 639968404
 mas "Peek", id: 1554235898
 mas "Pixelmator Pro", id: 1289583905
 mas "Reeder", id: 1529448980
+mas "Remote Desktop", id: 409907375
 mas "ScreenBrush", id: 1233965871
-mas "Shapr3D", id: 1091675654
 mas "Slack", id: 803453959
 mas "Table Tool", id: 1122008420
 mas "Tailscale", id: 1475387142
@@ -394,4 +403,5 @@ mas "TestFlight", id: 899247664
 mas "Textual IRC Client", id: 1262957439
 mas "Things", id: 904280696
 mas "WhatsApp", id: 1147396723
+mas "Xcode", id: 497799835
 mas "Yomu", id: 562211012
