@@ -17,6 +17,23 @@ function git_prompt_info() {
   fi
 }
 
+# wrapper for adding advanced git cli customisation
+alias git='git_wrapper'
+git_wrapper() {
+  # If invoked by another function, alias or xargs, interpret it as normal
+  if [[ -n ${FUNCNAME[*]} ]] || [[ -n $ALIASES ]] || [[ -n $XARGS ]]; then
+    command git "$@"
+    return
+  fi
+  # clone with depth=1 if no depth is not specified
+  if [[ $1 == "clone" ]] && [[ $* != *"--depth"* ]]; then
+    shift
+    command git clone --depth=1 "$@"
+  else
+    command git "$@"
+  fi
+}
+
 function gco() {
   if [[ -n $1 ]]; then
     if [[ $1 == "-b" ]]; then
@@ -24,7 +41,7 @@ function gco() {
       shift 1
     fi
     # check to see if the branch exists, if it doesn't offer to create it and check it out otherwise just check it out
-    if git branch -a | grep -q "remotes/origin/$1"; then
+    if git branch -a | grep -q "$1"; then
       git checkout "$1"
     else
       echo "Creating branch $1"
@@ -354,11 +371,12 @@ _force_rehash() {
   return 1 # Because we didn't really complete anything
 }
 
-edit-command-output() {
-  BUFFER=$(eval "$BUFFER")
-  CURSOR=0
-}
-zle -N edit-command-output
+# This was causing tab complete errors such as zle-line-init:1: command not found
+# edit-command-output() {
+#   BUFFER=$(eval "$BUFFER")
+#   CURSOR=0
+# }
+# zle -N edit-command-output
 
 __mkdir() { if [[ ! -d $1 ]]; then mkdir -p "$1"; fi; }
 
@@ -664,4 +682,43 @@ function ripSearch() {
   if [ -n "${ARGLIST}" ]; then
     code "${NEW_WINDOW}" "${ARGLIST}"
   fi
+}
+
+### CAPTURE AND RETURN OUTPUT OF A COMMAND ###
+# Usage:
+# $ find . -name 'filename' | cap
+# /path/to/filename
+# $ ret
+# /path/to/filename
+
+# capture the output of a command so it can be retrieved with ret
+cap() { tee /tmp/capture.out; }
+
+# return the output of the most recent command that was captured by cap
+ret() { cat /tmp/capture.out; }
+### END CAPTURE AND RETURN OUTPUT OF A COMMAND ###
+
+# Backup VSCode extensions settings
+function backup-vscode() {
+  local date
+  date="$(date +%Y-%m-%d)"
+  local destination="${HOME}/Library/Mobile Documents/com~apple~CloudDocs/Backups/vscode/${date}"
+  local extensions_file="${destination}/extensions.txt"
+  local settings_file="${destination}/settings.json"
+  local keybindings_file="${destination}/keybindings.json"
+
+  mkdir -p "${destination}"
+
+  # List extensions
+  code --list-extensions >"${extensions_file}"
+  echo "Created ${extensions_file}"
+
+  # Backup settings
+  cp "${HOME}/Library/Application Support/Code/User/settings.json" "${settings_file}"
+  echo "Created:"
+  echo "$settings_file"
+
+  # Backup keybindings
+  cp "${HOME}/Library/Application Support/Code/User/keybindings.json" "${keybindings_file}"
+  echo "$keybindings_file"
 }

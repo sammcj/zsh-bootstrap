@@ -46,7 +46,9 @@ brew "cairo"
 brew "lz4"
 brew "libtiff"
 brew "gdk-pixbuf"
+brew "pango"
 brew "librsvg"
+brew "adwaita-icon-theme"
 brew "age"
 brew "amazon-ecs-cli"
 brew "libyaml"
@@ -149,7 +151,6 @@ brew "gitui"
 brew "glow"
 brew "gnu-getopt"
 brew "gnu-sed"
-brew "guile"
 brew "libgpg-error"
 brew "libassuan"
 brew "libgcrypt"
@@ -162,13 +163,17 @@ brew "graphviz"
 brew "grep"
 brew "gron"
 brew "gtk+3"
+brew "gtk4"
+brew "guile"
 brew "hadolint"
+brew "handbrake"
 brew "helm"
 brew "htop"
 brew "hub"
 brew "hugo"
 brew "hyperfine"
 brew "icdiff"
+brew "imessage-exporter"
 brew "iperf3"
 brew "jc"
 brew "jemalloc"
@@ -184,7 +189,6 @@ brew "kubernetes-cli"
 brew "kube-ps1"
 brew "lazydocker"
 brew "lazygit"
-brew "lerna", link: false
 brew "lftp"
 brew "libcroco"
 brew "libheif"
@@ -199,6 +203,7 @@ brew "lua@5.1"
 brew "mas"
 brew "ninja"
 brew "meson"
+brew "mkvtoolnix"
 brew "yt-dlp"
 brew "mpv"
 brew "mtr"
@@ -218,8 +223,10 @@ brew "pipx"
 brew "platformio"
 brew "podman"
 brew "popt"
-brew "pre-commit"
+brew "pre-commit", link: false
 brew "prettier"
+brew "progress"
+brew "py3cairo"
 brew "pyenv"
 brew "pygitup"
 brew "pygobject3"
@@ -232,6 +239,7 @@ brew "rust"
 brew "rustup-init"
 brew "s3cmd"
 brew "saml2aws"
+brew "scipy"
 brew "semgrep"
 brew "shellcheck"
 brew "shfmt"
@@ -396,12 +404,13 @@ mas "Reeder", id: 1529448980
 mas "Remote Desktop", id: 409907375
 mas "ScreenBrush", id: 1233965871
 mas "Slack", id: 803453959
+mas "Strongbox", id: 897283731
 mas "Table Tool", id: 1122008420
 mas "Tailscale", id: 1475387142
-mas "Telegram", id: 747648890
 mas "TestFlight", id: 899247664
 mas "Textual IRC Client", id: 1262957439
 mas "Things", id: 904280696
+mas "Webcam Effects", id: 1525288396
 mas "WhatsApp", id: 1147396723
 mas "Xcode", id: 497799835
 mas "Yomu", id: 562211012

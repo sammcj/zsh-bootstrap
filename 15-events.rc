@@ -1,0 +1,49 @@
+# shellcheck disable=SC2148
+# Events - things that are triggered by other things
+
+# ### remindme ###
+# REMINDME_PATH="${HOME}/git/scripts/remindme.sh"
+# COMMAND_NAME="remind"
+# #
+# # Configure directories to check for reminders
+# # shellcheck disable=SC2088
+# CHECK_REMINDER_DIRECTORIES=("${HOME}/git" "~/git" "${HOME}/Documents" "~/Downloads" "~/Documents")
+# #
+# # Function to check if the current directory is in the list of directories to check
+# should_check_reminders() {
+#   local dir
+#   for dir in "${CHECK_REMINDER_DIRECTORIES[@]}"; do
+#     if [[ "${PWD/#$HOME/~}" == "$dir" ]]; then
+#       return 0
+#     fi
+#   done
+#   return 1
+# }
+
+# # Function to check for reminders related to the current directory
+# check_reminders_on_chdir() {
+#   if should_check_reminders; then
+#     local reminders
+#     reminders=$(source "$REMINDME_PATH" -l | while IFS= read -r line; do
+#       if [[ "$line" == *"$PWD"* ]]; then
+#         echo "${line#*= }"
+#       fi
+#     done)
+#     if [ -n "$reminders" ]; then
+#       echo "Reminders for this directory:"
+#       echo "$reminders"
+#       echo "Use \"${COMMAND_NAME} -d <reminder_id>\" to mark a reminder as completed."
+#     fi
+#   fi
+# }
+
+# # Call the check_reminders_on_chdir function whenever you change directories
+# autoload -U add-zsh-hook
+# add-zsh-hook chpwd check_reminders_on_chdir
+
+# # Define the reminder_me function for convenience
+# remind() {
+#   source "$REMINDME_PATH" "$@"
+# }
+
+### END remindme ###

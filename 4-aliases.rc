@@ -190,6 +190,7 @@ alias backup-models="rsync -avr --partial '/Users/samm/Library/Mobile Documents/
 alias backup-models-delete="rsync -avr --partial '/Users/samm/Library/Mobile Documents/com~apple~CloudDocs/3D Printing/Models' root@nas:/mnt/raid/3dprinting/ --delete"
 
 alias creality='/Users/samm/git/sammcj/ender-configs/creality-sonic-pad/login.exp'
+alias ender='cd ~/git/sammcj/ender-configs/ && code .'
 
 # pip install git+https://github.com/ChristophSchranz/Tweaker-3.git
 alias rotate='tweaker3 -vb -x -i'

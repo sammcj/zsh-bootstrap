@@ -22,7 +22,7 @@ fi
 brew bundle
 
 # Git related
-pip3 install -U mu-repo
+pip3 install -U mu-repo manim
 
 # # Markdown link checker
 # pip3 install linkcheckmd
@@ -41,9 +41,8 @@ go install github.com/projectdiscovery/katana/cmd/katana@latest
 
 # Install lazycli for building TUIs
 # Requires rust's cargo, either via homebrew rust / rust-up
-cargo install --locked lazycli
-
-Get install path to source
+# cargo install --locked lazycli
+# Get install path to source
 
 ### asdf ###
 
@@ -119,6 +118,11 @@ function clone_repo() {
     echo "No changes made to $1"
   fi
 }
+
+function install_extras() {
+  # This function is for installing things that are not available via homebrew, pip etc...
+  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh # Install rust via rustup
+}
 ## End local functions ##
 
 # Completion plugins
@@ -142,3 +146,12 @@ for dotfile in "${dotfiles[@]}"; do
 done
 
 link_dotfile "bat-config" "/Users/samm/.config/bat/config"
+
+echo "Do you want to install extras? [y/N]"
+"$(declare -f install_extras)"
+read -r response
+if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+  install_extras
+fi
+
+echo "Done"
