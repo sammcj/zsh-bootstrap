@@ -618,10 +618,11 @@ docker_inspect_all() {
     # Extract container name and remove leading '/'
     local container_name=$(jq -r '.Name[1:]' <<<"$inspect_output")
 
-    # Extract container status, creation timestamp, and IP address
+    # Extract container status, creation timestamp, and IP addresses
     local container_status=$(jq -r '.State.Status' <<<"$inspect_output")
     local created_timestamp=$(jq -r '.Created' <<<"$inspect_output")
     local ip_address=$(jq -r '.NetworkSettings.Networks[].IPAddress' <<<"$inspect_output")
+    local ipv6_address=$(jq -r '.NetworkSettings.Networks[].GlobalIPv6Address' <<<"$inspect_output")
 
     # Extract forwarded ports
     local ports=$(jq -r '.NetworkSettings.Ports | to_entries[] | .key + " -> " + .value[0].HostPort' <<<"$inspect_output")
@@ -632,6 +633,7 @@ docker_inspect_all() {
     echo "Container Status: $container_status"
     echo "Created Timestamp: $created_timestamp"
     echo "IP Address: $ip_address"
+    echo "IPv6 Address: $ipv6_address"
     echo "Forwarded Ports: $ports"
     echo "-----------------------"
   done
