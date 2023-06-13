@@ -1,3 +1,4 @@
+#!/usr/bin/env zsh
 #shellcheck disable=SC2148
 
 function mkcd {
@@ -84,16 +85,28 @@ function checkout-hotfix() {
   fi
 }
 
-function commit-hotfix() {
-  # Add -n if it's passed as an argument
-  local ARGS=""
-  if [[ -n $* ]]; then
-    local ARGS="-n"
-    # shift to remove the first argument from the list of arguments
-    shift 1
+commit-hotfix() {
+  local DATESTAMP=$(date +%Y/%m/%d)
+  local GIT_ARGS=""
+  local MESSAGE="$*" # Set the commit message to the arguments passed to the function
+  if [[ $1 == "-n" ]]; then
+    GIT_ARGS="-n"    # Add -n as a parameter to git if it's passed as an argument to the function
+    MESSAGE="${*:2}" # Remove the first argument from the list of arguments
   fi
-  git add .
-  git commit "$ARGS" -m "Hotfix-$(date +%Y/%m/%d) -- $*"
+
+  # Check for any files not added - if there are any, list them and ask the user if they want to add them
+  local untracked_files="$(git status --porcelain | grep -E '^\?\?' | awk '{print $2}')"
+  if [[ -n $untracked_files ]]; then
+    echo "There are untracked files in this directory:"
+    echo "$untracked_files"
+    echo "Would you like to add them? (y/n)"
+    read -r ADD_FILES
+    if [[ $ADD_FILES == "y" ]]; then
+      git add $untracked_files
+    fi
+  fi
+
+  git commit $GIT_ARGS -m "Hotfix-${DATESTAMP} -- ${MESSAGE}"
 }
 
 function checkout-jira() {
@@ -106,17 +119,27 @@ function checkout-jira() {
 }
 
 function commit-jira() {
-  # Use the JIRA number from the start of the branch name for the commit message (e.g. IF-1234 from the branch IF-1234-feature-name)
-
-  # Add -n if it's passed as an argument
-  local ARGS=""
+  local GIT_ARGS=""
+  local MESSAGE="$*" # Set the commit message to the arguments passed to the function
   if [[ -n $* ]]; then
-    local ARGS="-n"
-    # shift to remove the first argument from the list of arguments
+    GIT_ARGS="-n" # Add -n as a parameter to git if it's passed as an argument to the function
     shift 1
   fi
+
+  # Check for any files not added - if there are any, list them and ask the user if they want to add them
+  local untracked_files="$(git status --porcelain | grep -E '^\?\?' | awk '{print $2}')"
+  if [[ -n $untracked_files ]]; then
+    echo "There are untracked files in this directory:"
+    echo "$untracked_files"
+    echo "Would you like to add them? (y/n)"
+    read -r ADD_FILES
+    if [[ $ADD_FILES == "y" ]]; then
+      git add $untracked_files
+    fi
+  fi
+
   git add .
-  git commit "$ARGS" -m "$(git rev-parse --abbrev-ref HEAD | cut -d'-' -f1 -f2) -- $*"
+  git commit $GIT_ARGS -m "$(git rev-parse --abbrev-ref HEAD | cut -d'-' -f1 -f2) -- ${MESSAGE}"
 }
 
 # Outputs the name of the current branch
@@ -583,6 +606,37 @@ docker_login_ghcr() {
   printf '{"Username":"%s", "Secret":"%s"}\n' "$(gh config get -h github.com user)" "${token}"
 }
 
+docker_inspect_all() {
+  # Get the IDs of all running containers
+  local container_ids=($(docker ps -q))
+
+  # Iterate over each container ID
+  for container_id in "${container_ids[@]}"; do
+    # Run docker inspect command and store the output in a variable
+    local inspect_output=$(docker inspect --format='{{json .}}' "$container_id")
+
+    # Extract container name and remove leading '/'
+    local container_name=$(jq -r '.Name[1:]' <<<"$inspect_output")
+
+    # Extract container status, creation timestamp, and IP address
+    local container_status=$(jq -r '.State.Status' <<<"$inspect_output")
+    local created_timestamp=$(jq -r '.Created' <<<"$inspect_output")
+    local ip_address=$(jq -r '.NetworkSettings.Networks[].IPAddress' <<<"$inspect_output")
+
+    # Extract forwarded ports
+    local ports=$(jq -r '.NetworkSettings.Ports | to_entries[] | .key + " -> " + .value[0].HostPort' <<<"$inspect_output")
+
+    # Display the extracted information
+    echo "Container ID: $container_id"
+    echo "Container Name: $container_name"
+    echo "Container Status: $container_status"
+    echo "Created Timestamp: $created_timestamp"
+    echo "IP Address: $ip_address"
+    echo "Forwarded Ports: $ports"
+    echo "-----------------------"
+  done
+}
+
 # 3D Printing
 function cura-backup() {
   # Zip up the latest cura config from the newest number cura config directory (~/Library/Application\ Support/cura/(number.number) (e.g. 4.8)
@@ -722,3 +776,102 @@ function backup-vscode() {
   cp "${HOME}/Library/Application Support/Code/User/keybindings.json" "${keybindings_file}"
   echo "$keybindings_file"
 }
+
+### Github Functions ###
+function gh() {
+  # unset GITHUB_TOKEN for gh cli
+  GITHUB_TOKEN="" command gh "$@"
+}
+
+function gh_pr_list_open() {
+  local search_param=""
+  local other_params=()
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+    --match)
+      search_param="$2"
+      shift 2
+      ;;
+    *)
+      other_params+=("$1")
+      shift
+      ;;
+    esac
+  done
+
+  if [[ -n "$search_param" ]]; then
+    other_params+=("--search=\"$search_param\"")
+  fi
+
+  gh pr list --state open "${other_params[@]}"
+}
+
+function gh_pr_list_open_dir_repos() {
+  local search_param=""
+  local other_params=()
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+    --match)
+      search_param="$2"
+      shift 2
+      ;;
+    *)
+      other_params+=("$1")
+      shift
+      ;;
+    esac
+  done
+
+  for repo in */; do
+    if [[ -d "$repo" ]]; then
+      repo_name=$(basename "$repo")
+      repo_owner=$(basename "$(dirname "$repo")")
+      echo "Repository: $repo_owner/$repo_name"
+
+      gh_pr_list_open --repo "$repo_owner/$repo_name" --match "$search_param" "${other_params[@]}"
+
+      echo ""
+    fi
+  done
+}
+
+function gh_pr_merge_matching() {
+  local search_param="$1"
+  local other_params=()
+
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+    --match)
+      search_param="$2"
+      shift 2
+      ;;
+    *)
+      other_params+=("$1")
+      shift
+      ;;
+    esac
+  done
+
+  local pr_numbers=()
+  gh_pr_list_open --match "$search_param" "${other_params[@]}" | while IFS= read -r pr_info; do
+    pr_number=$(echo "$pr_info" | jq -r '.number')
+    pr_numbers+=("$pr_number")
+    echo "PR #$pr_number: $(echo "$pr_info" | jq -r '.title')"
+  done
+
+  if [[ ${#pr_numbers[@]} -eq 0 ]]; then
+    echo "No matching PRs found."
+    return 1
+  fi
+
+  read -p "Merge and resolve these PRs? (y/n): " choice
+  if [[ $choice == [yY] ]]; then
+    for pr_number in "${pr_numbers[@]}"; do
+      gh pr merge "$pr_number" --auto "${other_params[@]}"
+    done
+  fi
+}
+
+### END Github Functions ###

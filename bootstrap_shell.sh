@@ -123,6 +123,18 @@ function install_extras() {
   # This function is for installing things that are not available via homebrew, pip etc...
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh # Install rust via rustup
 }
+
+function configure_settings() {
+  # This optional function is for configuring settings that aren't synced
+  # Not currently in use but might be useful in the future
+
+  # npm
+  #npm config set prefer-dedupe true # maybe?
+
+  # git
+  git config --global branch.autoSetupMerge true
+  git config --global --add --bool push.autoSetupRemote true
+}
 ## End local functions ##
 
 # Completion plugins
