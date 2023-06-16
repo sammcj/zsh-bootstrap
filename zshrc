@@ -27,12 +27,12 @@ if [[ -d $HOME/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/d
 fi
 
 ## Add ssh keys to agent if not already added
-ssh-add-keys
+zsh-defer ssh-add-keys
 
 ### Below are items added by installer scripts (usually homebrew) ####
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-source /opt/homebrew/Cellar/fzf/*/shell/key-bindings.zsh
+zsh-defer source /opt/homebrew/Cellar/fzf/*/shell/key-bindings.zsh
 
 # Enable direnv - https://direnv.net
 # eval "$(direnv hook zsh)"
@@ -64,9 +64,9 @@ function condaInit() {
   # <<< conda initialize <<<
 }
 
-# condaInit
+# zsh-defer condaInit
 
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+zsh-defer test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 autoload -Uz compinit
 zstyle ':completion:*' menu select

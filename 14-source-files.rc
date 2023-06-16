@@ -2,22 +2,22 @@
 
 # iTerm2 Shell integration
 # https://www.iterm2.com/documentation-shell-integration.html
-source "$HOME"/.iterm2_shell_integration.zsh
+zsh-defer source "$HOME"/.iterm2_shell_integration.zsh
 
 # Node / Javascript
 # Note: If this doesn't work, make sure you've cleaned up nvm directories and related PATHs
-eval "$(/opt/homebrew/bin/fnm env --use-on-cd)"
+zsh-defer eval "$(/opt/homebrew/bin/fnm env --use-on-cd)"
 
 # Thefuck
-eval "$(thefuck --alias)"
+# zsh-defer eval "$(thefuck --alias)"
 
 #saml2aws
-eval "$(saml2aws --completion-script-zsh)"
+zsh-defer eval "$(saml2aws --completion-script-zsh)"
 
 #asdf
-. /opt/homebrew/opt/asdf/libexec/asdf.sh
+zsh-defer . /opt/homebrew/opt/asdf/libexec/asdf.sh
 
 #pyenv
 export PYENV_ROOT="$HOME/.pyenv"
-command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
+zsh-defer command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
+zsh-defer eval "$(pyenv init -)"

@@ -8,50 +8,50 @@ export ZGEN_RESET_ON_CHANGE="${HOME}/.zshrc"
 if ! zgen saved; then
   echo "Creating a zgen save"
 
+  # load normal plugins
+  zgen load romkatv/zsh-defer
+
   # load omz plugins
   zgen oh-my-zsh
-  zgen oh-my-zsh plugins/macos
-  zgen oh-my-zsh plugins/docker
-  zgen oh-my-zsh plugins/docker-compose
-  zgen oh-my-zsh plugins/gitfast
-  zgen oh-my-zsh plugins/aws
-  zgen oh-my-zsh plugins/colored-man-pages
-  zgen oh-my-zsh plugins/command-not-found
-  zgen oh-my-zsh plugins/fnm
-  zgen oh-my-zsh plugins/fzf
-  zgen oh-my-zsh plugins/nmap
-  zgen oh-my-zsh plugins/gh
+  zsh-defer zgen oh-my-zsh plugins/macos
+  zsh-defer zgen oh-my-zsh plugins/docker
+  zsh-defer zgen oh-my-zsh plugins/docker-compose
+  zsh-defer zgen oh-my-zsh plugins/gitfast
+  zsh-defer zgen oh-my-zsh plugins/aws
+  zsh-defer zgen oh-my-zsh plugins/colored-man-pages
+  zsh-defer zgen oh-my-zsh plugins/command-not-found
+  zsh-defer zgen oh-my-zsh plugins/fnm
+  zsh-defer zgen oh-my-zsh plugins/fzf
+  zsh-defer zgen oh-my-zsh plugins/nmap
+  zsh-defer zgen oh-my-zsh plugins/gh
 
-  # load normal plugins
-  zgen loadall <<EOPLUGINS
-    RobSis/zsh-completion-generator
-    zdharma-continuum/fast-syntax-highlighting
-    zsh-users/zsh-autosuggestions
-    lukechilds/zsh-better-npm-completion
-    MichaelAquilina/zsh-you-should-use
-    3v1n0/zsh-bash-completions-fallback
+  zsh-defer zgen load RobSis/zsh-completion-generator
+  zsh-defer zgen load lukechilds/zsh-better-npm-completion
+  zsh-defer zgen load zsh-users/zsh-completions
+  zsh-defer zgen load zsh-users/zsh-syntax-highlighting
+  zsh-defer zgen load zsh-users/zsh-autosuggestions
+  zsh-defer zgen load MichaelAquilina/zsh-you-should-us
+  zsh-defer zgen load zsh-users/zsh-history-substring-search
+  zsh-defer zgen load devndive/zsh-saml2aws-auto
+  zsh-defer zgen loadzdharma-continuum/fast-syntax-highlighting
 
-    # git related
-    paulirish/git-open
-    olivierverdier/zsh-git-prompt
-    peterhurford/git-it-on.zsh
+  zsh-defer zgen load3v1n0/zsh-bash-completions-fallback
 
-    # fzf wrappers
-    sunlei/zsh-ssh
-    torifat/npms
+  # git related
+  zsh-defer zgen loadpaulirish/git-open
+  zsh-defer zgen loadolivierverdier/zsh-git-prompt
+  zsh-defer zgen loadpeterhurford/git-it-on.zsh
 
-    # AWS
-    devndive/zsh-saml2aws-auto
-
-EOPLUGINS
-
+  # fzf wrappers
+  zsh-defer zgen loadsunlei/zsh-ssh
+  zsh-defer zgen loadtorifat/npms
   # Not in use at present
   # nnao45/zsh-kubectl-completion
   # trejo08/kubecolor-zsh
   # ascii-soup/zsh-url-highlighter
 
   # source completions
-  zgen load zsh-users/zsh-completions src
+  zsh-defer zgen load zsh-users/zsh-completions src
 
   zgen save
 fi

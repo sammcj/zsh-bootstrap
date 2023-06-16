@@ -20,7 +20,7 @@ export PATH="$PATH:$HOME/.local/bin"
 export PATH="/Users/samm/miniconda3/bin:$PATH"
 
 # override conda with python 3.10 as it doesn't support it ?
-export PATH="/opt/homebrew/opt/python@3.10/libexec/bin:$PATH"
+# export PATH="/opt/homebrew/opt/python@3.10/libexec/bin:$PATH"
 
 ### Kubernetes / k8s related exports ###
 
