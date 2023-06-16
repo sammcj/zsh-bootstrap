@@ -1,4 +1,5 @@
-# shellcheck disable=SC2148
+# shellcheck disable=SC2148 disable=SC1090 shell=bash
+
 # ~/.zshrc
 
 # There is an alias to jump to the directory with the various
@@ -46,28 +47,26 @@ source /opt/homebrew/Cellar/fzf/*/shell/key-bindings.zsh
 # zprof
 #### END PROFILING ######
 
-
 function condaInit() {
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/Users/samm/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
+  # >>> conda initialize >>>
+  # !! Contents within this block are managed by 'conda init' !!
+  __conda_setup="$('/Users/samm/miniconda3/bin/conda' 'shell.zsh' 'hook' 2>/dev/null)"
+  if [ $? -eq 0 ]; then
     eval "$__conda_setup"
-else
+  else
     if [ -f "/Users/samm/miniconda3/etc/profile.d/conda.sh" ]; then
-        . "/Users/samm/miniconda3/etc/profile.d/conda.sh"
+      . "/Users/samm/miniconda3/etc/profile.d/conda.sh"
     else
-        export PATH="/Users/samm/miniconda3/bin:$PATH"
+      export PATH="/Users/samm/miniconda3/bin:$PATH"
     fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
+  fi
+  unset __conda_setup
+  # <<< conda initialize <<<
 }
 
 # condaInit
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-
 
 autoload -Uz compinit
 zstyle ':completion:*' menu select

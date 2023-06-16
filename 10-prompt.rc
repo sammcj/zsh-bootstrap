@@ -1,4 +1,4 @@
-#shellcheck disable=SC2148
+# shellcheck disable=SC2148 disable=SC1090 disable=SC2034 disable=SC2154 disable=SC1087 shell=bash
 
 ### Prompt! ###
 

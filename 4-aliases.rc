@@ -1,4 +1,4 @@
-#shellcheck disable=SC2148
+# shellcheck disable=SC2148 disable=SC1090 shell=bash
 
 #TODO: cleanup this, move stuff out of Dropbox\ Import
 THIS_DIRECTORY="/Users/samm/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/"
@@ -51,6 +51,7 @@ alias gitmonth="git diff HEAD 'HEAD@{1 month ago}'"
 alias gitupdateallrepos="find . -name .git -type d | xargs -n1 -P4 -I% git --git-dir=% --work-tree=%/.. fetch --all --recurse-submodules"
 alias gitweek="git diff HEAD 'HEAD@{1 week ago}'"
 alias gitwip="git add .; git commit -m 'WIP - will rebase'; git push"
+alias gitupdatescripts="git add .; git commit -m 'update scripts'; git push"
 alias hotfix-checkout="checkout-hotfix"
 alias hotfix-commit="commit-hotfix"
 alias hotfix="checkout-hotfix"

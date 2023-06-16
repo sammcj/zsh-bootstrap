@@ -1,4 +1,4 @@
-#shellcheck disable=SC2148
+# shellcheck disable=SC2148 disable=SC1090 shell=bash
 
 ### Options ###
 
@@ -10,7 +10,7 @@
 # e.g. zmv -W '**/*.js' '**/*.ts' # recursively move anything matching the first pattern to the second pattern
 autoload -Uz zmv
 
-zmodload  zsh/complist
+zmodload zsh/complist
 
 # Keep echo "station" > station from clobbering station
 setopt NO_CLOBBER
@@ -65,7 +65,7 @@ zstyle ':completion:*:*:docker:*' option-stacking yes
 zstyle ':completion:*:*:docker-*:*' option-stacking yes
 
 # Group completions by type (file, external command, etc)
-zstyle ':completion:*:matches'  group 'yes'
+zstyle ':completion:*:matches' group 'yes'
 
 # don't mess up url passing as arguments
 zstyle ':urlglobber' url-other-schema
@@ -79,7 +79,6 @@ zstyle ':completion:*:default' list-prompt '%S%M matches%s'
 # Don't prompt for a huge list, menu it!
 zstyle ':completion:*:default' menu 'select=0'
 
-
 # Have the newer files last so I see them first
 zstyle ':completion:*' file-sort modification reverse
 
@@ -90,7 +89,7 @@ zstyle ':completion:*' list-colors "=(#b) #([0-9]#)*=36=31"
 #zstyle ':completion:*' hosts off
 
 unsetopt LIST_AMBIGUOUS
-setopt  COMPLETE_IN_WORD
+setopt COMPLETE_IN_WORD
 
 # Separate man page sections.  Neat.
 zstyle ':completion:*:manuals' separate-sections true
@@ -102,7 +101,7 @@ zstyle ':completion:*:windows' menu on=0
 zstyle ':completion:*:expand:*' tag-order all-expansions
 
 # more errors allowed for large words and fewer for small words
-zstyle ':completion:*:approximate:*' max-errors "reply=(  $((  ($#PREFIX+$#SUFFIX)/3  ))  )"
+zstyle ':completion:*:approximate:*' max-errors "reply=(  $((($#PREFIX + $#SUFFIX) / 3))  )"
 
 # Errors format
 zstyle ':completion:*:corrections' format '%B%d (errors %e)%b'
@@ -129,15 +128,14 @@ export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#7c4fef,bold,underline"
 export ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 
 # Accept autosuggestion with shift+tab
-bindkey '^I'   complete-word       # tab          | complete
-bindkey '^[[Z' autosuggest-accept  # shift + tab  | autosuggest
+bindkey '^I' complete-word        # tab          | complete
+bindkey '^[[Z' autosuggest-accept # shift + tab  | autosuggest
 
 # Autocomplete kubectl for k alias
 complete -F __start_kubectl k
 compdef __start_kubectl k
 
 ### END Autocompletion ###
-
 
 ### Key bindings ###
 
@@ -169,10 +167,10 @@ bindkey '\e[D' backward-char
 bindkey '\eOC' forward-char
 bindkey '\eOD' backward-char
 
-bindkey "5C" emacs-forward-word   #control left
-bindkey "5D" backward-word        #control right
+bindkey "5C" emacs-forward-word #control left
+bindkey "5D" backward-word      #control right
 
-bindkey "^[[A" history-search-backward  # Search history with up arrow
+bindkey "^[[A" history-search-backward # Search history with up arrow
 bindkey "^[[B" history-search-forward  # Search history with up arrow
 
 # gross.  Makes Meta-' write '\'' for you
@@ -193,17 +191,35 @@ bindkey -M vicmd "^q" push-line
 setopt autocd
 
 ### Fix slowness of pastes with zsh-syntax-highlighting.zsh
-pasteinit() {
-  OLD_SELF_INSERT=${${(s.:.)widgets[self-insert]}[2,3]}
-  zle -N self-insert url-quote-magic # I wonder if you'd need `.url-quote-magic`?
-}
+# pasteinit() {
+#   OLD_SELF_INSERT=${${(s.:.)widgets[self-insert]}[2,3]}
+#   zle -N self-insert url-quote-magic # I wonder if you'd need `.url-quote-magic`?
+# }
 
 pastefinish() {
   zle -N self-insert $OLD_SELF_INSERT
 }
 zstyle :bracketed-paste-magic paste-init pasteinit
 zstyle :bracketed-paste-magic paste-finish pastefinish
-### Fix slowness of pastes
+### End fix slowness of pastes
 
-# zsh CTRL+e summons redo
-bindkey -s '^l' 'redo^M'
+# Suggest corrections for commands
+setopt correct
+
+# ### Expand aliases
+# globalias() {
+#    zle _expand_alias
+#    zle expand-word
+#    zle self-insert
+# }
+# zle -N globalias
+# # space expands all aliases, including global
+# bindkey -M emacs " " globalias
+# bindkey -M viins " " globalias
+
+# # control-space to make a normal space
+# bindkey -M emacs "^ " magic-space
+# bindkey -M viins "^ " magic-space
+
+# # normal space during searches
+# bindkey -M isearch " " magic-space

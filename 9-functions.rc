@@ -1,5 +1,4 @@
-#!/usr/bin/env zsh
-#shellcheck disable=SC2148
+# shellcheck disable=SC2148 disable=SC1090 shell=bash
 
 function mkcd {
   dir="$*"
@@ -49,6 +48,7 @@ function gco() {
       git checkout -b "$1"
     fi
   else
+    # shellcheck disable=SC2033
     git branch --sort=-committerdate | fzf --header 'Checkout Recent Branch' --preview 'git diff --color=always {1}' --pointer='>' | xargs git checkout
   fi
 }
@@ -57,6 +57,7 @@ function gbd() {
   if [[ -n $* ]]; then
     git branch -d "$@"
   else
+    # shellcheck disable=SC2033
     git branch --sort=-committerdate | fzf --header 'Delete Git Branch' --preview 'git diff --color=always {1}' --pointer='>' | xargs git branch -d
   fi
 }
@@ -420,6 +421,30 @@ function aws-azure-login() {
 # shellcheck disable=SC2068 disable=SC2046 disable=SC2145
 function s2a { eval $($(which saml2aws) script --shell=bash --profile=$@); }
 
+# Interactively export AWS_PROFILE
+function aws-profile() {
+  export AWS_PROFILE=$(grep profile ${HOME}/.aws/config |
+    awk '{print $2}' | sed 's,],,g' |
+    fzf --layout reverse --height=10% --border)
+}
+
+# Interactive git diff
+function git-diff() {
+  git log --graph --color=always \
+    --format="%C(auto)%h%d %s %C(black)%C(bold)%cr" "$@" |
+    fzf --ansi --preview "echo {} \
+    | grep -o '[a-f0-9]\{7\}' \
+    | head -1 \
+    | xargs -I % sh -c 'git show --color=always %'" \
+      --bind "enter:execute:
+            (grep -o '[a-f0-9]\{7\}' \
+                | head -1 \
+                | xargs -I % sh -c 'git show --color=always % \
+                | less -R') << 'FZF-EOF'
+            {}
+FZF-EOF"
+}
+
 # Github
 # Deletes workflow logs from a given repo older than 1 month
 # e.g. USER=myuser REPO=myrepo ghac
@@ -528,7 +553,7 @@ function awslogin() {
     echo "ERROR: account name required, e.g. awslogin data-dev"
   else
     # Check credentials are current, refresh if needed and export into shell
-    aws configure list --profile "${1}" && eval $(saml2aws script --profile "${1}")
+    aws configure list --profile "${1}" && eval "$(saml2aws script --profile "${1}")"
   fi
 }
 
@@ -608,7 +633,7 @@ docker_login_ghcr() {
 
 docker_inspect_all() {
   # Get the IDs of all running containers
-  local container_ids=($(docker ps -q))
+  local container_ids=("$(docker ps -q)")
 
   # Iterate over each container ID
   for container_id in "${container_ids[@]}"; do
@@ -877,3 +902,16 @@ function gh_pr_merge_matching() {
 }
 
 ### END Github Functions ###
+
+### Get output from last command ###
+# CTRL+Q,CTRL+L
+zmodload -i zsh/parameter
+
+insert-last-command-output() {
+  # shellcheck disable=SC2154
+  LBUFFER+="$(eval "$history"[$((HISTCMD - 1))])"
+}
+zle -N insert-last-command-output
+
+bindkey "^Q^L" insert-last-command-output
+### End get output from last command ###

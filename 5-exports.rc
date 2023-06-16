@@ -1,4 +1,4 @@
-#shellcheck disable=SC2148
+# shellcheck disable=SC2148 disable=SC1090 shell=bash
 
 ### Exports ###
 
@@ -25,3 +25,8 @@ export LESS="-F -X $LESS"
 
 # Options to fzf command
 export FZF_COMPLETION_OPTS='--border --info=inline'
+
+# Export a variable that contains the directory this script is sourced from (e.g. /Users/username/icloud docs/somedir/).
+# we can't use BASH_SOURCE[0] because it's not available in zsh
+DOTFILES_DIR="$(cd "$(dirname "$0")" && pwd)"
+export DOTFILES_DIR

@@ -1,4 +1,4 @@
-# shellcheck disable=SC2148
+# shellcheck disable=SC2148 disable=SC1090 shell=bash
 
 # load zgen
 source "${HOME}/.zgen/zgen.zsh"
@@ -42,6 +42,7 @@ if ! zgen saved; then
 
     # AWS
     devndive/zsh-saml2aws-auto
+
 EOPLUGINS
 
   # Not in use at present

@@ -1,4 +1,5 @@
-# shellcheck disable=SC2148
+# shellcheck disable=SC2148 disable=SC1090 shell=bash
+
 # Events - things that are triggered by other things
 
 # ### remindme ###
