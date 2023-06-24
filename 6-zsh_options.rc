@@ -26,6 +26,12 @@ setopt EXTENDED_GLOB
 
 ### Completion Stuff ###
 
+## zsh-completion-generator ##
+# Requires zgen load RobSis/zsh-completion-generator - see 1-zgen.rc
+# Can also be run on the cli using: gencomp <command>
+zstyle :plugin:zsh-completion-generator programs ggrep tr cat xattr
+##
+
 # If we have a glob this will expand it
 setopt GLOB_COMPLETE
 setopt PUSHD_MINUS
@@ -127,7 +133,7 @@ export ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#7c4fef,bold,underline"
 # Autosuggestions from history, if none use the completion engine.
 export ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 
-# Accept autosuggestion with shift+tab
+# Accept autosuggestion with shift+tab - I use this EVERY day
 bindkey '^I' complete-word        # tab          | complete
 bindkey '^[[Z' autosuggest-accept # shift + tab  | autosuggest
 
@@ -190,18 +196,20 @@ bindkey -M vicmd "^q" push-line
 # cd into a directory when you type its name
 setopt autocd
 
-### Fix slowness of pastes with zsh-syntax-highlighting.zsh
-# pasteinit() {
-#   OLD_SELF_INSERT=${${(s.:.)widgets[self-insert]}[2,3]}
-#   zle -N self-insert url-quote-magic # I wonder if you'd need `.url-quote-magic`?
-# }
+### Fix slowness of pastes with zsh-syntax-highlighting.zsh ###
+# Still needed as of 2023-06-24!
+pasteinit() {
+  # shellcheck disable=SC2296,SC2298
+  OLD_SELF_INSERT=${${(s.:.)widgets[self-insert]}[2,3]}
+  zle -N self-insert url-quote-magic
+}
 
 pastefinish() {
   zle -N self-insert $OLD_SELF_INSERT
 }
 zstyle :bracketed-paste-magic paste-init pasteinit
 zstyle :bracketed-paste-magic paste-finish pastefinish
-### End fix slowness of pastes
+### End fix slowness of pastes ###
 
 # Suggest corrections for commands
 setopt correct

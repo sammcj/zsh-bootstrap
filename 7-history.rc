@@ -8,9 +8,9 @@
 # Where it gets saved
 HISTFILE=~/.history
 
-# Remember about a years worth of history (AWESOME)
-export SAVEHIST=100000
-export HISTSIZE=100000
+# Remember a lot of history (AWESOME)
+export SAVEHIST=1000000
+export HISTSIZE=1000000
 
 # Don't overwrite, append!
 setopt APPEND_HISTORY
@@ -24,7 +24,7 @@ setopt SHARE_HISTORY
 # If I type cd and then cd again, only save the last one
 setopt HIST_IGNORE_DUPS
 
-# Even if there are commands inbetween commands that are the same, still only save the last one
+# Even if there are commands in between commands that are the same, still only save the last one
 setopt HIST_IGNORE_ALL_DUPS
 
 # Pretty    Obvious.  Right?

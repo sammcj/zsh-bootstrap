@@ -518,6 +518,7 @@ encrypt_file_pw() {
 }
 
 conda_setup() {
+  # CONDA - is managed via a function when needed
   # >>> conda initialize >>>
   # !! Contents within this block are managed by 'conda init' !!
   __conda_setup="$('/Users/samm/miniconda3/bin/conda' 'shell.zsh' 'hook' 2>/dev/null)"
@@ -680,10 +681,11 @@ function cura-backup() {
 }
 
 # ML / Github Copilot
+
 copilot_what-the-shell() {
   TMPFILE=$(mktemp)
   trap 'rm -f $TMPFILE' EXIT
-  if /Users/samm/Library/Caches/fnm_multishells/86793_1677532119189/bin/github-copilot-cli what-the-shell "$@" --shellout $TMPFILE; then
+  if /Users/samm/Library/Caches/fnm_multishells/14732_1687470861733/bin/github-copilot-cli what-the-shell "$@" --shellout $TMPFILE; then
     if [ -e "$TMPFILE" ]; then
       FIXED_CMD=$(cat $TMPFILE)
 
@@ -695,11 +697,12 @@ copilot_what-the-shell() {
     return 1
   fi
 }
+alias '??'='copilot_what-the-shell'
 
 copilot_git-assist() {
   TMPFILE=$(mktemp)
   trap 'rm -f $TMPFILE' EXIT
-  if /Users/samm/Library/Caches/fnm_multishells/86793_1677532119189/bin/github-copilot-cli git-assist "$@" --shellout $TMPFILE; then
+  if /Users/samm/Library/Caches/fnm_multishells/14732_1687470861733/bin/github-copilot-cli git-assist "$@" --shellout $TMPFILE; then
     if [ -e "$TMPFILE" ]; then
       FIXED_CMD=$(cat $TMPFILE)
 
@@ -711,11 +714,12 @@ copilot_git-assist() {
     return 1
   fi
 }
+alias 'git?'='copilot_git-assist'
 
 copilot_gh-assist() {
   TMPFILE=$(mktemp)
   trap 'rm -f $TMPFILE' EXIT
-  if /Users/samm/Library/Caches/fnm_multishells/86793_1677532119189/bin/github-copilot-cli gh-assist "$@" --shellout $TMPFILE; then
+  if /Users/samm/Library/Caches/fnm_multishells/14732_1687470861733/bin/github-copilot-cli gh-assist "$@" --shellout $TMPFILE; then
     if [ -e "$TMPFILE" ]; then
       FIXED_CMD=$(cat $TMPFILE)
 
@@ -915,3 +919,13 @@ zle -N insert-last-command-output
 
 bindkey "^Q^L" insert-last-command-output
 ### End get output from last command ###
+
+
+# if ifup or ifdown is run - remind the user of the correct
+ifup() {
+  echo "Did you mean 'ip link set $1 up'?"
+}
+
+ifdown() {
+  echo "Did you mean 'ip link set $1 down'?"
+}

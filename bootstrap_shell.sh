@@ -30,8 +30,9 @@ pip3 install -U mu-repo manim
 # Ensure we don't have those pesky ^ in our package.json files
 npm config set save-exact=true
 
-npm install -G husky npm-check-updates eslint prettier aws-azure-login editorconfig \
+npm install -G husky npm-check-updates eslint prettier editorconfig \
   @typescript-eslint/parser typescript ts-node bash-language-server
+# aws-azure-login
 
 go install github.com/rhysd/actionlint/cmd/actionlint@latest
 go install github.com/nao1215/gup@latest # gup update to update go packages

@@ -62,7 +62,7 @@ alias jira="checkout-jira"
 alias main="git checkout main && git pull"
 alias minor="git commit -m 'chore: minor tweaks [skip ci]"
 ### Short git aliases
-alias a="git add ."
+alias add="git add ."
 alias c="git commit -m"
 alias h="hugo serve --disableFastRender --buildDrafts"
 alias m="git checkout main"
@@ -87,7 +87,6 @@ alias arcfarsync="rsync -rhm --numeric-ids -e 'ssh -T -c arcfour -o Compression=
 alias tree="tree -ChF"
 alias mtr="sudo mtr"
 alias iftop="sudo iftop -i en0"
-alias plint="puppet-lint --with-filename --no-documentation-check --no-arrow_alignment-check --no-hard_tabs-check --no-80chars-check"
 alias ls='gls --color=auto -AHhF --group-directories-first'
 alias updatedb='sudo /usr/libexec/locate.updatedb'
 alias netwatch='lsof -i'
@@ -95,7 +94,8 @@ alias flushdns='sudo discoveryutil udnsflushcaches'
 alias httpserver='sudo python3 -m http.server 80'
 alias cc='colorize.py'
 alias rmid="ssh-keygen -R"
-alias aria="aria2c -s 5 -j 5 -x 5 -c --enable-http-pipelining=true --http-accept-gzip=true"
+alias aria="aria2c -s 5 -j 5 -x 5 -c --enable-http-pipelining=true --http-accept-gzip=true --max-connection-per-server=10"
+alias a=aria
 alias dmesg="dmesg -LT"
 alias cpuinfo="sysctl -n machdep.cpu.brand_string"
 alias psql="/Applications/Postgres.app/Contents/Versions/latest/bin/psql"
@@ -149,6 +149,7 @@ alias json-graph='colima start && docker run -p 8888:8080 jsonvisio && open http
 alias backblaze_edit='code /Library/Backblaze.bzpkg/bzdata/bzexcluderules_editable.xml'
 
 alias scripts='cd ~/git/scripts'
+alias nzb="cd ~/git/sammcj/nzb-docker"
 
 ### Suffix Aliases ###
 
@@ -168,7 +169,6 @@ alias -s {jpg,jpeg,png,gif,bmp,ico,svg,webp}=open
 alias -s md=glow
 
 # Networking
-
 alias ip6="curl -s 6.ipquail.com/ip"
 alias ip4="curl -s 4.ipquail.com/ip"
 alias ptr6="curl -s 6.ipquail.com/ptr"

@@ -17,11 +17,11 @@ ZSH_THEME_GIT_PROMPT_UNTRACKED="%{$fg[green]%}?"
 ZSH_THEME_GIT_PROMPT_CLEAN=""
 
 if [ -f "/opt/homebrew/share/kube-ps1.sh" ]; then
-  zsh-defer source "/opt/homebrew/share/kube-ps1.sh"
+  source "/opt/homebrew/share/kube-ps1.sh"
 fi
 
 if [ -f "/usr/local/share/kube-ps1.sh" ]; then
-  zsh-defer source "/usr/local/share/kube-ps1.sh"
+  source "/usr/local/share/kube-ps1.sh"
 fi
 
-# zsh-defer PS1='$(kube_ps1)'$PS1
+# PS1='$(kube_ps1)'$PS1
