@@ -857,8 +857,11 @@ function gh_pr_list_open_dir_repos() {
 
   for repo in */; do
     if [[ -d "$repo" ]]; then
-      repo_name=$(basename "$repo")
-      repo_owner=$(basename "$(dirname "$repo")")
+      # Get the repo name from the git config
+      repo_name=$(git -C "$repo" config --get remote.origin.url | sed -E 's/.*github.com[:/].*\/(.*)\.git/\1/')
+      # Get the repo owner from the git config
+      repo_owner=$(git -C "$repo" config --get remote.origin.url | sed -E 's/.*github.com[:/](.*)\/.*/\1/')
+
       echo "Repository: $repo_owner/$repo_name"
 
       gh_pr_list_open --repo "$repo_owner/$repo_name" --match "$search_param" "${other_params[@]}"
@@ -920,7 +923,6 @@ zle -N insert-last-command-output
 bindkey "^Q^L" insert-last-command-output
 ### End get output from last command ###
 
-
 # if ifup or ifdown is run - remind the user of the correct
 ifup() {
   echo "Did you mean 'ip link set $1 up'?"
@@ -928,4 +930,14 @@ ifup() {
 
 ifdown() {
   echo "Did you mean 'ip link set $1 down'?"
+}
+
+# A small function that updates chromium (don't worry - my main browser is Firefox) and removes the extended attributes that cause it to be quarantined by macOS
+__update_chromium() {
+  brew upgrade --cask chromium
+
+  # if chromium was upgraded and is quarantined, remove the quarantine
+  if [[ -f "/Applications/Chromium.app/Contents/MacOS/Chromium" ]]; then
+    xattr -d com.apple.quarantine "/Applications/Chromium.app/Contents/MacOS/Chromium"
+  fi
 }
