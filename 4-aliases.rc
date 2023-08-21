@@ -17,14 +17,15 @@ alias zshconfigd="cd ${THIS_DIRECTORY}"
 
 # Packages #TODO: Convert this to a function
 alias ba="brew update &&
-  __update_chromium;
   brew upgrade --greedy;
   brew upgrade --cask --greedy;
+  __update_chromium;
   pip install -U pip;
   pip3 install -U pip;
   zgen selfupdate;
   zgen update;
   vim +PluginUpdate +qall;
+  npm i -g npm-check-updates;
   \ncu --global;
   mas upgrade;
   gup update;
@@ -64,8 +65,7 @@ alias gitlast="git add .;git commit --amend -C HEAD ; git push"
 alias gitmonth="git diff HEAD 'HEAD@{1 month ago}'"
 alias gitupdateallrepos="find . -name .git -type d | xargs -n1 -P4 -I% git --git-dir=% --work-tree=%/.. fetch --all --recurse-submodules"
 alias gitweek="git diff HEAD 'HEAD@{1 week ago}'"
-alias gitwip="git add .; git commit -m 'WIP - will rebase'; git push"
-alias gitupdatescripts="git add .; git commit -n -m 'update scripts'; git push"
+alias gitwip="git add .; git commit -m 'minor updates'; git push"
 alias hotfix-checkout="checkout-hotfix"
 alias hotfix-commit="commit-hotfix"
 alias hotfix="checkout-hotfix"

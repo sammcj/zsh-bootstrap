@@ -27,6 +27,9 @@ pip3 install -U mu-repo manim
 # # Markdown link checker
 # pip3 install linkcheckmd
 
+# ML/AI related
+pip install shell-gpt
+
 # Ensure we don't have those pesky ^ in our package.json files
 npm config set save-exact=true
 

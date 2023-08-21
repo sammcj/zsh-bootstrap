@@ -49,3 +49,11 @@ fpath+=~/.zfunc
 # Uncomment below to enable debug timing
 # zprof
 #### END PROFILING ######
+
+# pnpm
+export PNPM_HOME="/Users/samm/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end

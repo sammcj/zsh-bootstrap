@@ -2,7 +2,7 @@
 
 ### Exports ###
 
-export HOMEBREW_NO_ANALYTICS=1
+# export HOMEBREW_NO_ANALYTICS=1 # Allowing Analytics now as homebrew have reduced how much data they collect, it's a non-profit and it's not going to the USA
 export DO_NOT_TRACK=1
 export SAM_CLI_TELEMETRY=0                             # AWS SAM
 export TELEMETRY=0 ENABLE_TELEMETRY=0 SEND_TELEMETRY=0 # General catch-all

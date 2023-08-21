@@ -40,25 +40,51 @@ function gco() {
       # shift to remove -b from args
       shift 1
     fi
-    # check to see if the branch exists, if it doesn't offer to create it and check it out otherwise just check it out
-    if git branch -a | grep -q "$1"; then
-      git checkout "$1"
+    local branchname remote_branch_exist local_branch_exist
+    branchname="$1"
+    local_branch_exist=$(
+      # command git show-ref --verify --quiet refs/heads/"$branchname"
+      command git branch -a | grep -q "$1"
+      echo $?
+    )
+
+    # If the branch name is "main" or "master" just check it out
+    if [[ "$branchname" == "main" ]] || [[ "$branchname" == "master" ]]; then
+      command git checkout "$branchname"
+      return
+    fi
+
+    # check to see if the branch exists locally, if it doesn't offer to create it and check it out otherwise just check it out
+    if [ -z "$local_branch_exist" ]; then
+      echo "Branch exists locally, checking out..."
+      command git checkout "$1"
     else
-      echo "Creating branch $1"
-      git checkout -b "$1"
+      echo "Checking if branch exists remotely..."
+      remote_branch_exist=$(command git ls-remote --heads origin "$branchname")
+
+      if [ -n "$remote_branch_exist" ]; then
+        echo "Branch exists remotely, checking out and pulling..."
+        command git fetch origin "$branchname"
+        command git checkout -b "$branchname" "origin/$branchname"
+        command git pull
+      else
+        # If the branch doesn't exist either locally or remotely
+        echo "Branch doesn't exist locally or remotely, creating and checking out..."
+        command git checkout -b "$branchname"
+      fi
     fi
   else
     # shellcheck disable=SC2033
-    git branch --sort=-committerdate | fzf --header 'Checkout Recent Branch' --preview 'git diff --color=always {1}' --pointer='>' | xargs git checkout
+    command git branch --sort=-committerdate | fzf --header 'Checkout Recent Branch' --preview 'git diff --color=always {1}' --pointer='>' | xargs git checkout
   fi
 }
 
 function gbd() {
   if [[ -n $* ]]; then
-    git branch -d "$@"
+    command git branch -d "$@"
   else
     # shellcheck disable=SC2033
-    git branch --sort=-committerdate | fzf --header 'Delete Git Branch' --preview 'git diff --color=always {1}' --pointer='>' | xargs git branch -d
+    command git branch --sort=-committerdate | fzf --header 'Delete Git Branch' --preview 'git diff --color=always {1}' --pointer='>' | xargs git branch -d
   fi
 }
 
@@ -68,26 +94,28 @@ function checkout-hotfix() {
   if git branch -a | grep -q "remotes/origin/$HOTFIX_BRANCH"; then
     HOTFIX_BRANCH="${HOTFIX_BRANCH}-$(date +%H-%M-%S)"
   fi
-  git checkout -b "${HOTFIX_BRANCH}"
+  command git checkout -b "${HOTFIX_BRANCH}"
 }
 
 function checkout-hotfix() {
   local PREFIX="hotfix-${USER}"
-  local DATESTAMP=$(date +%Y-%m-%d)
+  local DATESTAMP
+  DATESTAMP=$(date +%Y-%m-%d)
   # If the hotfix branch already exists, append a number to the branch name, if the number already exists increment it
-  if git branch -a | grep -q "$PREFIX-$DATESTAMP"; then
+  if command git branch -a | grep -q "$PREFIX-$DATESTAMP"; then
     local COUNT=1
     while git branch -a | grep -q "$PREFIX-$DATESTAMP-$COUNT"; do
       COUNT=$((COUNT + 1))
     done
-    git checkout -b "${PREFIX}-${DATESTAMP}-${COUNT}"
+    command git checkout -b "${PREFIX}-${DATESTAMP}-${COUNT}"
   else
-    git checkout -b "${PREFIX}-${DATESTAMP}"
+    command git checkout -b "${PREFIX}-${DATESTAMP}"
   fi
 }
 
 commit-hotfix() {
-  local DATESTAMP=$(date +%Y/%m/%d)
+  local DATESTAMP
+  DATESTAMP=$(date +%Y/%m/%d)
   local GIT_ARGS=""
   local MESSAGE="$*" # Set the commit message to the arguments passed to the function
   if [[ $1 == "-n" ]]; then
@@ -96,27 +124,28 @@ commit-hotfix() {
   fi
 
   # Check for any files not added - if there are any, list them and ask the user if they want to add them
-  local untracked_files="$(git status --porcelain | grep -E '^\?\?' | awk '{print $2}')"
+  local untracked_files
+  untracked_files="$(git status --porcelain | grep -E '^\?\?' | awk '{print $2}')"
   if [[ -n $untracked_files ]]; then
     echo "There are untracked files in this directory:"
     echo "$untracked_files"
     echo "Would you like to add them? (y/n)"
     read -r ADD_FILES
     if [[ $ADD_FILES == "y" ]]; then
-      git add $untracked_files
+      command git add "$untracked_files"
     fi
   fi
 
-  git commit $GIT_ARGS -m "Hotfix-${DATESTAMP} -- ${MESSAGE}"
+  command git commit $GIT_ARGS -m "Hotfix-${DATESTAMP} -- ${MESSAGE}"
 }
 
 function checkout-jira() {
   JIRA_BRANCH="IF-${1}-${USER}-$(date +%Y-%m-%d)"
   # If the JIRA branch already exists, append the current time to the branch name
-  if git branch -a | grep -q "remotes/origin/$JIRA_BRANCH"; then
+  if command git branch -a | grep -q "remotes/origin/$JIRA_BRANCH"; then
     JIRA_BRANCH="${JIRA_BRANCH}-$(date +%H-%M-%S)"
   fi
-  git checkout -b "${JIRA_BRANCH}"
+  command git checkout -b "${JIRA_BRANCH}"
 }
 
 function commit-jira() {
@@ -128,19 +157,20 @@ function commit-jira() {
   fi
 
   # Check for any files not added - if there are any, list them and ask the user if they want to add them
-  local untracked_files="$(git status --porcelain | grep -E '^\?\?' | awk '{print $2}')"
+  local untracked_files
+  untracked_files="$(git status --porcelain | grep -E '^\?\?' | awk '{print $2}')"
   if [[ -n $untracked_files ]]; then
     echo "There are untracked files in this directory:"
     echo "$untracked_files"
     echo "Would you like to add them? (y/n)"
     read -r ADD_FILES
     if [[ $ADD_FILES == "y" ]]; then
-      git add $untracked_files
+      git add "$untracked_files"
     fi
   fi
 
-  git add .
-  git commit $GIT_ARGS -m "$(git rev-parse --abbrev-ref HEAD | cut -d'-' -f1 -f2) -- ${MESSAGE}"
+  command git add .
+  command git commit $GIT_ARGS -m "$(git rev-parse --abbrev-ref HEAD | cut -d'-' -f1 -f2) -- ${MESSAGE}"
 }
 
 # Outputs the name of the current branch
@@ -423,7 +453,7 @@ function s2a { eval $($(which saml2aws) script --shell=bash --profile=$@); }
 
 # Interactively export AWS_PROFILE
 function aws-profile() {
-  export AWS_PROFILE=$(grep profile ${HOME}/.aws/config |
+  export AWS_PROFILE=$(grep profile "${HOME}"/.aws/config |
     awk '{print $2}' | sed 's,],,g' |
     fzf --layout reverse --height=10% --border)
 }
@@ -671,7 +701,7 @@ function cura-backup() {
   # and copy it to the cloud backup folder
   local cura_base_dir="${HOME}/Library/Application Support/cura"
   local destination="${HOME}/Library/Mobile Documents/com~apple~CloudDocs/Backups/3dprinting/cura"
-  local latest_version_dir="$(ls -d ${cura_base_dir}/*/ | tail -n1)"
+  local latest_version_dir="$(ls -d "${cura_base_dir}"/*/ | tail -n1)"
 
   # zip it up with the date
   local date="$(date +%Y-%m-%d)"
@@ -685,9 +715,9 @@ function cura-backup() {
 copilot_what-the-shell() {
   TMPFILE=$(mktemp)
   trap 'rm -f $TMPFILE' EXIT
-  if /Users/samm/Library/Caches/fnm_multishells/14732_1687470861733/bin/github-copilot-cli what-the-shell "$@" --shellout $TMPFILE; then
+  if /Users/samm/Library/Caches/fnm_multishells/14732_1687470861733/bin/github-copilot-cli what-the-shell "$@" --shellout "$TMPFILE"; then
     if [ -e "$TMPFILE" ]; then
-      FIXED_CMD=$(cat $TMPFILE)
+      FIXED_CMD=$(cat "$TMPFILE")
 
       eval "$FIXED_CMD"
     else
@@ -702,9 +732,9 @@ alias '??'='copilot_what-the-shell'
 copilot_git-assist() {
   TMPFILE=$(mktemp)
   trap 'rm -f $TMPFILE' EXIT
-  if /Users/samm/Library/Caches/fnm_multishells/14732_1687470861733/bin/github-copilot-cli git-assist "$@" --shellout $TMPFILE; then
+  if /Users/samm/Library/Caches/fnm_multishells/14732_1687470861733/bin/github-copilot-cli git-assist "$@" --shellout "$TMPFILE"; then
     if [ -e "$TMPFILE" ]; then
-      FIXED_CMD=$(cat $TMPFILE)
+      FIXED_CMD=$(cat "$TMPFILE")
 
       eval "$FIXED_CMD"
     else
@@ -719,9 +749,9 @@ alias 'git?'='copilot_git-assist'
 copilot_gh-assist() {
   TMPFILE=$(mktemp)
   trap 'rm -f $TMPFILE' EXIT
-  if /Users/samm/Library/Caches/fnm_multishells/14732_1687470861733/bin/github-copilot-cli gh-assist "$@" --shellout $TMPFILE; then
+  if /Users/samm/Library/Caches/fnm_multishells/14732_1687470861733/bin/github-copilot-cli gh-assist "$@" --shellout "$TMPFILE"; then
     if [ -e "$TMPFILE" ]; then
-      FIXED_CMD=$(cat $TMPFILE)
+      FIXED_CMD=$(cat "$TMPFILE")
 
       eval "$FIXED_CMD"
     else
@@ -934,10 +964,16 @@ ifdown() {
 
 # A small function that updates chromium (don't worry - my main browser is Firefox) and removes the extended attributes that cause it to be quarantined by macOS
 __update_chromium() {
-  brew upgrade --cask chromium
-
   # if chromium was upgraded and is quarantined, remove the quarantine
-  if [[ -f "/Applications/Chromium.app/Contents/MacOS/Chromium" ]]; then
-    xattr -d com.apple.quarantine "/Applications/Chromium.app/Contents/MacOS/Chromium"
+  local chromium_quarantined
+  chromium_quarantined=$(xattr -p com.apple.quarantine /Applications/Chromium.app 2>/dev/null)
+  if $chromium_quarantined; then
+    xattr -d com.apple.quarantine /Applications/Chromium.app
+    if pgrep -x "Chromium"; then
+      osascript -e 'tell application "System Events" to display dialog "Chromium updated. Do you want to restart Chromium?" buttons {"No", "Yes"} default button "Yes" with icon caution' &&
+        killall Chromium &&
+        sleep 5 &&
+        open -a /Applications/Chromium.app
+    fi
   fi
 }
