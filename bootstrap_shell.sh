@@ -28,7 +28,7 @@ pip3 install -U mu-repo manim
 # pip3 install linkcheckmd
 
 # ML/AI related
-pip install shell-gpt
+# pip install shell-gpt
 
 # Ensure we don't have those pesky ^ in our package.json files
 npm config set save-exact=true
@@ -154,6 +154,7 @@ grep -q -F '/opt/homebrew/bin/zsh' /etc/shells || echo '/opt/homebrew/bin/zsh' |
 
 clone_repo "${HOME}/.zgen" "https://github.com/tarjoilija/zgen.git"
 clone_repo "${HOME}/.tmux/plugins/tpm" "https://github.com/tmux-plugins/tpm"
+clone_repo "${HOME}/.git/fuzzy" "https://github.com/bigH/git-fuzzy.git" && ln -s "${HOME}/.git/fuzzy/bin/git-fuzzy" "${HOME}/bin/git-fuzzy"
 
 # Link dotfiles
 dotfiles=(".gitignoreglobal" ".gitconfig" ".vimrc" ".gitconfig_nopush" ".gitconfig.private" ".dircolors" ".tmux.conf" ".zshrc" ".asdfrc")
@@ -162,6 +163,12 @@ for dotfile in "${dotfiles[@]}"; do
 done
 
 link_dotfile "bat-config" "/Users/samm/.config/bat/config"
+
+echo "Do you want to enable touchID for sudo? [y/N]"
+read -r response
+if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+  sudo sh -c 'echo "auth       sufficient     pam_tid.so" >> /etc/pam.d/sudo'
+fi
 
 echo "Do you want to install extras? [y/N]"
 "$(declare -f install_extras)"

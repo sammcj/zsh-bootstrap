@@ -43,3 +43,6 @@ setopt EXTENDED_HISTORY
 setopt HIST_SAVE_NO_DUPS
 setopt HIST_EXPIRE_DUPS_FIRST
 setopt HIST_FIND_NO_DUPS
+
+# When outputting history, print it out with timestamps and command only
+alias history="history -i"

@@ -15,23 +15,6 @@ alias zshconfig="code ${THIS_DIRECTORY}"
 #shellcheck disable=SC2139
 alias zshconfigd="cd ${THIS_DIRECTORY}"
 
-# Packages #TODO: Convert this to a function
-alias ba="brew update &&
-  brew upgrade --greedy;
-  brew upgrade --cask --greedy;
-  __update_chromium;
-  pip install -U pip;
-  pip3 install -U pip;
-  zgen selfupdate;
-  zgen update;
-  vim +PluginUpdate +qall;
-  npm i -g npm-check-updates;
-  \ncu --global;
-  mas upgrade;
-  gup update;
-  omz update;
-  brew cleanup;
-  brew autoremove"
 alias app_store_upgrade_mmas="mas upgrade"
 alias go_update_all="gup update"
 alias pa="pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip install -U"
@@ -40,11 +23,11 @@ alias pa="pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip i
 alias brew86="arch -x86_64 /usr/local/homebrew/bin/brew"
 
 #shellcheck disable=SC2139
-alias brewbackup="brew bundle dump --force --file=${THIS_DIRECTORY}/Brewfile-${HOST}"
+alias brewbackup="brew bundle dump --force --file=""${THIS_DIRECTORY}""/Brewfile-""${HOST}"""
 
 # Git
 # alias gbd="git branch -d" Moved to functions
-#alias gitrb='for branch in `git branch -r --merged | grep -v HEAD`; do echo -e `git show --format="%ci %cr %an" $branch | head -n 1` \\t$branch; done | sort -r'
+#alias gitrb='for branch in $(git branch -r --merged | grep -v HEAD); do echo -e $(git show --format="%ci %cr %an" "$branch" | head -n 1) \\t$branch; done | sort -r'
 alias amend="git commit --amend --no-edit"
 alias bfg="java -jar ~/bin/bfg.jar"
 alias ch="commit-hotfix"

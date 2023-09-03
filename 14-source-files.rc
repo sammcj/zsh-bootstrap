@@ -4,9 +4,6 @@
 # Note: If this doesn't work, make sure you've cleaned up nvm directories and related PATHs
 eval "$(/opt/homebrew/bin/fnm env --use-on-cd)"
 
-# Thefuck
-# eval "$(thefuck --alias)"
-
 #saml2aws
 eval "$(saml2aws --completion-script-zsh)"
 
@@ -17,3 +14,11 @@ eval "$(saml2aws --completion-script-zsh)"
 export PYENV_ROOT="$HOME/.pyenv"
 command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
+
+# # pnpm
+# export PNPM_HOME="/Users/samm/Library/pnpm"
+# case ":$PATH:" in
+# *":$PNPM_HOME:"*) ;;
+# *) export PATH="$PNPM_HOME:$PATH" ;;
+# esac
+# pnpm end

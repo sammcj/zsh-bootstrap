@@ -35,7 +35,6 @@ if ! zgen saved; then
     MichaelAquilina/zsh-you-should-us
     lukechilds/zsh-better-npm-completion
     3v1n0/zsh-bash-completions-fallback
-    devndive/zsh-saml2aws-auto
     mrkmg/borgbackup-zsh-completion
 
     # git related
@@ -46,10 +45,11 @@ if ! zgen saved; then
     # fzf wrappers
     sunlei/zsh-ssh
     torifat/npms
+    bigH/git-fuzzy
 EOPLUGINS
 
   ## zsh completion generator ##
-  zgen load RobSis/zsh-completion-generator
+  # zgen load RobSis/zsh-completion-generator # Disabled for now as was the cause of 25% of my load time
 
   ## Not in use at present ##
   # nnao45/zsh-kubectl-completion

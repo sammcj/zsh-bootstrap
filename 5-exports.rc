@@ -1,11 +1,8 @@
 # shellcheck disable=SC2148 disable=SC1090 shell=bash
 
 ### Exports ###
-
-# export HOMEBREW_NO_ANALYTICS=1 # Allowing Analytics now as homebrew have reduced how much data they collect, it's a non-profit and it's not going to the USA
-export DO_NOT_TRACK=1
-export SAM_CLI_TELEMETRY=0                             # AWS SAM
-export TELEMETRY=0 ENABLE_TELEMETRY=0 SEND_TELEMETRY=0 # General catch-all
+export SAM_CLI_TELEMETRY=0                                                                                           # AWS SAM
+export TELEMETRY=0 ENABLE_TELEMETRY=0 SEND_TELEMETRY=0 DO_NOT_TRACK=1 ANALYTICS=0 DISABLE_ANALYTICS=1 NO_ANALYTICS=1 # General catch-all
 export GREP_OPTIONS="--color"
 # export LSCOLORS="ExFxCxDxBxegedabagacad"
 export LS_COLORS="$(vivid generate dracula)"
@@ -31,3 +28,27 @@ export FZF_COMPLETION_OPTS='--border --info=inline'
 # we can't use BASH_SOURCE[0] because it's not available in zsh
 DOTFILES_DIR="$(cd "$(dirname "$0")" && pwd)"
 export DOTFILES_DIR
+
+# # Global package manager caches to save on disk space
+# export PIP_DOWNLOAD_CACHE="${HOME}/Library/Caches/pip"
+# export NPM_CONFIG_CACHE="${HOME}/.npm"
+
+## Text formatting shortcuts ##
+export _FMT_ITL="\e[3m"
+export _FMT_BLD="\e[1m"
+export _FMT_RED="\e[31m"
+export _FMT_GRN="\e[32m"
+export _FMT_YLW="\e[33m"
+export _FMT_BLU="\e[34m"
+export _FMT_MAG="\e[35m"
+export _FMT_CYN="\e[36m"
+export _FMT_WHT="\e[37m"
+export _FMT_BRED="\e[1;31m"
+export _FMT_BGRN="\e[1;32m"
+export _FMT_BYLW="\e[1;33m"
+export _FMT_BBLU="\e[1;34m"
+export _FMT_BMAG="\e[1;35m"
+export _FMT_BCYN="\e[1;36m"
+export _FMT_BWHT="\e[1;37m"
+export _FMT_END="\e[0m" # end of line stop formatting
+##

@@ -4,6 +4,8 @@
 
 # set -x
 
+set +m # Make jobs quiet by default
+
 # There is an alias to jump to the directory with the various
 # included zsh configs, simply type `zshconfig` at the prompt.
 
@@ -17,7 +19,7 @@
 #source "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/path.zsh.inc"
 #source "/usr/local/Caskroom/google-cloud-sdk/latest/google-cloud-sdk/completion.zsh.inc"
 
-autoload -U +X bashcompinit && bashcompinit
+# autoload -U +X bashcompinit && bashcompinit
 # autoload -U +X compinit && compinit #zgen does this now
 
 ## Source all configs
@@ -29,7 +31,7 @@ if [[ -d $HOME/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/d
 fi
 
 ## Add ssh keys to agent if not already added
-ssh-add-keys
+bg_silent ssh-add-keys
 
 ### Below are items added by installer scripts (usually homebrew) ####
 
@@ -39,9 +41,11 @@ source /opt/homebrew/Cellar/fzf/*/shell/key-bindings.zsh
 # Enable direnv - https://direnv.net
 # eval "$(direnv hook zsh)"
 
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+test -e "${HOME}/.iterm2_shell_integration.zsh" && bg_silent source "${HOME}/.iterm2_shell_integration.zsh"
 
-autoload -Uz compinit
+autoload -Uz compinit && bg_silent compinit
+autoload -U +X bashcompinit && bg_silent bashcompinit
+
 zstyle ':completion:*' menu select
 fpath+=~/.zfunc
 
@@ -50,10 +54,4 @@ fpath+=~/.zfunc
 # zprof
 #### END PROFILING ######
 
-# pnpm
-export PNPM_HOME="/Users/samm/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-# pnpm end
+set -m # reenable job output

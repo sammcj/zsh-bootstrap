@@ -40,43 +40,44 @@ function gco() {
       # shift to remove -b from args
       shift 1
     fi
-    local branchname remote_branch_exist local_branch_exist
+    local branchname remote_branch_exist
     branchname="$1"
-    local_branch_exist=$(
-      # command git show-ref --verify --quiet refs/heads/"$branchname"
-      command git branch -a | grep -q "$1"
-      echo $?
-    )
 
     # If the branch name is "main" or "master" just check it out
     if [[ "$branchname" == "main" ]] || [[ "$branchname" == "master" ]]; then
-      command git checkout "$branchname"
+      command git switch "$branchname"
       return
     fi
 
     # check to see if the branch exists locally, if it doesn't offer to create it and check it out otherwise just check it out
-    if [ -z "$local_branch_exist" ]; then
-      echo "Branch exists locally, checking out..."
-      command git checkout "$1"
+    if command git show-ref --verify --quiet refs/heads/"$branchname"; then
+      echo "Branch exists locally, switching branch..."
+      command git switch "$branchname"
     else
       echo "Checking if branch exists remotely..."
       remote_branch_exist=$(command git ls-remote --heads origin "$branchname")
-
       if [ -n "$remote_branch_exist" ]; then
         echo "Branch exists remotely, checking out and pulling..."
-        command git fetch origin "$branchname"
-        command git checkout -b "$branchname" "origin/$branchname"
+        command git fetch # origin "$branchname"
+        # command git checkout "$branchname" "origin/${branchname}" || echo "Error - available branches: $(git branch -v -a)"
+        command git switch -c "$branchname" "origin/${branchname}" || echo "Error - available branches: $(git branch -v -a)"
         command git pull
       else
         # If the branch doesn't exist either locally or remotely
-        echo "Branch doesn't exist locally or remotely, creating and checking out..."
-        command git checkout -b "$branchname"
+        echo "Branch doesn't exist locally or remotely, creating and switching..."
+        command git switch -c "$branchname"
       fi
     fi
   else
     # shellcheck disable=SC2033
-    command git branch --sort=-committerdate | fzf --header 'Checkout Recent Branch' --preview 'git diff --color=always {1}' --pointer='>' | xargs git checkout
+    command git branch --sort=-committerdate | fzf --header 'Checkout Recent Branch' --preview 'git diff --color=always {1}' --pointer='>' | xargs git switch
+    echo -e "${_FMT_ITL}Hint: You can check remote branches with 'gcor'${_FMT_END}"
   fi
+}
+
+function gcor() {
+  # list all remote branches and select one with fzf git branch -v -a
+  command git branch -v -a | fzf --header 'Checkout Remote Branch' --preview 'git diff --color=always {1}' --pointer='>' | awk '{print $1}' | xargs git checkout
 }
 
 function gbd() {
@@ -441,23 +442,6 @@ tch() {
   touch "$@"
 }
 
-# AWS Azure AD login
-function aws-azure-login() {
-  command aws-azure-login --no-prompt --profile "$@"
-  export AWS_PROFILE=$@
-  export AWSCLIPARAMS="--profile=$@"
-}
-
-# shellcheck disable=SC2068 disable=SC2046 disable=SC2145
-function s2a { eval $($(which saml2aws) script --shell=bash --profile=$@); }
-
-# Interactively export AWS_PROFILE
-function aws-profile() {
-  export AWS_PROFILE=$(grep profile "${HOME}"/.aws/config |
-    awk '{print $2}' | sed 's,],,g' |
-    fzf --layout reverse --height=10% --border)
-}
-
 # Interactive git diff
 function git-diff() {
   git log --graph --color=always \
@@ -570,44 +554,99 @@ function update_asdf() {
   asdf plugin-update --all
 }
 
-# saml2aws
-aad() {
-  INPUT_PROFILE=$(echo "$1" | sed -e 's/dosa/kis/g;s/cust/klue/g') # Specific to a project I'm working on.
-  local IDPPW=$(keychain_password awsazurepw)                      # requires mfa and keychain authentication
-  saml2aws login -a "$INPUT_PROFILE" --skip-prompt --password="$IDPPW" --profile="$INPUT_PROFILE" && export AWS_PROFILE="$INPUT_PROFILE" && export AWSCLIPARAMS="--profile=$INPUT_PROFILE"
-  unset IDPPW
-  aws --profile "$AWS_PROFILE" sts get-caller-identity
+# shellcheck disable=SC2068 disable=SC2046 disable=SC2145
+function s2a() {
+  eval $($(command saml2aws) script --shell=bash --profile=$@)
 }
 
-function awslogin() {
-  if [ -z "${1}" ]; then
-    echo "ERROR: account name required, e.g. awslogin data-dev"
+### AWS Auth ###
+# aws-profile uses s2a-keychain to login to AWS using saml2aws and then exports the AWS_PROFILE variable
+
+# Interactively export AWS_PROFILE
+function aws-profile() {
+  # if provided an argument, use that as the profile
+  if [[ -n $1 ]]; then
+    export AWS_PROFILE=$1
+    export AWSCLIPARAMS="--profile=$1"
   else
-    # Check credentials are current, refresh if needed and export into shell
-    aws configure list --profile "${1}" && eval "$(saml2aws script --profile "${1}")"
+    # otherwise, use fzf to select a profile
+    AWS_PROFILE=$(grep profile "${HOME}"/.aws/config |
+      awk '{print $2}' | sed 's,],,g' |
+      fzf --layout reverse --height=30% --border)
+    export AWS_PROFILE
+    export AWSCLIPARAMS="--profile=${AWS_PROFILE}"
   fi
+
+  # # Check if we've already got a session
+  # if [[ -n $(aws --profile="${AWS_PROFILE}" sts get-caller-identity) ]]; then
+  #   echo "You already have a session, would you like to refresh it? (y/n)"
+  #   read -r REFRESH_SESSION
+  #   if [[ $REFRESH_SESSION == "n" ]]; then
+  #     exit 0
+  #   fi
+  # fi
+
+  # # Offer to start a tmux session if one isn't already running (tmux_attach will check if there are any sessions)
+  # if [[ -z $(tmux ls) ]]; then
+  #   echo "Would you like to start a tmux session? (y/n)"
+  #   read -r START_TMUX
+  #   if [[ $START_TMUX == "y" ]]; then
+  #     tmux_create "aws"
+  #   fi
+  # fi
+
+  s2a-keychain "$AWS_PROFILE"
+
+  echo "[You are now using the ${AWS_PROFILE} profile]"
+
 }
 
-# Reads a password from keychain and outputs it
-# usage: keychain_password <service name to match on> <account>
-keychain_password() {
-  # Make sure there no screen recording active on before returning the password
-  if [[ $(pgrep -i screencapture) ]]; then
-    echo "ERROR: macOS screen recording (screencapture process) is active. Please stop it before printing the password."
-    return 1
-  fi
-  security find-generic-password -s "$1" -a "$(whoami)" -w
+alias aad=aws-profile
+alias awslogin=aws-profile
+alias aws-azure-login=aws-profile
+
+# Logs into AWS using saml2aws and a password stored in keychain
+function s2a-keychain() {
+  local IDPPW INPUT_PROFILE KEYCHAIN_ITEM
+  KEYCHAIN_ITEM=${KEYCHAIN_ITEM:-"saml2awspw"}
+  INPUT_PROFILE=${1:-"default"}
+  CHECK_SCREENRECORDER=${CHECK_SCREENRECORDER:-"false"}
+
+  IDPPW=$(keychain_password "$KEYCHAIN_ITEM") # requires mfa and keychain authentication
+
+  aws configure list --profile "${INPUT_PROFILE}"
+
+  # Login to AWS
+  saml2aws login -a "$INPUT_PROFILE" \
+    --skip-prompt \
+    --password="$IDPPW" \
+    --profile="$INPUT_PROFILE"
+
+  export AWS_PROFILE="$INPUT_PROFILE"
+  export AWSCLIPARAMS="--profile=${INPUT_PROFILE}"
+  export AWS_DEFAULT_REGION=ap-southeast-2
+  unset IDPPW
 }
+
+### END AWS Auth ###
 
 # Prompts for a name and a password and stores it in keychain
 keychain_password_prompt() {
   echo "Enter a name for the password:"
   read -r name
   echo "Enter the password:"
-  # disable echoing the password
-  stty -echo
+  stty -echo # disable echoing the password
   read -r password
   security add-generic-password -s "$name" -a "$(whoami)" -w "$password"
+  stty echo # re-enable echoing
+}
+
+# Reads a password from keychain and outputs it
+# usage: keychain_password <service name to match on> <account>
+keychain_password() {
+  stty -echo # disable echoing the password
+  security find-generic-password -s "$1" -a "$(whoami)" -w
+  stty echo # re-enable echoing
 }
 
 # A function that checks ssh-add and adds my keys if they're not already added
@@ -615,6 +654,30 @@ function ssh-add-keys() {
   if ! ssh-add -l | grep -qe 'ED25519\|RSA'; then
     ssh-add --apple-use-keychain ~/.ssh/id_*.key
   fi
+}
+
+function tmux_create() {
+  SESSION="$1"
+  echo "Creating tmux session ${SESSION}"
+  tmux new-session -d -s "$SESSION"
+  tmux switch-client -t "$SESSION"
+}
+
+function tmux_attach() {
+  # If not provided an argument, use fzf to select a session
+  if [[ -n $1 ]]; then
+    SESSION="$1"
+
+    # check if there are any sessions
+    if [[ -z $(tmux ls) ]]; then
+      echo "No tmux sessions found"
+      return 1
+    fi
+  else
+    SESSION=$(tmux ls | grep -Eo '^[0-9]+.*' | fzf --layout reverse --height=40% --border | awk '{print $1}')
+  fi
+  echo "Attaching to tmux session ${SESSION}"
+  tmux switch-client -t "$SESSION"
 }
 
 clean_string() {
@@ -964,16 +1027,154 @@ ifdown() {
 
 # A small function that updates chromium (don't worry - my main browser is Firefox) and removes the extended attributes that cause it to be quarantined by macOS
 __update_chromium() {
-  # if chromium was upgraded and is quarantined, remove the quarantine
-  local chromium_quarantined
-  chromium_quarantined=$(xattr -p com.apple.quarantine /Applications/Chromium.app 2>/dev/null)
-  if $chromium_quarantined; then
+  # check if there is an update available from homebrew
+  local chromium_update
+  chromium_update=$(brew outdated --cask --greedy | grep -i chromium)
+
+  if [[ -n $chromium_update ]]; then
+    brew upgrade --cask --greedy --no-quarantine chromium
     xattr -d com.apple.quarantine /Applications/Chromium.app
-    if pgrep -x "Chromium"; then
-      osascript -e 'tell application "System Events" to display dialog "Chromium updated. Do you want to restart Chromium?" buttons {"No", "Yes"} default button "Yes" with icon caution' &&
-        killall Chromium &&
-        sleep 5 &&
-        open -a /Applications/Chromium.app
-    fi
+    echo "Updated Chromium to $chromium_update, and removed quarantine attributes."
   fi
 }
+
+function ba() {
+  # trap ctrl-c
+  trap '' SIGINT
+
+  # create a log file, if it already exists move it to .1 and create a new one
+  local log_file="${HOME}/.ba.log"
+  local error_log="${HOME}/.ba.errors.log"
+
+  # update homebrew and all apps
+  brew update >>"${error_log}" 2>&1
+
+  mv "${log_file}" "${log_file}.1"
+
+  mv "${log_file}" "${log_file}.1"
+
+  echo "Upgrading in the background, tail -f ${log_file} for details."
+
+  touch "${log_file}" "${error_log}"
+  echo "Starting update at $(date +%Y-%m-%d) ..." >>"${log_file}"
+
+  __upgrade_apps >>"${log_file}" 2>&1 &
+  __upgrade_packages >>"${log_file}" 2>&1 &
+  __upgrade_shell >>"${log_file}" 2>&1 &
+
+  # list all background jobs
+  jobs
+
+  # every 5 seconds, check if any background jobs are paused, if so, foreground them
+  while true; do
+    sleep 5
+    if [[ -n $(jobs -p -s) ]]; then
+      fg
+    else
+      break
+    fi
+  done
+
+  # wait for all background jobs to finish
+  wait
+  fg # bring the last background job to the foreground
+
+  echo "Updates complete, see ${log_file} for details."
+
+  # unset trap
+  trap - SIGINT
+}
+
+function __upgrade_apps() {
+  trap 'fg' SIGINT
+
+  brew update
+  NONINTERACTIVE=1 __update_chromium
+  NONINTERACTIVE=1 brew upgrade --greedy --greedy-latest
+  NONINTERACTIVE=1 brew upgrade --cask --greedy
+  NONINTERACTIVE=1 mas upgrade
+  brew cleanup
+  brew autoremove
+  gup update
+
+  # unset trap
+  trap - SIGINT
+
+  # check for any suspended jobs and foreground them
+  if [[ -n $(jobs -p -s) ]]; then
+    fg
+  fi
+}
+
+function __upgrade_packages() {
+  trap 'fg' SIGINT
+
+  pip3 install -U pip
+  npm i -g npm-check-updates
+  \ncu --global
+  echo | vim +PluginInstall +qall &>/dev/null
+
+  # unset trap
+  trap - SIGINT
+}
+
+function __upgrade_shell() {
+  zgen selfupdate
+  zgen update
+  omz update
+}
+
+bg_silent() {
+  # background a task quietly and disown
+  { "$@" 2>&3 & } 3>&2 2>/dev/null
+  disown &>/dev/null
+}
+
+### OLD
+# # AWS Azure AD login
+# function aws-azure-login() {
+#   command aws-azure-login --no-prompt --profile "$@"
+#   export AWS_PROFILE=$*
+#   export AWSCLIPARAMS="--profile=$*"
+# }
+
+# # saml2aws
+# aad() {
+#   local IDPPW INPUT_PROFILE
+
+#   # Check for input
+#   if [ -z "${1}" ]; then
+#     echo "ERROR: account name required, e.g. $(basename "$0") data-dev"
+#     return 1
+#   else
+#     # Cleanup the input
+#     INPUT_PROFILE=$(echo "$1" | sed -e 's/dosa/kis/g;s/cust/klue/g')
+#   fi
+
+#   # Fetch the password from keychain
+#   IDPPW=$(keychain_password awsazurepw) # requires mfa and keychain authentication
+
+#   aws configure list --profile "${1}"
+#   # Login to AWS
+#   saml2aws login -a "$INPUT_PROFILE" \
+#     --skip-prompt \
+#     --password="$IDPPW" \
+#     --profile="$INPUT_PROFILE" \
+#     --cache-saml &&
+#     export AWS_PROFILE="$INPUT_PROFILE" &&
+#     export AWSCLIPARAMS="--profile=${INPUT_PROFILE}" &&
+#     export AWS_DEFAULT_REGION=ap-southeast-2
+#   unset IDPPW
+
+#   # Check the login was successful
+#   aws --profile "$AWS_PROFILE" sts get-caller-identity
+# }
+
+# function awslogin() {
+#   if [ -z "${1}" ]; then
+#     echo "ERROR: account name required, e.g. awslogin data-dev"
+#   else
+#     # Check credentials are current, refresh if needed and export into shell
+#     aws configure list --profile "${1}" && eval "$(saml2aws script --profile "${1}")"
+#   fi
+# }

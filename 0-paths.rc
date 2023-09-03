@@ -1,26 +1,23 @@
 # shellcheck disable=SC2148 disable=SC1090 shell=bash
 
-export PATH="/usr/local/bin:$PATH"
-export PATH="/opt/homebrew/bin:$PATH"
-export PATH="/opt/homebrew/sbin:$PATH"
-export PATH="/opt/homebrew/opt/gnu-getopt/bin:$PATH"
+export PATH="/usr/local/bin:${PATH}"
+export PATH="/opt/homebrew/bin:${PATH}"
+export PATH="/opt/homebrew/sbin:${PATH}"
+export PATH="/opt/homebrew/opt/gnu-getopt/bin:${PATH}"
 
-export PATH="$PATH:$HOME/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/bin"
-export PATH="$PATH:$HOME/git/scripts"
-export PATH="$PATH:$HOME/.local/bin"
+export PATH="${PATH}:${HOME}/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/bin"
+export PATH="${PATH}:${HOME}/git/scripts"
+export PATH="${PATH}:${HOME}/.local/bin:${HOME}/bin"
 
 # Golang
-export PATH="$PATH:$HOME/go/bin"
+export PATH="${PATH}:${HOME}/go/bin"
 
 # added by Miniconda3 installer
-export PATH="/Users/samm/miniconda3/bin:$PATH"
-
-# override conda with python 3.10 as it doesn't support it ?
-# export PATH="/opt/homebrew/opt/python@3.10/libexec/bin:$PATH"
+export PATH="/Users/samm/miniconda3/bin:${PATH}"
 
 ### Kubernetes / k8s related exports ###
 
 # Krew Kubernetes plugin manager
-# export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+# export PATH="${KREW_ROOT:-$HOME/.krew}/bin:${PATH}"
 
 #source $HOME/.helm/helmenv.sh
