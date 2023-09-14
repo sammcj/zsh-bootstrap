@@ -25,10 +25,23 @@ git_wrapper() {
     command git "$@"
     return
   fi
+
   # clone with depth=1 if no depth is not specified
   if [[ $1 == "clone" ]] && [[ $* != *"--depth"* ]]; then
     shift
     command git clone --depth=1 "$@"
+
+    # Move into the cloned directory
+    cd "$(basename "$1" .git)"
+
+    # Update the fetch configuration to track all upstream branches
+    git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+
+    # Fetch all branches in the background, silently
+    git fetch --all --quiet &>/dev/null &
+
+    # Move back to the original directory
+    cd -
   else
     command git "$@"
   fi
@@ -1124,6 +1137,28 @@ function __upgrade_shell() {
   omz update
 }
 
+function __upgrade_docker_compose() {
+  VERSION=$(curl --silent https://api.github.com/repos/docker/compose/releases/latest | jq .name -r)
+  DESTINATION=/usr/local/bin/docker-compose
+  COMPOSE_LOCATION=$(which docker-compose 2>/dev/null)
+
+  # Check if we've got docker-compose already installed and if we're using the homebrew version
+  if [[ $COMPOSE_LOCATION == "/opt/homebrew/bin/docker-compose" ]]; then
+    echo "You're using the homebrew version of docker-compose, skipping update."
+    return
+  fi
+
+  if [[ -f $DESTINATION ]] && [[ $(docker-compose version --short) == "$VERSION" ]]; then
+    echo "docker-compose is already up to date."
+    return
+  else
+    curl -L "https://github.com/docker/compose/releases/download/${VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o "$DESTINATION"
+    chmod 755 "$DESTINATION"
+    ln -fs "$(which docker-compose)" /usr/libexec/docker/cli-plugins/docker-compose
+    echo "Updated docker-compose to ${VERSION}"
+  fi
+}
+
 bg_silent() {
   # background a task quietly and disown
   { "$@" 2>&3 & } 3>&2 2>/dev/null
@@ -1178,3 +1213,28 @@ bg_silent() {
 #     aws configure list --profile "${1}" && eval "$(saml2aws script --profile "${1}")"
 #   fi
 # }
+
+# Function to recursively replace the registry in package-lock.json files
+npm_replace_registry() {
+  # Define the string to search for and the string to replace it with
+  local search_string="${LOCAL_NPM_REGISTRY}"
+  local replace_string="registry.npmjs.org"
+
+  # skip if search string is empty
+  if [ -z "$search_string" ]; then
+    return 0
+  fi
+
+  # Use find to locate all package-lock.json files and loop through them
+  find . -type f -name 'package-lock.json' | while read -r file; do
+    echo "Processing $file"
+
+    # Use sed to perform the string replacement
+    sed -i.bak "s|$search_string|$replace_string|g" "$file"
+
+    # Remove the backup file created by sed
+    rm -f "${file}.bak"
+
+    echo "Replaced $search_string with $replace_string in $file"
+  done
+}
