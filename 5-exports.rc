@@ -1,8 +1,7 @@
 # shellcheck disable=SC2148 disable=SC1090 shell=bash
 
 ### Exports ###
-export SAM_CLI_TELEMETRY=0                                                                                           # AWS SAM
-export TELEMETRY=0 ENABLE_TELEMETRY=0 SEND_TELEMETRY=0 DO_NOT_TRACK=1 ANALYTICS=0 DISABLE_ANALYTICS=1 NO_ANALYTICS=1 # General catch-all
+export SAM_CLI_TELEMETRY=0 TELEMETRY=0 ENABLE_TELEMETRY=0 SEND_TELEMETRY=0 DO_NOT_TRACK=1 ANALYTICS=0 DISABLE_ANALYTICS=1 NO_ANALYTICS=1 # General catch-all
 export GREP_OPTIONS="--color"
 # export LSCOLORS="ExFxCxDxBxegedabagacad"
 export LS_COLORS="$(vivid generate dracula)"

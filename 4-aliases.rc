@@ -22,9 +22,6 @@ alias pa="pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip i
 # Second homebrew install with x86 arch
 alias brew86="arch -x86_64 /usr/local/homebrew/bin/brew"
 
-#shellcheck disable=SC2139
-alias brewbackup="brew bundle dump --force --file=""${THIS_DIRECTORY}""/Brewfile-""${HOST}"""
-
 # Git
 # alias gbd="git branch -d" Moved to functions
 #alias gitrb='for branch in $(git branch -r --merged | grep -v HEAD); do echo -e $(git show --format="%ci %cr %an" "$branch" | head -n 1) \\t$branch; done | sort -r'
@@ -97,7 +94,6 @@ alias dmesg="dmesg -LT"
 alias cpuinfo="sysctl -n machdep.cpu.brand_string"
 alias psql="/Applications/Postgres.app/Contents/Versions/latest/bin/psql"
 alias fastmail_you_there_bro="openssl s_client -connect imap.fastmail.com:993 -crlf"
-
 alias zmv='noglob zmv -W'
 
 # MacOS shortcuts

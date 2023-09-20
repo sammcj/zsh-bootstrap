@@ -150,6 +150,7 @@ chmod +x ~/.docker/cli-plugins/docker-compose
 ln -sfn /opt/homebrew/opt/docker-compose/bin/docker-compose "${HOME}/.docker/cli-plugins/docker-compose"
 ####
 
+mkdir -p "${HOME}/.zsh.d"
 grep -q -F '/opt/homebrew/bin/zsh' /etc/shells || echo '/opt/homebrew/bin/zsh' | sudo tee -a /etc/shells
 
 clone_repo "${HOME}/.zgen" "https://github.com/tarjoilija/zgen.git"

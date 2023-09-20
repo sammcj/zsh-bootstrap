@@ -151,6 +151,7 @@ commit-hotfix() {
   fi
 
   command git commit $GIT_ARGS -m "Hotfix-${DATESTAMP} -- ${MESSAGE}"
+  command git push
 }
 
 function checkout-jira() {
@@ -166,7 +167,8 @@ function commit-jira() {
   local GIT_ARGS=""
   local MESSAGE="$*" # Set the commit message to the arguments passed to the function
   if [[ -n $* ]]; then
-    GIT_ARGS="-n" # Add -n as a parameter to git if it's passed as an argument to the function
+    GIT_ARGS="-n"    # Add -n as a parameter to git if it's passed as an argument to the function
+    MESSAGE="${*:2}" # Remove the first argument from the list of arguments
     shift 1
   fi
 
@@ -179,12 +181,12 @@ function commit-jira() {
     echo "Would you like to add them? (y/n)"
     read -r ADD_FILES
     if [[ $ADD_FILES == "y" ]]; then
-      git add "$untracked_files"
+      command git add "$untracked_files"
     fi
   fi
 
-  command git add .
   command git commit $GIT_ARGS -m "$(git rev-parse --abbrev-ref HEAD | cut -d'-' -f1 -f2) -- ${MESSAGE}"
+  command git push
 }
 
 # Outputs the name of the current branch
@@ -634,7 +636,7 @@ function s2a-keychain() {
     --skip-prompt \
     --password="$IDPPW" \
     --profile="$INPUT_PROFILE"
-
+  # --skip-verify
   export AWS_PROFILE="$INPUT_PROFILE"
   export AWSCLIPARAMS="--profile=${INPUT_PROFILE}"
   export AWS_DEFAULT_REGION=ap-southeast-2
@@ -1237,4 +1239,72 @@ npm_replace_registry() {
 
     echo "Replaced $search_string with $replace_string in $file"
   done
+}
+
+### Docker Compose ###
+# Functions to help when working with docker-compose especially with multiple docker-compose files and profiles
+
+# ddc() {
+#   local command="$1"
+#   shift
+#   local service_name="$1"
+#   shift
+#   local profile=""
+
+#   # Iterate through all docker-compose*.yaml files to find the profile
+#   for file in docker-compose*.yaml; do
+#     # Check if the specified service exists in the file
+#     if grep -q "^  $service_name:" "$file"; then
+#       # Extract profile name
+#       profile_name=$(awk -v service="$service_name" '$1 == service":" { getline; getline; print $3 }' "$file")
+#       profile_name="${profile_name#- }"
+#       profile_name="${profile_name%\"}"
+#       profile_name="${profile_name#\"}"
+#       if [[ ! -z "$profile_name" ]]; then
+#         profile="--profile $profile_name"
+#       fi
+#       break
+#     fi
+#   done
+
+#   # Run the docker-compose command
+#   docker-compose $profile $command "$service_name" "$@"
+# }
+
+function docker-network() {
+  docker ps -q | xargs -n 1 docker inspect --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}} {{ .Name }}' | sed 's/ \// /' | sort
+}
+
+dpup() {
+  pushd "$DOCKER_COMPOSE_DIR" || return
+  docker-compose --profile "$1" up -d "$1"
+  echo "----"
+  docker logs -f "$1"
+  popd
+}
+
+# Run docker-compose profiles on a remote (ssh) server
+nas_dcup() {
+  local server="$1"
+  local profile="$2"
+  local service="$3"
+  local command="$4"
+
+  ssh "$server" "cd ${DOCKER_COMPOSE_DIR} && docker-compose --profile ${profile} ${command} ${service}"
+}
+
+# Yazi https://github.com/sxyazi/yazi
+# https://github.com/sxyazi/yazi/tree/main/config/docs
+function y() {
+  tmp="$(mktemp -t "yazi-cwd.XXXXX")"
+  yazi --cwd-file="$tmp"
+  if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
+    cd -- "$cwd"
+  fi
+  rm -f -- "$tmp"
+}
+
+function brewbackup() {
+  # shellcheck disable=SC2139,SC2153
+  brew bundle dump --force --file="${THIS_DIRECTORY}/Brewfile-${HOST}"
 }
