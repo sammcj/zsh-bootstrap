@@ -34,7 +34,7 @@ concurrency:
 jobs:
   lint-actions-workflows:
     name: Lint Actions Workflows
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3

@@ -5,7 +5,7 @@ name: "Sync Available Github Labels"
 on:
   workflow_dispatch:
   schedule:
-    - cron: "30 4 * * *"
+    - cron: "30 4 * * 0"
   push:
     paths:
       - .github/config/labels.yml
@@ -25,7 +25,7 @@ concurrency:
 jobs:
   sync-labels:
     name: Sync Github Labels
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab # v3
