@@ -102,6 +102,21 @@ function gbd() {
   fi
 }
 
+# A function that provides an untracked_files check for other functions
+function __untracked_files() {
+  local untracked_files
+  untracked_files="$(git status --porcelain | grep -E '^\?\?' | awk '{print $2}')"
+  if [[ -n $untracked_files ]]; then
+    echo "There are untracked files in this directory:"
+    echo "$untracked_files"
+    echo "Would you like to add them? (y/n)"
+    read -r ADD_FILES
+    if [[ $ADD_FILES == "y" ]]; then
+      command git add "$untracked_files"
+    fi
+  fi
+}
+
 function checkout-hotfix() {
   HOTFIX_BRANCH="Hotfix-$(date +%Y-%m-%d)-${USER}"
   # If the hotfix branch already exists, append the current time to the branch name
@@ -138,17 +153,7 @@ commit-hotfix() {
   fi
 
   # Check for any files not added - if there are any, list them and ask the user if they want to add them
-  local untracked_files
-  untracked_files="$(git status --porcelain | grep -E '^\?\?' | awk '{print $2}')"
-  if [[ -n $untracked_files ]]; then
-    echo "There are untracked files in this directory:"
-    echo "$untracked_files"
-    echo "Would you like to add them? (y/n)"
-    read -r ADD_FILES
-    if [[ $ADD_FILES == "y" ]]; then
-      command git add "$untracked_files"
-    fi
-  fi
+  __untracked_files
 
   command git commit $GIT_ARGS -m "Hotfix-${DATESTAMP} -- ${MESSAGE}"
   command git push
@@ -173,17 +178,7 @@ function commit-jira() {
   fi
 
   # Check for any files not added - if there are any, list them and ask the user if they want to add them
-  local untracked_files
-  untracked_files="$(git status --porcelain | grep -E '^\?\?' | awk '{print $2}')"
-  if [[ -n $untracked_files ]]; then
-    echo "There are untracked files in this directory:"
-    echo "$untracked_files"
-    echo "Would you like to add them? (y/n)"
-    read -r ADD_FILES
-    if [[ $ADD_FILES == "y" ]]; then
-      command git add "$untracked_files"
-    fi
-  fi
+  __untracked_files
 
   command git commit $GIT_ARGS -m "$(git rev-parse --abbrev-ref HEAD | cut -d'-' -f1 -f2) -- ${MESSAGE}"
   command git push
@@ -1066,16 +1061,16 @@ function ba() {
 
   mv "${log_file}" "${log_file}.1"
 
-  mv "${log_file}" "${log_file}.1"
-
-  echo "Upgrading in the background, tail -f ${log_file} for details."
+  echo "Upgrading shell and packages in the background, tail -f ${log_file} for details."
 
   touch "${log_file}" "${error_log}"
   echo "Starting update at $(date +%Y-%m-%d) ..." >>"${log_file}"
 
-  __upgrade_apps >>"${log_file}" 2>&1 &
-  __upgrade_packages >>"${log_file}" 2>&1 &
   __upgrade_shell >>"${log_file}" 2>&1 &
+  __upgrade_packages >>"${log_file}" 2>&1 &
+
+  echo "Upgrading apps in the foreground..."
+  __upgrade_apps # >>"${log_file}"
 
   # list all background jobs
   jobs
@@ -1084,6 +1079,8 @@ function ba() {
   while true; do
     sleep 5
     if [[ -n $(jobs -p -s) ]]; then
+      sleep 1
+      echo -e ""
       fg
     else
       break
@@ -1307,4 +1304,113 @@ function y() {
 function brewbackup() {
   # shellcheck disable=SC2139,SC2153
   brew bundle dump --force --file="${THIS_DIRECTORY}/Brewfile-${HOST}"
+}
+
+# Function to reload updated Zsh functions
+zsh_reload_updated_functions() {
+  # Create a unique temporary file to store currently loaded functions
+  local temp_file
+  temp_file="/tmp/zsh_functions_$(date +%s%N)"
+
+  # Extract currently loaded functions into the temporary file
+  typeset -f >"$temp_file"
+
+  # File containing the function definitions (e.g., ~/.zshrc)
+  local source_file="$HOME/.zshrc"
+
+  # Find updated functions
+  local updated_functions
+  updated_functions=$(comm -13 <(awk '/^function / {print $2}' "$temp_file" | sort) <(awk '/^function / {print $2}' "$source_file" | sort))
+
+  # Reload updated functions
+  for fn in $updated_functions; do
+    unfunction "$fn" 2>/dev/null
+    source "$source_file"
+    echo "Reloaded function: $fn"
+  done
+
+  # Remove temporary file
+  rm -f "$temp_file"
+}
+
+# Update pam to enable touchID for sudo
+function touchid_sudo() {
+  # Check if pam is already configured
+  if grep -q "pam_tid.so" /etc/pam.d/sudo; then
+    echo "pam_tid.so is already configured in /etc/pam.d/sudo"
+    return 0
+  fi
+
+  cat /etc/pam.d/sudo
+
+  # Add pam_tid.so to /etc/pam.d/sudo
+  echo "Adding pam_tid.so to /etc/pam.d/sudo"
+  sudo sed -i '' '1s/^/auth       sufficient     pam_tid.so\n/' /etc/pam.d/sudo
+}
+
+a() {
+  # Run aria2c with the specified options
+  aria2c \
+    --split=8 \
+    --always-resume=true \
+    --enable-http-pipelining=true \
+    --http-accept-gzip=true \
+    --max-connection-per-server=10 \
+    --max-concurrent-downloads=8 \
+    --auto-file-renaming=false \
+    "$1"
+
+  echo "downloaded ${1}"
+}
+
+rename_files() {
+  local find_word="$1"
+  local replace_word="$2"
+  local files_to_rename=()
+  local new_names=()
+
+  if [ -z "$find_word" ] || [ -z "$replace_word" ]; then
+    echo "Usage: rename_files <find_word> <replace_word>"
+    return 1
+  fi
+
+  # Collect the list of files to be renamed
+  for f in *"$find_word"*; do
+    if [ -e "$f" ]; then # Check if file exists
+      files_to_rename+=("$f")
+      new_names+=("${f//$find_word/$replace_word}")
+    fi
+  done
+
+  # Display the list of files to be renamed
+  echo "Files to be renamed:"
+  for i in "${!files_to_rename[@]}"; do
+    echo "'${files_to_rename[$i]}' -> '${new_names[$i]}'"
+  done
+
+  # Ask for confirmation
+  echo "Proceed with renaming? (y/n)"
+  read -r confirm
+  if [ "$confirm" = "y" ] || [ "$confirm" = "Y" ]; then
+    for i in "${!files_to_rename[@]}"; do
+      mv "${files_to_rename[$i]}" "${new_names[$i]}"
+    done
+  else
+    echo "Renaming cancelled."
+  fi
+}
+
+hfdl() {
+  # Huggingface download wrapper
+  if [[ $# -ne 1 ]]; then
+    echo "Usage: hfdl <huggingface URL>"
+    return 1
+  fi
+
+  local url=$1
+  local stripped_url=$(echo "$url" | sed 's|https://huggingface.co/||')
+  local owner=$(echo "$stripped_url" | cut -d'/' -f1)
+  local repo=$(echo "$stripped_url" | cut -d'/' -f2)
+
+  HF_HUB_ENABLE_HF_TRANSFER=1 huggingface-cli download "$owner/$repo" --local-dir-use-symlinks False --local-dir "$repo"
 }

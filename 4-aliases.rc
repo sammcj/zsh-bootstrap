@@ -1,7 +1,7 @@
 # shellcheck disable=SC2148 disable=SC1090 shell=bash
 
 #TODO: cleanup this, move stuff out of Dropbox\ Import
-THIS_DIRECTORY="/Users/samm/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/dotfiles/shell_config/"
+THIS_DIRECTORY="/Users/samm/Library/Mobile Documents/com~apple~CloudDocs/Dropbox Import/dotfiles/shell_config"
 
 ### Aliases ###
 
@@ -11,9 +11,9 @@ alias icloud_drive="cd ~/Library/Mobile\ Documents/com\~apple\~CloudDocs/"
 
 # IDE Projects
 #shellcheck disable=SC2139
-alias zshconfig="code ${THIS_DIRECTORY}"
+alias zshconfig="code '${THIS_DIRECTORY}'"
 #shellcheck disable=SC2139
-alias zshconfigd="cd ${THIS_DIRECTORY}"
+alias zshconfigd="cd '${THIS_DIRECTORY}'"
 
 alias app_store_upgrade_mmas="mas upgrade"
 alias go_update_all="gup update"
@@ -88,13 +88,14 @@ alias flushdns='sudo discoveryutil udnsflushcaches'
 alias httpserver='sudo python3 -m http.server 80'
 alias cc='colorize.py'
 alias rmid="ssh-keygen -R"
-alias aria="aria2c -s 5 -j 5 -x 5 -c --enable-http-pipelining=true --http-accept-gzip=true --max-connection-per-server=10"
-alias a=aria
+# alias aria="aria2c -s 5 -j 5 -x 5 -c --enable-http-pipelining=true --http-accept-gzip=true --max-connection-per-server=10"
+# alias a=aria
 alias dmesg="dmesg -LT"
 alias cpuinfo="sysctl -n machdep.cpu.brand_string"
 alias psql="/Applications/Postgres.app/Contents/Versions/latest/bin/psql"
 alias fastmail_you_there_bro="openssl s_client -connect imap.fastmail.com:993 -crlf"
 alias zmv='noglob zmv -W'
+alias mc='yazi'
 
 # MacOS shortcuts
 # alias delete-all-local-snapshots='for d in $(tmutil listlocalsnapshotdates | grep -v "Snapshot dates for all disks"); do sudo tmutil deletelocalsnapshots $d; done'
@@ -199,3 +200,5 @@ alias '??'='copilot_what-the-shell'  # function
 alias 'git?'='copilot_git-assist'    # function
 alias 'gh?'='copilot_gh-assist'      # function
 alias 'wts'='copilot_what-the-shell' # function
+
+alias idf='. $HOME/git/esp-idf/export.sh'

@@ -22,7 +22,7 @@ fi
 brew bundle
 
 # Git related
-pip3 install -U mu-repo manim
+pip3 install -U mu-repo # manim
 
 # # Markdown link checker
 # pip3 install linkcheckmd
@@ -38,10 +38,10 @@ npm install -G husky npm-check-updates eslint prettier editorconfig \
 # aws-azure-login
 
 go install github.com/rhysd/actionlint/cmd/actionlint@latest
-go install github.com/nao1215/gup@latest # gup update to update go packages
+go install github.com/nao1215/gup@latest # gup - updates go packages
 go install github.com/jesseduffield/lazydocker@latest
 go install github.com/rs/dnstrace@latest
-go install github.com/projectdiscovery/katana/cmd/katana@latest
+# github.com/projectdiscovery/katana/cmd/katana@latest # website crawler/downloader
 
 # Install lazycli for building TUIs
 # Requires rust's cargo, either via homebrew rust / rust-up
@@ -168,7 +168,8 @@ link_dotfile "bat-config" "/Users/samm/.config/bat/config"
 echo "Do you want to enable touchID for sudo? [y/N]"
 read -r response
 if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
-  sudo sh -c 'echo "auth       sufficient     pam_tid.so" >> /etc/pam.d/sudo'
+  source '9-functions.rc'
+  touchid_sudo
 fi
 
 echo "Do you want to install extras? [y/N]"
