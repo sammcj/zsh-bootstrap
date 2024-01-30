@@ -1,52 +1,60 @@
 # shellcheck disable=SC2148 disable=SC1090 shell=bash
 
+autoload -Uz compinit -C
+compinit -C
+autoload -U +X bashcompinit
+bashcompinit
+
 # load zgen
 source "${HOME}/.zgen/zgen.zsh"
 
 export ZGEN_RESET_ON_CHANGE="${HOME}/.zshrc"
+export ZSH_DISABLE_AUTO_UPDATE=7 # Only check for oh-my-zsh updates every 7 days
+
+# start compdef
+# compinit -u
 
 if ! zgen saved; then
-  echo "Creating a zgen save"
+  # echo "Creating a zgen save"
 
   ## load omz plugins ##
-  zgen oh-my-zsh
-  zgen oh-my-zsh plugins/macos
+  # zgen oh-my-zsh
   zgen oh-my-zsh plugins/gitfast
   zgen oh-my-zsh plugins/command-not-found
   zgen oh-my-zsh plugins/fzf
-  zgen oh-my-zsh plugins/fnm
-  zgen oh-my-zsh plugins/nmap
-  zgen oh-my-zsh plugins/gh
-  zgen oh-my-zsh plugins/docker
+  # zgen oh-my-zsh plugins/fnm
+  # zgen oh-my-zsh plugins/docker
   zgen oh-my-zsh plugins/docker-compose
   zgen oh-my-zsh plugins/aws
   zgen oh-my-zsh plugins/colored-man-pages
+  # plugins/macos - throwing compdef errors
+  # zgen oh-my-zsh plugins/nmap
+  # zgen oh-my-zsh plugins/gh
 
   ## load normal plugins ##
-  # load normal plugins
   zgen loadall <<EOPLUGINS
     zsh-users/zsh-completions src
     # zgen load zsh-users/zsh-completions
-    zsh-users/zsh-syntax-highlighting
+    # zsh-users/zsh-syntax-highlighting
     zsh-users/zsh-autosuggestions
     zsh-users/zsh-history-substring-search
     zdharma-continuum/fast-syntax-highlighting
 
-    MichaelAquilina/zsh-you-should-us
-    lukechilds/zsh-better-npm-completion
-    3v1n0/zsh-bash-completions-fallback
-    mrkmg/borgbackup-zsh-completion
-
     # git related
     olivierverdier/zsh-git-prompt
     peterhurford/git-it-on.zsh
-    paulirish/git-open
 
     # fzf wrappers
     sunlei/zsh-ssh
-    torifat/npms
     bigH/git-fuzzy
 EOPLUGINS
+
+  # MichaelAquilina/zsh-you-should-us
+  # paulirish/git-open
+  # lukechilds/zsh-better-npm-completion
+  # 3v1n0/zsh-bash-completions-fallback
+  # mrkmg/borgbackup-zsh-completion
+  # torifat/npms
 
   ## zsh completion generator ##
   # zgen load RobSis/zsh-completion-generator # Disabled for now as was the cause of 25% of my load time
@@ -56,5 +64,6 @@ EOPLUGINS
   # trejo08/kubecolor-zsh
   # ascii-soup/zsh-url-highlighter
 
+  # save zgen cache
   zgen save
 fi

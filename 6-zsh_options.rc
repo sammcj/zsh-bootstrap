@@ -138,8 +138,8 @@ bindkey '^I' complete-word        # tab          | complete
 bindkey '^[[Z' autosuggest-accept # shift + tab  | autosuggest
 
 # Autocomplete kubectl for k alias
-complete -F __start_kubectl k
-compdef __start_kubectl k
+# complete -F __start_kubectl k
+# compdef __start_kubectl k
 
 ### END Autocompletion ###
 
@@ -205,7 +205,7 @@ pasteinit() {
 }
 
 pastefinish() {
-  zle -N self-insert $OLD_SELF_INSERT
+  zle -N self-insert "$OLD_SELF_INSERT"
 }
 zstyle :bracketed-paste-magic paste-init pasteinit
 zstyle :bracketed-paste-magic paste-finish pastefinish

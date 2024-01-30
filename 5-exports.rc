@@ -1,7 +1,7 @@
 # shellcheck disable=SC2148 disable=SC1090 shell=bash
 
 ### Exports ###
-export SAM_CLI_TELEMETRY=0 TELEMETRY=0 ENABLE_TELEMETRY=0 SEND_TELEMETRY=0 DO_NOT_TRACK=1 ANALYTICS=0 DISABLE_ANALYTICS=1 NO_ANALYTICS=1 # General catch-all
+export SAM_CLI_TELEMETRY=0 TELEMETRY=0 ENABLE_TELEMETRY=0 SEND_TELEMETRY=0 DO_NOT_TRACK=1 ANALYTICS=0 DISABLE_ANALYTICS=1 NO_ANALYTICS=1 DOTNET_CLI_TELEMETRY_OPTOUT=1 # General catch-all
 export GREP_OPTIONS="--color"
 # export LSCOLORS="ExFxCxDxBxegedabagacad"
 export LS_COLORS="$(vivid generate dracula)"
@@ -14,9 +14,6 @@ export EDITOR=vim
 # colima / docker
 export DOCKER_HOST="unix://$HOME/.colima/docker.sock"
 
-# aws
-export AWS_DEFAULT_REGION=ap-southeast-2
-
 # Tells 'less' not to paginate if less than a page
 export LESS="-F -X $LESS"
 
@@ -25,8 +22,8 @@ export FZF_COMPLETION_OPTS='--border --info=inline'
 
 # Export a variable that contains the directory this script is sourced from (e.g. /Users/username/icloud docs/somedir/).
 # we can't use BASH_SOURCE[0] because it's not available in zsh
-DOTFILES_DIR="$(cd "$(dirname "$0")" && pwd)"
-export DOTFILES_DIR
+# DOTFILES_DIR="$(cd "$(dirname "$0")" && pwd)"
+# export DOTFILES_DIR
 
 # # Global package manager caches to save on disk space
 # export PIP_DOWNLOAD_CACHE="${HOME}/Library/Caches/pip"
@@ -51,3 +48,9 @@ export _FMT_BCYN="\e[1;36m"
 export _FMT_BWHT="\e[1;37m"
 export _FMT_END="\e[0m" # end of line stop formatting
 ##
+
+## AI/ML ##
+
+# automatic1111
+export COMMANDLINE_ARGS="${COMMANDLINE_ARGS:-$COMMANDLINE_ARGS --skip-torch-cuda-test --upcast-sampling --opt-sub-quad-attention}" # --use-cpu interrogate
+export HF_HUB_ENABLE_HF_TRANSFER=1

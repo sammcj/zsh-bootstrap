@@ -106,7 +106,6 @@ alias screenshots-png='defaults write com.apple.screencapture type PNG'
 # Kubes
 alias kubes-busybox='kubectl run -i --tty loader --image=busybox /bin/sh'
 alias k='kubectl'
-alias k_docker_desktop='export KUBECONFIG=~/.kube/config-docker-desktop'
 
 # VSC
 alias code='/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code'

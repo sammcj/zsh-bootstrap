@@ -7,15 +7,26 @@ function mkcd {
 
 # change /dev/null to youtube-dl-"$(date +%Y%m%d-%H%M%S)".log if you want logging
 
-# Outputs current branch info in prompt format
-function git_prompt_info() {
-  local ref
-  if [[ "$(command git config --get oh-my-zsh.hide-status 2>/dev/null)" != "1" ]]; then
-    ref=$(command git symbolic-ref HEAD 2>/dev/null) ||
-      ref=$(command git rev-parse --short HEAD 2>/dev/null) || return 0
-    echo "$ZSH_THEME_GIT_PROMPT_PREFIX${ref#refs/heads/}$(parse_git_dirty)$ZSH_THEME_GIT_PROMPT_SUFFIX"
-  fi
-}
+function git_sparse_clone() (
+  rurl="$1" localdir="$2" && shift 2
+
+  mkdir -p "$localdir"
+  cd "$localdir"
+
+  git init
+  git remote add -f origin "$rurl"
+
+  git sparse-checkout init
+
+  # Loops over remaining args
+  for i; do
+    echo "$i" >>.git/info/sparse-checkout
+  done
+
+  git pull origin main
+
+  git sparse-checkout list
+)
 
 # wrapper for adding advanced git cli customisation
 alias git='git_wrapper'
@@ -1091,6 +1102,8 @@ function ba() {
   wait
   fg # bring the last background job to the foreground
 
+  compdump # recompile zsh completion files
+
   echo "Updates complete, see ${log_file} for details."
 
   # unset trap
@@ -1158,11 +1171,12 @@ function __upgrade_docker_compose() {
   fi
 }
 
-bg_silent() {
-  # background a task quietly and disown
-  { "$@" 2>&3 & } 3>&2 2>/dev/null
-  disown &>/dev/null
-}
+# Now in 1-zgen.rc
+# bg_silent() {
+#   # background a task quietly and disown
+#   { "$@" 2>&3 & } 3>&2 2>/dev/null
+#   disown &>/dev/null
+# }
 
 ### OLD
 # # AWS Azure AD login
@@ -1303,7 +1317,7 @@ function y() {
 
 function brewbackup() {
   # shellcheck disable=SC2139,SC2153
-  brew bundle dump --force --file="${THIS_DIRECTORY}/Brewfile-${HOST}"
+  brew bundle dump --force --file="/Users/${USER}/Library/Mobile Documents/com~apple~CloudDocs/Backups/homebrew/Brewfile-${HOST}"
 }
 
 # Function to reload updated Zsh functions
@@ -1401,16 +1415,39 @@ rename_files() {
 }
 
 hfdl() {
+  local cliargs=()
   # Huggingface download wrapper
-  if [[ $# -ne 1 ]]; then
+  if [[ $# -eq 0 ]]; then
     echo "Usage: hfdl <huggingface URL>"
     return 1
   fi
 
   local url=$1
+
+  # if a third argument is provided, treat it as a file to download (include)
+  if [[ $# -eq 2 ]]; then
+    local file_to_download="$2"
+    cliargs+=("--include" "$file_to_download")
+  fi
+
   local stripped_url=$(echo "$url" | sed 's|https://huggingface.co/||')
   local owner=$(echo "$stripped_url" | cut -d'/' -f1)
   local repo=$(echo "$stripped_url" | cut -d'/' -f2)
 
-  HF_HUB_ENABLE_HF_TRANSFER=1 huggingface-cli download "$owner/$repo" --local-dir-use-symlinks False --local-dir "$repo"
+  HF_HUB_ENABLE_HF_TRANSFER=1 huggingface-cli download "$owner/$repo" --local-dir-use-symlinks False --local-dir "$repo" "${cliargs[@]}"
+}
+
+# hide overlayfs in df
+df() {
+  # if macOS use /bin/df
+  if [[ $(uname) == "Darwin" ]]; then
+    /bin/df "$@"
+    return
+  fi
+  /usr/bin/df -x overlay "$@"
+}
+
+gpumem() {
+  # Increase the GPU memory limit for my 96GB MBP
+  sudo /usr/sbin/sysctl iogpu.wired_limit_mb=86000
 }
