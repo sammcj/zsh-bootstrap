@@ -6,7 +6,7 @@ THIS_DIRECTORY="/Users/samm/Library/Mobile Documents/com~apple~CloudDocs/Dropbox
 ### Aliases ###
 
 # Directory Jumps
-alias d="cd ~/Downloads"
+alias d="cd ~/Downloads && ls -ltarh"
 alias icloud_drive="cd ~/Library/Mobile\ Documents/com\~apple\~CloudDocs/"
 
 # IDE Projects
@@ -190,14 +190,18 @@ alias ender='cd ~/git/sammcj/ender-configs/ && code .'
 alias rotate='tweaker3 -vb -x -i'
 alias rotate_min_supports='tweaker3 -vb -x -min sur -i'
 
-# ML / Github Copilot
-alias copilot="github-copilot-cli what-the-shell"
-alias copilot-git="github-copilot-cli git-assist"
-alias git-copilot='copilot-git'
-alias gh-cli-copilot="github-copilot-cli gh-assist"
-alias '??'='copilot_what-the-shell'  # function
-alias 'git?'='copilot_git-assist'    # function
-alias 'gh?'='copilot_gh-assist'      # function
-alias 'wts'='copilot_what-the-shell' # function
+alias obsidian='cd /Users/samm/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/Main && ls -ltarh'
 
+# ML / Github Copilot
+alias copilot="gh copilot suggest -t shell"
+alias copilot-explain="gh copilot explain"
+alias '??'='copilot'
+alias wtf='copilot'
+alias l="ollama list"
+alias ol="mods"
 alias idf='. $HOME/git/esp-idf/export.sh'
+alias o='tlm explain'
+alias hf="hfdownloader -c 10 -t \$HUGGINGFACE_TOKEN -j"
+
+# uv
+alias venv='uv venv ; source .venv/bin/activate'

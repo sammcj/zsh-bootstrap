@@ -2,7 +2,7 @@
 
 # Node / Javascript
 # Note: If this doesn't work, make sure you've cleaned up nvm directories and related PATHs
-eval "$(/opt/homebrew/bin/fnm env --use-on-cd)"
+eval "$(/opt/homebrew/bin/fnm env --use-on-cd --corepack-enabled)"
 
 #saml2aws
 eval "$(saml2aws --completion-script-zsh)"
@@ -14,6 +14,8 @@ eval "$(saml2aws --completion-script-zsh)"
 export PYENV_ROOT="$HOME/.pyenv"
 command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
+# uv
+. ~/.venv/bin/activate
 
 # # pnpm
 # export PNPM_HOME="/Users/samm/Library/pnpm"
@@ -22,3 +24,12 @@ eval "$(pyenv init -)"
 # *) export PATH="$PNPM_HOME:$PATH" ;;
 # esac
 # pnpm end
+
+#nav
+# source "${HOME}/.nav/nav.zsh"
+# nav bindkeys
+
+#cargo
+if [ -d "$HOME/.cargo/env" ]; then
+  . "$HOME/.cargo/env"
+fi

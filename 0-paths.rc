@@ -15,6 +15,9 @@ export PATH="/sbin:${PATH}"
 # added by Miniconda3 installer
 export PATH="/Users/samm/miniconda3/bin:${PATH}"
 
+# cargo
+export PATH="${HOME}/.cargo/bin:${PATH}"
+
 ### Kubernetes / k8s related exports ###
 
 # Krew Kubernetes plugin manager
