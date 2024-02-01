@@ -31,6 +31,7 @@ function git_sparse_clone() (
 # wrapper for adding advanced git cli customisation
 alias git='git_wrapper'
 git_wrapper() {
+  set +m # Make jobs quiet by default
   # If invoked by another function, alias or xargs, interpret it as normal
   if [[ -n ${FUNCNAME[*]} ]] || [[ -n $ALIASES ]] || [[ -n $XARGS ]]; then
     command git "$@"
@@ -56,6 +57,7 @@ git_wrapper() {
   else
     command git "$@"
   fi
+  set -m # Make jobs verbose again
 }
 
 function gco() {

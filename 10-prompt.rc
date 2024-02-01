@@ -8,34 +8,40 @@ autoload -U colors && colors
 function git_prompt_info() {
   local ref
   # if [[ "$(command git config --get oh-my-zsh.hide-status 2>/dev/null)" != "1" ]]; then
-  ref=$(command git symbolic-ref HEAD 2>/dev/null) ||
-    ref=$(command git rev-parse --short HEAD 2>/dev/null) || return 0
+  # ref=$(command git symbolic-ref HEAD 2>/dev/null) || - ref=$(command git rev-parse --short HEAD 2>/dev/null) || return 0
   # echo "$ZSH_THEME_GIT_PROMPT_PREFIX${ref#refs/heads/}$(parse_git_dirty)$ZSH_THEME_GIT_PROMPT_SUFFIX"
   echo "${ZSH_THEME_GIT_PROMPT_PREFIX}${ref#refs/heads/}${ZSH_THEME_GIT_PROMPT_SUFFIX}"
   # fi
 }
 
-__PROMPT_USER="%{$fg[yellow]%}%n%{$reset_color%}"
-__PROMPT_HOST="%{$fg[green]%}%m%{$reset_color%}"
-__PROMPT_GIT="$(git_prompt_info)"
-__PROMPT_DIR="%{$fg_bold[green]%}%~%{$reset_color%}"
-# __PROMPT_KUBE="$(kube_ps1)"
+# show git changes on the command line
+autoload -Uz vcs_info add-zsh-hook
+setopt prompt_subst
+add-zsh-hook precmd vcs_info
 
-# PROMPT="${__PROMPT_USER}@${__PROMPT_HOST}:${__PROMPT_DIR}${__PROMPT_GIT} "
-PROMPT='%{$fg[magenta]%}%n%{$reset_color%}@%{$fg[yellow]%}%m%{$reset_color%}:%{$fg_bold[green]%}${__PROMPT_DIR}%{$reset_color%}$(git_prompt_info) '
+zstyle ':vcs_info:*' enable git
+precmd() {
+  vcs_info
+}
 
-ZSH_THEME_GIT_PROMPT_PREFIX="@%{$fg[magenta]%}"
-ZSH_THEME_GIT_PROMPT_SUFFIX="%{$reset_color%}"
-ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[green]%}!"
-ZSH_THEME_GIT_PROMPT_UNTRACKED="%{$fg[green]%}?"
-ZSH_THEME_GIT_PROMPT_CLEAN=""
+# Enable checking for (un)staged changes, enabling use of %u and %c
+zstyle ':vcs_info:*' check-for-changes true
+# Set custom strings for an unstaged vcs repo changes (*) and staged changes (+)
+# zstyle ':vcs_info:*' unstagedstr ' [*unstaged]'
+# zstyle ':vcs_info:*' stagedstr '[+staged]'
+# Set the format of the Git information for vcs_info
+zstyle ':vcs_info:git:*' formats '(%b%u%c)'
+zstyle ':vcs_info:git:*' actionformats '(%b|%a%u%c)'
+# add the number of unstaged/staged changes to the prompt
+zstyle ':vcs_info:git:*' enable git
 
-# if [ -f "/opt/homebrew/share/kube-ps1.sh" ]; then
-#   source "/opt/homebrew/share/kube-ps1.sh"
-# fi
+# %s - The current version control system, like git or svn.
+# %r - The name of the root directory of the repository
+# %S - The current path relative to the repository root directory
+# %b - Branch information, like master
+# %m - In case of Git, show information about stashes
+# %u - Show unstaged changes in the repository
+# %c - Show staged changes in the repository
 
-# if [ -f "/usr/local/share/kube-ps1.sh" ]; then
-#   source "/usr/local/share/kube-ps1.sh"
-# fi
-
-# PS1='$(kube_ps1)'$PS1
+RPROMPT="%{$(tput setaf 177)%}\$vcs_info_msg_0_"
+PROMPT="%{$(tput setaf 60)%}%m %{$(tput setaf 105)%}%~${vcs_info_msg_0_}%{$(tput sgr0)%} %(?..[%?] )$ "
