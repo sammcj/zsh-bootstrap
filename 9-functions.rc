@@ -153,7 +153,17 @@ function checkout-hotfix() {
 function commit-hotfix() {
   local DATESTAMP
   DATESTAMP=$(date +%Y/%m/%d)
-  local MESSAGE="$*"
+  local GIT_ARGS=()
+  local MESSAGE=""
+
+  # Check for the '-n' flag and prepare commit options accordingly
+  if [[ "$1" == "-n" ]]; then
+    GIT_ARGS+=("-n") # Add '-n' to the git commit command options
+    shift            # Remove '-n' from the argument list so it's not included in the commit message
+  fi
+
+  # After shifting '-n', all remaining arguments form the commit message
+  MESSAGE="$*"
 
   # Attempt to stage changes; if the user cancels, abort the commit
   if ! __stage_changes; then
@@ -162,8 +172,11 @@ function commit-hotfix() {
   fi
 
   # Proceed with commit
-  local CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-  git commit -m "Hotfix-${DATESTAMP} -- ${MESSAGE}"
+  local CURRENT_BRANCH
+  CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+  git commit "${GIT_ARGS[@]}" -m "Hotfix-${DATESTAMP} -- ${MESSAGE}"
+
+  # Check if the commit was successful before attempting to push
   if git rev-parse --verify "$CURRENT_BRANCH" >/dev/null 2>&1; then
     git push --set-upstream origin "$CURRENT_BRANCH"
     echo "Changes committed and pushed to $CURRENT_BRANCH."
@@ -185,14 +198,14 @@ function commit-jira() {
   local GIT_ARGS=()
   local MESSAGE=""
 
-  # Handle additional arguments for the commit, if any
+  # Check for the '-n' flag and prepare commit options accordingly
   if [[ "$1" == "-n" ]]; then
-    GIT_ARGS+=("-n") # Add -n as a parameter to git commit
-    shift            # Remove the first argument
-    MESSAGE="$*"     # Assign the rest as the commit message
-  else
-    MESSAGE="$*"
+    GIT_ARGS+=("-n") # Add '-n' to the git commit command options
+    shift            # Remove '-n' from the argument list so it's not included in the commit message
   fi
+
+  # After shifting '-n', all remaining arguments form the commit message
+  MESSAGE="$*"
 
   # Call the updated function to check and stage all changes
   if ! __stage_changes; then
@@ -207,8 +220,9 @@ function commit-jira() {
   # Proceed with commit if there are staged changes
   if git diff --cached --quiet; then
     echo "No changes to commit."
-    # If the branch doesn't exist on the remote, offer to push it
+    # Check if the branch exists on the remote
     if ! git ls-remote --heads origin "$CURRENT_BRANCH" | grep -q "$CURRENT_BRANCH"; then
+      # Offer to push and track the branch if it doesn't exist on the remote
       echo "Current branch '$CURRENT_BRANCH' does not exist on the remote. Would you like to push it? (y/n)"
       read -r yn
       if [[ "$yn" =~ ^[Yy]$ ]]; then
@@ -219,10 +233,8 @@ function commit-jira() {
       fi
     fi
   else
-    # Changes to commit
-    local BRANCH_NAME
-    BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD | cut -d'-' -f1 -f2)
-    git commit "${GIT_ARGS[@]}" -m "$BRANCH_NAME -- $MESSAGE"
+    # Execute the commit with any options and the message
+    git commit "${GIT_ARGS[@]}" -m "$MESSAGE"
     git push --set-upstream origin "$CURRENT_BRANCH"
     echo "Changes committed and pushed to '$CURRENT_BRANCH'."
   fi
