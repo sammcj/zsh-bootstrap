@@ -96,14 +96,14 @@ function gco() {
     fi
   else
     # shellcheck disable=SC2033
-    command git branch --sort=-committerdate | fzf --header 'Checkout Recent Branch' --preview 'git diff --color=always {1}' --pointer='>' | xargs git switch
+    command git branch --sort=-committerdate | fzf --header 'Checkout Recent Branch' --preview 'git diff --color=always {1}' --pointer='>' | xargs command git switch
     echo -e "${_FMT_ITL}Hint: You can check remote branches with 'gcor'${_FMT_END}"
   fi
 }
 
 function gcor() {
   # list all remote branches and select one with fzf git branch -v -a
-  command git branch -v -a | fzf --header 'Checkout Remote Branch' --preview 'git diff --color=always {1}' --pointer='>' | awk '{print $1}' | xargs git checkout
+  command git branch -v -a | fzf --header 'Checkout Remote Branch' --preview 'git diff --color=always {1}' --pointer='>' | awk '{print $1}' | xargs command git checkout
 }
 
 function gbd() {
@@ -111,32 +111,27 @@ function gbd() {
     command git branch -d "$@"
   else
     # shellcheck disable=SC2033
-    command git branch --sort=-committerdate | fzf --header 'Delete Git Branch' --preview 'git diff --color=always {1}' --pointer='>' | xargs git branch -d
+    command git branch --sort=-committerdate | fzf --header 'Delete Git Branch' --preview 'git diff --color=always {1}' --pointer='>' | xargs command git branch -d
   fi
 }
 
 # A function that provides an untracked_files check for other functions
-function __untracked_files() {
-  local untracked_files
-  untracked_files="$(git status --porcelain | grep -E '^\?\?' | awk '{print $2}')"
-  if [[ -n $untracked_files ]]; then
-    echo "There are untracked files in this directory:"
-    echo "$untracked_files"
-    echo "Would you like to add them? (y/n)"
-    read -r ADD_FILES
-    if [[ $ADD_FILES == "y" ]]; then
-      command git add "$untracked_files"
-    fi
-  fi
-}
+function __stage_changes() {
+  # Display all changes including untracked files
+  echo "Detected changes:"
+  git status --short
 
-function checkout-hotfix() {
-  HOTFIX_BRANCH="Hotfix-$(date +%Y-%m-%d)-${USER}"
-  # If the hotfix branch already exists, append the current time to the branch name
-  if git branch -a | grep -q "remotes/origin/$HOTFIX_BRANCH"; then
-    HOTFIX_BRANCH="${HOTFIX_BRANCH}-$(date +%H-%M-%S)"
+  # Ask the user if they want to stage all changes
+  echo "Do you want to stage all changes? (y/n)"
+  read -r yn
+  if [[ "$yn" =~ ^[Yy]$ ]]; then
+    # Stage all changes
+    git add -A
+    echo "All changes staged."
+  else
+    echo "Staging cancelled by the user."
+    return 1 # Return failure to indicate staging was not done
   fi
-  command git checkout -b "${HOTFIX_BRANCH}"
 }
 
 function checkout-hotfix() {
@@ -155,46 +150,82 @@ function checkout-hotfix() {
   fi
 }
 
-commit-hotfix() {
+function commit-hotfix() {
   local DATESTAMP
   DATESTAMP=$(date +%Y/%m/%d)
-  local GIT_ARGS=""
-  local MESSAGE="$*" # Set the commit message to the arguments passed to the function
-  if [[ $1 == "-n" ]]; then
-    GIT_ARGS="-n"    # Add -n as a parameter to git if it's passed as an argument to the function
-    MESSAGE="${*:2}" # Remove the first argument from the list of arguments
+  local MESSAGE="$*"
+
+  # Attempt to stage changes; if the user cancels, abort the commit
+  if ! __stage_changes; then
+    echo "Commit aborted due to no changes being staged."
+    return 1
   fi
 
-  # Check for any files not added - if there are any, list them and ask the user if they want to add them
-  __untracked_files
-
-  command git commit $GIT_ARGS -m "Hotfix-${DATESTAMP} -- ${MESSAGE}"
-  command git push
+  # Proceed with commit
+  local CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+  git commit -m "Hotfix-${DATESTAMP} -- ${MESSAGE}"
+  if git rev-parse --verify "$CURRENT_BRANCH" >/dev/null 2>&1; then
+    git push --set-upstream origin "$CURRENT_BRANCH"
+    echo "Changes committed and pushed to $CURRENT_BRANCH."
+  else
+    echo "Failed to push changes. Branch $CURRENT_BRANCH does not exist."
+  fi
 }
 
 function checkout-jira() {
   JIRA_BRANCH="IF-${1}-${USER}-$(date +%Y-%m-%d)"
   # If the JIRA branch already exists, append the current time to the branch name
-  if command git branch -a | grep -q "remotes/origin/$JIRA_BRANCH"; then
+  if command git branch -a | grep -q "remotes/origin/${JIRA_BRANCH}"; then
     JIRA_BRANCH="${JIRA_BRANCH}-$(date +%H-%M-%S)"
   fi
   command git checkout -b "${JIRA_BRANCH}"
 }
 
 function commit-jira() {
-  local GIT_ARGS=""
-  local MESSAGE="$*" # Set the commit message to the arguments passed to the function
-  if [[ -n $* ]]; then
-    GIT_ARGS="-n"    # Add -n as a parameter to git if it's passed as an argument to the function
-    MESSAGE="${*:2}" # Remove the first argument from the list of arguments
-    shift 1
+  local GIT_ARGS=()
+  local MESSAGE=""
+
+  # Handle additional arguments for the commit, if any
+  if [[ "$1" == "-n" ]]; then
+    GIT_ARGS+=("-n") # Add -n as a parameter to git commit
+    shift            # Remove the first argument
+    MESSAGE="$*"     # Assign the rest as the commit message
+  else
+    MESSAGE="$*"
   fi
 
-  # Check for any files not added - if there are any, list them and ask the user if they want to add them
-  __untracked_files
+  # Call the updated function to check and stage all changes
+  if ! __stage_changes; then
+    echo "Commit aborted due to no changes being staged."
+    return 1
+  fi
 
-  command git commit $GIT_ARGS -m "$(git rev-parse --abbrev-ref HEAD | cut -d'-' -f1 -f2) -- ${MESSAGE}"
-  command git push
+  # Get the current branch name
+  local CURRENT_BRANCH
+  CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+
+  # Proceed with commit if there are staged changes
+  if git diff --cached --quiet; then
+    echo "No changes to commit."
+    # If the branch doesn't exist on the remote, offer to push it
+    if ! git ls-remote --heads origin "$CURRENT_BRANCH" | grep -q "$CURRENT_BRANCH"; then
+      echo "Current branch '$CURRENT_BRANCH' does not exist on the remote. Would you like to push it? (y/n)"
+      read -r yn
+      if [[ "$yn" =~ ^[Yy]$ ]]; then
+        git push --set-upstream origin "$CURRENT_BRANCH"
+        echo "Branch pushed and tracked on remote."
+      else
+        echo "Push cancelled by the user."
+      fi
+    fi
+  else
+    # Changes to commit
+    local BRANCH_NAME
+    BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD | cut -d'-' -f1 -f2)
+    git commit "${GIT_ARGS[@]}" -m "$BRANCH_NAME -- $MESSAGE"
+    git push --set-upstream origin "$CURRENT_BRANCH"
+    echo "Changes committed and pushed to '$CURRENT_BRANCH'."
+  fi
 }
 
 # Outputs the name of the current branch
@@ -779,6 +810,23 @@ docker_inspect_all() {
     echo "Forwarded Ports: $ports"
     echo "-----------------------"
   done
+}
+
+ps-docker() {
+  # ps -aux but with the container name and nice formatting
+  echo -e "Processing docker containers, this may take a moment...\n"
+  {
+    echo -e "CONTAINER NAME\tUSER\tPID\t%CPU\t%MEM\tRUN TIME\tCOMMAND"
+    ps -aux | awk '{print $2}' | while read pid; do
+      container_id=$(grep -Eo "docker-([a-f0-9]{64})\.scope" /proc/"$pid"/cgroup 2>/dev/null | head -n1 | grep -Eo "([a-f0-9]{64})")
+      if [ ! -z "$container_id" ]; then
+        container_name=$(docker ps --no-trunc | grep "$container_id" | awk '{print $NF}')
+        if [ ! -z "$container_name" ]; then
+          ps -p "$pid" -o user,pid,%cpu,%mem,etime,cmd --no-headers | awk -v cn="$container_name" '{printf "%-20s\t%-8s\t%-8s\t%-5s\t%-5s\t%-10s\t%-40s\n", cn, $1, $2, $3, $4, $5, substr($0, index($0,$6))}'
+        fi
+      fi
+    done
+  } | awk 'BEGIN {OFS="\t"; prev="none"} NR==1 {print} NR>1 {split($0,a,"\t"); if (a[1]!=prev && NR>2) print "--------------------\t\t\t\t\t\t\t"; print; prev=a[1]}'
 }
 
 # 3D Printing
