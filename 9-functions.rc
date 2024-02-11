@@ -1513,3 +1513,19 @@ gpumem() {
   # Increase the GPU memory limit for my 96GB MBP
   sudo /usr/sbin/sysctl iogpu.wired_limit_mb=86000
 }
+
+# loops through all subdirectories one level deep that are git repos and runs the specified command
+function git-loop() {
+  local command="$1"
+  shift
+  local args=("$@")
+
+  for dir in */; do
+    if [ -d "$dir/.git" ]; then
+      echo "Running $command in $dir"
+      git -C "$dir" "$command" "${args[@]}"
+    fi
+  done
+}
+# Register each git repo in directory with maintenance
+alias git-maintenance-register="git-loop maintenance register"

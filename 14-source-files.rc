@@ -2,7 +2,7 @@
 
 # Node / Javascript
 # Note: If this doesn't work, make sure you've cleaned up nvm directories and related PATHs
-eval "$(/opt/homebrew/bin/fnm env --use-on-cd)"
+eval "$(/opt/homebrew/bin/fnm env --use-on-cd --corepack-enabled)"
 
 #saml2aws
 eval "$(saml2aws --completion-script-zsh)"

@@ -138,6 +138,12 @@ function configure_settings() {
   # git
   git config --global branch.autoSetupMerge true
   git config --global --add --bool push.autoSetupRemote true
+  git config --global rerere.enabled true
+  git config --global rerere.autoUpdate true
+  git config --global branch.sort -committerdate
+  git config --global alias.fpush push --force-with-lease
+  git maintenance start
+  git maintenance register
 }
 ## End local functions ##
 
