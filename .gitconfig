@@ -9,8 +9,8 @@
 [include]
     path = ~/.gitconfig.private
 
-[url "git@github.com:"]
-  insteadOf = https://github.com/
+#[url "git@github.com:"]
+#  insteadOf = https://github.com/
 
 # Alises
 [alias]
@@ -21,15 +21,15 @@
   glog = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'
   logline = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
   tree = log --graph --decorate --pretty=oneline --abbrev-commit
-  squash-all = "!f(){ git reset $(git commit-tree HEAD^{tree} -m \"${1:-Initial commit}\");};f"
+  squash-all = "!f(){ git reset $(git commit-tree HEAD^{tree} -m \"${1:-A new start}\");};f"
+  #squash-all = "!f(){ git reset $(git commit-tree HEAD^{tree} -m \"${1:-Make Actions Great Again}\");};f"
   scrub = reset --hard @{upstream}
   recentb = "!r() { refbranch=$1 count=$2; git for-each-ref --sort=-committerdate refs/heads --format='%(refname:short)|%(HEAD)%(color:yellow)%(refname:short)|%(color:bold green)%(committerdate:relative)|%(color:blue)%(subject)|%(color:magenta)%(authorname)%(color:reset)' --color=always --count=${count:-20} | while read line; do branch=$(echo \"$line\" | awk 'BEGIN { FS = \"|\" }; { print $1 }' | tr -d '*'); ahead=$(git rev-list --count \"${refbranch:-origin/master}..${branch}\"); behind=$(git rev-list --count \"${branch}..${refbranch:-origin/master}\"); colorline=$(echo \"$line\" | sed 's/^[^|]*|//'); echo \"$ahead|$behind|$colorline\" | awk -F'|' -vOFS='|' '{$5=substr($5,1,70)}1' ; done | ( echo \"ahead|behind||branch|lastcommit|message|author\\n\" && cat) | column -ts'|';}; r"
-  # https://github.com/nedbat/watchgha
   runs = "!f() { \
       watch_gha_runs \
           \"$(git remote get-url origin)\" \
           \"$(git rev-parse --abbrev-ref HEAD)\"; \
-  }; f"
+    }; f"
 
 # *********************
 # Rebase workflow
@@ -41,6 +41,7 @@
   pub = publish
   ammend = commit --amend
   amend = commit --amend
+	fpush = push
 # *********************
 
 ## Behaviour
@@ -50,7 +51,9 @@
   default = current
   autoSetupRemote = true
 [pull]
-  rebase = false
+  #rebase = false
+  rebase = true
+
 [rebase]
   autosquash = true
 [diff]
@@ -65,6 +68,7 @@
   prompt = false
 [branch]
   autoSetupMerge = true
+	sort = -committerdate
 
 [filter "lfs"]
   required = true
@@ -106,13 +110,6 @@
   line-numbers-left-style = blue
   line-numbers-right-style = blue
 
-# Kaleidoscope diff-tool
-[difftool "Kaleidoscope"]
-  cmd = ksdiff --partial-changeset --relative-path \"$MERGED\" -- \"$LOCAL\" \"$REMOTE\"
-[mergetool "Kaleidoscope"]
-  cmd = ksdiff --merge --output \"$MERGED\" --base \"$BASE\" -- \"$LOCAL\" --snapshot \"$REMOTE\" --snapshot
-  trustExitCode = true
-
 [safe]
 	directory = /github/workspace
 [interactive]
@@ -121,3 +118,9 @@
 	changeHunkIndicators = true
 [status]
 	submodulesummary = 1
+[maintenance]
+	repo = /path/to/git/repos/dotfiles/shell_config # Example
+[rerere] # Reuse Recorded Resolution
+	enable = true
+	enabled = true
+	autoUpdate = true
