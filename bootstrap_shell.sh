@@ -142,6 +142,14 @@ function configure_settings() {
   git config --global rerere.autoUpdate true
   git config --global branch.sort -committerdate
   git config --global alias.fpush push --force-with-lease
+  git config --global help.autocorrect 1
+  git config --global diff.algorithm histogram
+  git config --global rebase.autosquash true
+  git config --global merge.conflictstyle zdiff3
+  git config --global fetch.prunetags true
+  git config --global log.date iso
+  git config --global diff.tool difftastic # brew install difftastic / cargo install --locked difftastic
+  git config --global push.followtags true
   git maintenance start
   git maintenance register
 }

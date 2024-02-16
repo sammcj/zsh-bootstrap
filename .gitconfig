@@ -59,10 +59,12 @@
 [diff]
   colorMoved = default
 	submodule = log
+	algorithm = histogram
+	tool = difftastic
 [difftool]
   prompt = false
 [merge]
-  conflictstyle = diff3
+	conflictstyle = zdiff3
   tool = delta
 [mergetool]
   prompt = false
@@ -118,9 +120,17 @@
 	changeHunkIndicators = true
 [status]
 	submodulesummary = 1
-[maintenance]
-	repo = /path/to/git/repos/dotfiles/shell_config # Example
 [rerere] # Reuse Recorded Resolution
 	enable = true
 	enabled = true
 	autoUpdate = true
+[help]
+	autocorrect = 1
+[fetch]
+	prunetags = true
+[log]
+	date = iso
+
+
+# [maintenance] # Included in my private gitconfig, below is an example
+# 	repo = /path/to/git/repos/dotfiles/shell_config # Example
