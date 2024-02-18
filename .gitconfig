@@ -1,0 +1,147 @@
+[core]
+  excludesfile = ~/.gitignoreglobal
+  ignorecase = true
+
+[credential]
+  helper = store
+
+[include]
+  path = ~/.gitconfig.private
+
+#[url "git@github.com:"]
+#  insteadOf = https://github.com/
+
+## Behaviour
+[init]
+  defaultBranch = main
+[push]
+  default = current
+  autoSetupRemote = true
+	followtags = true
+[pull]
+  rebase = true
+[rebase]
+  autosquash = true
+[branch]
+  autoSetupMerge = true
+	sort = -committerdate
+[mergetool]
+  prompt = false
+[filter "lfs"]
+  required = true
+  clean = git-lfs clean -- %f
+  smudge = git-lfs smudge -- %f
+  process = git-lfs filter-process
+[tar "tar.xz"]
+  command = xz -c
+
+### DIFF TOOLING ###
+[core]
+	pager = delta #--features=interactive #,diff-so-fancy,decorations
+  #page = diff-so-fancy | less --tabs=2 -RFX
+[merge]
+	conflictstyle = zdiff3
+  tool = delta
+
+[diff]
+  colorMoved = default
+	submodule = log
+	algorithm = histogram
+	tool = delta
+  # external = delta
+  prompt = false
+
+[delta]
+  side-by-side = true
+  navigate = true
+  features = decorations unobtrusive-line-numbers diff-so-fancy dark
+  syntax-theme = Dracula
+  tabs = 4
+  true-color = always
+  hyperlinks = true
+  hyperlinks-file-link-format = "vscode://file/{path}:{line}"
+  # or: hyperlinks-file-link-format = "idea://open?file={path}&line={line}"
+  # or: hyperlinks-file-link-format = "pycharm://open?file={path}&line={line}"
+[delta "interactive"]
+  diffFilter = delta --color-only --dark --features=interactive,unobtrusive-line-numbers,diff-so-fancy
+  keep-plus-minus-markers = false
+[delta "decorations"]
+  commit-decoration-style = bold yellow box ul
+  file-style = bold yellow ul
+  file-decoration-style = none
+  hunk-header-decoration-style = yellow box
+  commit-decoration-style = blue ol
+  # commit-style = raw
+  # file-style = omit
+  # hunk-header-decoration-style = blue box
+  hunk-header-file-style = red
+  # hunk-header-line-number-style = "#067a00"
+  hunk-header-style = file line-number syntax
+[delta "unobtrusive-line-numbers"]
+  line-numbers = true
+  line-numbers-minus-style = "#444444"
+  line-numbers-zero-style = "#444444"
+  line-numbers-plus-style = "#444444"
+  line-numbers-left-format = "{nm:>4}┊"
+  line-numbers-right-format = "{np:>4}│"
+  line-numbers-left-style = blue
+  line-numbers-right-style = blue
+
+
+# Diff-so-fancy diff-tool
+[interactive]
+	diffFilter = delta --diff-so-fancy # diff-so-fancy --patch
+[diff-so-fancy]
+	changeHunkIndicators = true
+### END DIFF ###
+
+[safe]
+	directory = /github/workspace
+[status]
+	submodulesummary = 1
+[rerere] # Reuse Recorded Resolution
+	enable = true
+	enabled = true
+	autoUpdate = true
+[help]
+	autocorrect = 1
+[fetch]
+	prunetags = true
+[log]
+	date = iso
+
+# Alases
+[alias]
+  init-safe-commit = !~/.safe-commit-hook/install-for-project.sh
+  quick-stats = ! /usr/local/bin/git-quick-stats
+  prune = fetch --prune
+  undo = reset --soft HEAD^
+  glog = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset'
+  logline = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+  tree = log --graph --decorate --pretty=oneline --abbrev-commit
+  squash-all = "!f(){ git reset $(git commit-tree HEAD^{tree} -m \"${1:-A new start}\");};f"
+  #squash-all = "!f(){ git reset $(git commit-tree HEAD^{tree} -m \"${1:-Make Actions Great Again}\");};f"
+  scrub = reset --hard @{upstream}
+  recentb = "!r() { refbranch=$1 count=$2; git for-each-ref --sort=-committerdate refs/heads --format='%(refname:short)|%(HEAD)%(color:yellow)%(refname:short)|%(color:bold green)%(committerdate:relative)|%(color:blue)%(subject)|%(color:magenta)%(authorname)%(color:reset)' --color=always --count=${count:-20} | while read line; do branch=$(echo \"$line\" | awk 'BEGIN { FS = \"|\" }; { print $1 }' | tr -d '*'); ahead=$(git rev-list --count \"${refbranch:-origin/master}..${branch}\"); behind=$(git rev-list --count \"${branch}..${refbranch:-origin/master}\"); colorline=$(echo \"$line\" | sed 's/^[^|]*|//'); echo \"$ahead|$behind|$colorline\" | awk -F'|' -vOFS='|' '{$5=substr($5,1,70)}1' ; done | ( echo \"ahead|behind||branch|lastcommit|message|author\\n\" && cat) | column -ts'|';}; r"
+  runs = "!f() { \
+      watch_gha_runs \
+          \"$(git remote get-url origin)\" \
+          \"$(git rev-parse --abbrev-ref HEAD)\"; \
+    }; f"
+
+# *********************
+# Rebase workflow
+  mainbranch = "!git remote show origin | sed -n '/HEAD branch/s/.*: //p'"
+  synced = "!git pull origin $(git mainbranch) --rebase"
+  update = "!git pull origin $(git rev-parse --abbrev-ref HEAD) --rebase"
+  squash = "!git rebase -v -i $(git mainbranch)"
+  publish = push origin HEAD --force-with-lease
+  pub = publish
+  ammend = commit --amend
+  amend = commit --amend
+	fpush = push
+# *********************
+
+
+# [maintenance]
+# 	repo = /path/to/example/repo
