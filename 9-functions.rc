@@ -116,21 +116,26 @@ function gbd() {
 }
 
 # A function that provides an untracked_files check for other functions
-function __stage_changes() {
+function __staged_changes() {
   # Display all changes including untracked files
-  echo "Detected changes:"
-  git status --short
+  local STAGED_FILES
+  STAGED_FILES=$(git diff --cached --name-only)
+  if [[ -n "$STAGED_FILES" ]]; then
+    echo "Staged files:"
+    echo "$STAGED_FILES"
 
-  # Ask the user if they want to stage all changes
-  echo "Do you want to stage all changes? (y/n)"
-  read -r yn
-  if [[ "$yn" =~ ^[Yy]$ ]]; then
-    # Stage all changes
-    git add -A
-    echo "All changes staged."
+    # Ask the user if they want to stage all changes
+    echo "Do you want to add all changes to the commit? (y/n)"
+    read -r yn
+    if [[ "$yn" =~ ^[Yy]$ ]]; then
+      # Stage all changes
+      git add -A
+    else
+      echo "Staging cancelled by the user."
+      return 1 # Return failure to indicate staging was not done
+    fi
   else
-    echo "Staging cancelled by the user."
-    return 1 # Return failure to indicate staging was not done
+    echo "No staged changes to add."
   fi
 }
 
@@ -166,7 +171,7 @@ function commit-hotfix() {
   MESSAGE="$*"
 
   # Attempt to stage changes; if the user cancels, abort the commit
-  if ! __stage_changes; then
+  if ! __staged_changes; then
     echo "Commit aborted due to no changes being staged."
     return 1
   fi
@@ -197,6 +202,7 @@ function checkout-jira() {
 function commit-jira() {
   local GIT_ARGS=()
   local MESSAGE=""
+  local BRANCH_PREFIX CURRENT_BRANCH
 
   # Check for the '-n' flag and prepare commit options accordingly
   if [[ "$1" == "-n" ]]; then
@@ -208,37 +214,35 @@ function commit-jira() {
   MESSAGE="$*"
 
   # Call the updated function to check and stage all changes
-  if ! __stage_changes; then
+  if ! __staged_changes; then
     echo "Commit aborted due to no changes being staged."
     return 1
   fi
 
-  # Get the current branch name
-  local CURRENT_BRANCH
+  # add the branch prefix to the message (e.g. IF-1234 -- message)
   CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+  BRANCH_PREFIX=$(echo "$CURRENT_BRANCH" | cut -d'-' -f1 -f2)
+  MESSAGE="${BRANCH_PREFIX} -- ${MESSAGE}"
 
-  # Proceed with commit if there are staged changes
-  if git diff --cached --quiet; then
+  # Proceed with commit
+  if ! git diff --cached --quiet; then
     echo "No changes to commit."
-    return 0
-  fi
-
-  # Execute the commit with any options and the message
-  git commit "${GIT_ARGS[@]}" -m "$MESSAGE"
-
-  # Check if the branch exists on the remote
-  if ! git ls-remote --heads origin "$CURRENT_BRANCH" | grep -q "$CURRENT_BRANCH"; then
-    # Offer to push and track the branch if it doesn't exist on the remote
-    echo "Current branch '$CURRENT_BRANCH' does not exist on the remote. Would you like to push it? (y/n)"
-    read -r yn
-    if [[ "$yn" =~ ^[Yy]$ ]]; then
-      git push --set-upstream origin "$CURRENT_BRANCH"
-      echo "Branch pushed and tracked on remote."
-    else
-      echo "Push cancelled by the user."
+    # Check if the branch exists on the remote
+    if ! git ls-remote --heads origin "$CURRENT_BRANCH" | grep -q "$CURRENT_BRANCH"; then
+      # Offer to push and track the branch if it doesn't exist on the remote
+      echo "Current branch '$CURRENT_BRANCH' does not exist on the remote. Would you like to push it? (y/n)"
+      read -r yn
+      if [[ "$yn" =~ ^[Yy]$ ]]; then
+        git push --set-upstream origin "$CURRENT_BRANCH"
+        echo "Branch pushed and tracked on remote."
+      else
+        echo "Push cancelled by the user."
+      fi
     fi
   else
-    git push
+    # Execute the commit with any options and the message
+    git commit "${GIT_ARGS[@]}" -m "$MESSAGE"
+    git push --set-upstream origin "$CURRENT_BRANCH"
     echo "Changes committed and pushed to '$CURRENT_BRANCH'."
   fi
 }
@@ -1134,7 +1138,6 @@ function __upgrade_apps() {
   brew cleanup
   brew autoremove
   gup update
-  command gh extension upgrade gh-copilot
 
   # unset trap
   trap - SIGINT
@@ -1481,40 +1484,3 @@ function git-loop() {
 }
 # Register each git repo in directory with maintenance
 alias git-maintenance-register="git-loop maintenance register"
-
-function set_default_permissions() {
-  local user="$1"
-  local group="$2"
-  local directory="$3"
-
-  # Output the current user and group of the top level directory
-  current_user=$(stat -c '%U' "$directory")
-  current_group=$(stat -c '%G' "$directory")
-  echo "Current user:group of '$directory' is ${current_user}:${current_group}."
-
-  echo "This will set the default user to '${user}' and group to '${group}' for new files and directories in '${directory}'."
-  echo "Do you want to proceed? (y/n)"
-  read -r answer
-  if [[ $answer != "y" ]]; then
-    echo "Operation cancelled."
-    return
-  fi
-
-  # Change group of the directory recursively
-  sudo chgrp -R "$group" "$directory"
-
-  # Set the SGID bit so new files inherit the directory's group
-  sudo chmod -R g+s "$directory"
-
-  # Set default ACLs for user, group, and others
-  setfacl -d -m u:"$user":rwx "$directory"
-  setfacl -d -m g:"$group":rwx "$directory"
-  setfacl -d -m o::r "$directory"
-
-  echo "Default permissions have been set."
-  echo "To revert changes, manually adjust the permissions or ACLs as needed."
-  echo "Example commands to reset permissions (adjust as necessary):"
-  echo "sudo chgrp -R ${current_group} ${directory}"
-  echo "sudo chmod -R g-s ${directory}"
-  echo "setfacl -b ${directory}"
-}

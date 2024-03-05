@@ -11,6 +11,8 @@
 autoload -Uz zmv
 
 zmodload zsh/complist
+zmodload zsh/mapfile # bring mapfile to zsh
+# zmodload zsh/attr # attrs info
 
 # Keep echo "station" > station from clobbering station
 setopt NO_CLOBBER
