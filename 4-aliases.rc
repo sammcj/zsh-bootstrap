@@ -191,13 +191,9 @@ alias rotate='tweaker3 -vb -x -i'
 alias rotate_min_supports='tweaker3 -vb -x -min sur -i'
 
 # ML / Github Copilot
-alias copilot="github-copilot-cli what-the-shell"
-alias copilot-git="github-copilot-cli git-assist"
-alias git-copilot='copilot-git'
-alias gh-cli-copilot="github-copilot-cli gh-assist"
-alias '??'='copilot_what-the-shell'  # function
-alias 'git?'='copilot_git-assist'    # function
-alias 'gh?'='copilot_gh-assist'      # function
-alias 'wts'='copilot_what-the-shell' # function
+alias copilot="gh copilot suggest"
+alias copilot-explain="gh copilot explain"
+alias '??'='copilot'
+alias wtf='copilot'
 
 alias idf='. $HOME/git/esp-idf/export.sh'

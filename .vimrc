@@ -45,6 +45,7 @@ Plugin 'github/copilot.vim'
 Plugin 'ryanoasis/vim-devicons'
 Plugin 'robertbasic/vim-hugo-helper'
 Plugin 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plugin 'nanotee/zoxide.vim'
 call vundle#end()
 " Plugins END
 filetype plugin on              " required

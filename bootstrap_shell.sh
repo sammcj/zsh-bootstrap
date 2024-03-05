@@ -152,6 +152,9 @@ function configure_settings() {
   git config --global push.followtags true
   git maintenance start
   git maintenance register
+
+  # Increase the density of status bar icons
+  defaults -currentHost write -globalDomain NSStatusItemSelectionPadding -int 6
 }
 ## End local functions ##
 

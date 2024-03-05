@@ -220,22 +220,25 @@ function commit-jira() {
   # Proceed with commit if there are staged changes
   if git diff --cached --quiet; then
     echo "No changes to commit."
-    # Check if the branch exists on the remote
-    if ! git ls-remote --heads origin "$CURRENT_BRANCH" | grep -q "$CURRENT_BRANCH"; then
-      # Offer to push and track the branch if it doesn't exist on the remote
-      echo "Current branch '$CURRENT_BRANCH' does not exist on the remote. Would you like to push it? (y/n)"
-      read -r yn
-      if [[ "$yn" =~ ^[Yy]$ ]]; then
-        git push --set-upstream origin "$CURRENT_BRANCH"
-        echo "Branch pushed and tracked on remote."
-      else
-        echo "Push cancelled by the user."
-      fi
+    return 0
+  fi
+
+  # Execute the commit with any options and the message
+  git commit "${GIT_ARGS[@]}" -m "$MESSAGE"
+
+  # Check if the branch exists on the remote
+  if ! git ls-remote --heads origin "$CURRENT_BRANCH" | grep -q "$CURRENT_BRANCH"; then
+    # Offer to push and track the branch if it doesn't exist on the remote
+    echo "Current branch '$CURRENT_BRANCH' does not exist on the remote. Would you like to push it? (y/n)"
+    read -r yn
+    if [[ "$yn" =~ ^[Yy]$ ]]; then
+      git push --set-upstream origin "$CURRENT_BRANCH"
+      echo "Branch pushed and tracked on remote."
+    else
+      echo "Push cancelled by the user."
     fi
   else
-    # Execute the commit with any options and the message
-    git commit "${GIT_ARGS[@]}" -m "$MESSAGE"
-    git push --set-upstream origin "$CURRENT_BRANCH"
+    git push
     echo "Changes committed and pushed to '$CURRENT_BRANCH'."
   fi
 }
@@ -856,58 +859,6 @@ function cura-backup() {
   echo "Created ${zip_file}"
 }
 
-# ML / Github Copilot
-
-copilot_what-the-shell() {
-  TMPFILE=$(mktemp)
-  trap 'rm -f $TMPFILE' EXIT
-  if /Users/samm/Library/Caches/fnm_multishells/14732_1687470861733/bin/github-copilot-cli what-the-shell "$@" --shellout "$TMPFILE"; then
-    if [ -e "$TMPFILE" ]; then
-      FIXED_CMD=$(cat "$TMPFILE")
-
-      eval "$FIXED_CMD"
-    else
-      echo "Apologies! Extracting command failed"
-    fi
-  else
-    return 1
-  fi
-}
-alias '??'='copilot_what-the-shell'
-
-copilot_git-assist() {
-  TMPFILE=$(mktemp)
-  trap 'rm -f $TMPFILE' EXIT
-  if /Users/samm/Library/Caches/fnm_multishells/14732_1687470861733/bin/github-copilot-cli git-assist "$@" --shellout "$TMPFILE"; then
-    if [ -e "$TMPFILE" ]; then
-      FIXED_CMD=$(cat "$TMPFILE")
-
-      eval "$FIXED_CMD"
-    else
-      echo "Apologies! Extracting command failed"
-    fi
-  else
-    return 1
-  fi
-}
-alias 'git?'='copilot_git-assist'
-
-copilot_gh-assist() {
-  TMPFILE=$(mktemp)
-  trap 'rm -f $TMPFILE' EXIT
-  if /Users/samm/Library/Caches/fnm_multishells/14732_1687470861733/bin/github-copilot-cli gh-assist "$@" --shellout "$TMPFILE"; then
-    if [ -e "$TMPFILE" ]; then
-      FIXED_CMD=$(cat "$TMPFILE")
-
-      eval "$FIXED_CMD"
-    else
-      echo "Apologies! Extracting command failed"
-    fi
-  else
-    return 1
-  fi
-}
-
 function ripSearch() {
   # 1. Search for text in files using Ripgrep
   # 2. Interactively narrow down the list using fzf
@@ -1183,6 +1134,7 @@ function __upgrade_apps() {
   brew cleanup
   brew autoremove
   gup update
+  command gh extension upgrade gh-copilot
 
   # unset trap
   trap - SIGINT
@@ -1529,3 +1481,40 @@ function git-loop() {
 }
 # Register each git repo in directory with maintenance
 alias git-maintenance-register="git-loop maintenance register"
+
+function set_default_permissions() {
+  local user="$1"
+  local group="$2"
+  local directory="$3"
+
+  # Output the current user and group of the top level directory
+  current_user=$(stat -c '%U' "$directory")
+  current_group=$(stat -c '%G' "$directory")
+  echo "Current user:group of '$directory' is ${current_user}:${current_group}."
+
+  echo "This will set the default user to '${user}' and group to '${group}' for new files and directories in '${directory}'."
+  echo "Do you want to proceed? (y/n)"
+  read -r answer
+  if [[ $answer != "y" ]]; then
+    echo "Operation cancelled."
+    return
+  fi
+
+  # Change group of the directory recursively
+  sudo chgrp -R "$group" "$directory"
+
+  # Set the SGID bit so new files inherit the directory's group
+  sudo chmod -R g+s "$directory"
+
+  # Set default ACLs for user, group, and others
+  setfacl -d -m u:"$user":rwx "$directory"
+  setfacl -d -m g:"$group":rwx "$directory"
+  setfacl -d -m o::r "$directory"
+
+  echo "Default permissions have been set."
+  echo "To revert changes, manually adjust the permissions or ACLs as needed."
+  echo "Example commands to reset permissions (adjust as necessary):"
+  echo "sudo chgrp -R ${current_group} ${directory}"
+  echo "sudo chmod -R g-s ${directory}"
+  echo "setfacl -b ${directory}"
+}
