@@ -193,7 +193,7 @@ function commit-hotfix() {
 function checkout-jira() {
   JIRA_BRANCH="IF-${1}-${USER}-$(date +%Y-%m-%d)"
   # If the JIRA branch already exists, append the current time to the branch name
-  if command git branch -a | grep -q "remotes/origin/${JIRA_BRANCH}"; then
+  if command git branch -a | grep -q "remotes/origin/${JIRA_BRANCH}" || command git branch -a | grep -q "${JIRA_BRANCH}"; then
     JIRA_BRANCH="${JIRA_BRANCH}-$(date +%H-%M-%S)"
   fi
   command git checkout -b "${JIRA_BRANCH}"
@@ -1484,3 +1484,20 @@ function git-loop() {
 }
 # Register each git repo in directory with maintenance
 alias git-maintenance-register="git-loop maintenance register"
+
+# If the user runs the conda activate command before running conda init - offer to run conda init, otherwise run conda activate
+function conda() {
+  if [[ $1 == "activate" ]]; then
+    if [[ -z $CONDA_EXE ]]; then
+      echo "Conda is not initialized, would you like to initialize it? (y/n)"
+      read -r response
+      if [[ $response == "y" ]]; then
+        conda_init
+      fi
+    else
+      command conda "$@"
+    fi
+  else
+    command conda "$@"
+  fi
+}
