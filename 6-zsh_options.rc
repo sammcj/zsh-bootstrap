@@ -233,3 +233,10 @@ setopt correct
 
 # # normal space during searches
 # bindkey -M isearch " " magic-space
+
+#nav bindkeys
+# bindkey '^[[1;5A' nav-up      # cmd + up
+# bindkey '^[[1;5B' nav-down    # cmd + down
+# bindkey '^[[1;5C' nav-forward # cmd + right
+# bindkey '^[[1;5D' nav-back    # cmd + left
+# #

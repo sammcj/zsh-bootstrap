@@ -173,6 +173,7 @@ grep -q -F '/opt/homebrew/bin/zsh' /etc/shells || echo '/opt/homebrew/bin/zsh' |
 clone_repo "${HOME}/.zgen" "https://github.com/tarjoilija/zgen.git"
 clone_repo "${HOME}/.tmux/plugins/tpm" "https://github.com/tmux-plugins/tpm"
 clone_repo "${HOME}/.git/fuzzy" "https://github.com/bigH/git-fuzzy.git" && ln -s "${HOME}/.git/fuzzy/bin/git-fuzzy" "${HOME}/bin/git-fuzzy"
+# clone_repo "${HOME}/.nav" "https://github.com/betafcc/nav"
 
 # Link dotfiles
 dotfiles=(".gitignoreglobal" ".gitconfig" ".vimrc" ".gitconfig_nopush" ".gitconfig.private" ".dircolors" ".tmux.conf" ".zshrc" ".asdfrc")

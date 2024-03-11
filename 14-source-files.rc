@@ -22,3 +22,7 @@ eval "$(pyenv init -)"
 # *) export PATH="$PNPM_HOME:$PATH" ;;
 # esac
 # pnpm end
+
+#nav
+# source "${HOME}/.nav/nav.zsh"
+# nav bindkeys

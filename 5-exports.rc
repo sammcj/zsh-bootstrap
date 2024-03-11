@@ -54,3 +54,8 @@ export _FMT_END="\e[0m" # end of line stop formatting
 # automatic1111
 export COMMANDLINE_ARGS="${COMMANDLINE_ARGS:-$COMMANDLINE_ARGS --skip-torch-cuda-test --upcast-sampling --opt-sub-quad-attention}" # --use-cpu interrogate
 export HF_HUB_ENABLE_HF_TRANSFER=1
+
+# if running on macos
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  export CMAKE_ARGS="${CMAKE_ARGS} -DLLAMA_METAL=on"
+fi

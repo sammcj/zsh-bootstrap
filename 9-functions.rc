@@ -28,6 +28,21 @@ function git_sparse_clone() (
   git sparse-checkout list
 )
 
+# A function that checks a git repo for any incorrect casing / cashing clashes and force over-rides local changes if so
+git-fix-casing() {
+  local original_dir
+  original_dir=$(pwd)
+  cd "$1" || return 1
+  sh -c 'git ls-files -ci --exclude-standard -z | xargs -0 git rm --cached'
+  git status
+  if [[ $(git ls-files -ci --exclude-standard) ]]; then
+    echo "There are files with incorrect casing in the git repo"
+    git reset --hard
+    git status
+  fi
+  cd "$original_dir" || return 1
+}
+
 # wrapper for adding advanced git cli customisation
 alias git='git_wrapper'
 git_wrapper() {
@@ -124,12 +139,15 @@ function __staged_changes() {
     echo "Staged files:"
     echo "$STAGED_FILES"
 
+    # If there are changes that haven't been added, ask the user if they want to add them
+
     # Ask the user if they want to stage all changes
     echo "Do you want to add all changes to the commit? (y/n)"
     read -r yn
     if [[ "$yn" =~ ^[Yy]$ ]]; then
       # Stage all changes
       git add -A
+      git add .
     else
       echo "Staging cancelled by the user."
       return 1 # Return failure to indicate staging was not done
@@ -627,56 +645,36 @@ function update_asdf() {
   asdf plugin-update --all
 }
 
-# shellcheck disable=SC2068 disable=SC2046 disable=SC2145
-function s2a() {
-  eval $($(command saml2aws) script --shell=bash --profile=$@)
+# Prompts for a name and a password and stores it in keychain
+keychain_password_prompt() {
+  echo "Enter a name for the password:"
+  read -r name
+  echo "Enter the password:"
+  stty -echo # disable echoing the password
+  read -r password
+  security add-generic-password -s "$name" -a "$(whoami)" -w "$password"
+  stty echo # re-enable echoing
+}
+
+# Reads a password from keychain and outputs it
+# usage: keychain_password <service name to match on> <account>
+keychain_password() {
+  stty -echo # disable echoing the password
+  security find-generic-password -s "$1" -a "$(whoami)" -w
+  stty echo # re-enable echoing
 }
 
 ### AWS Auth ###
 # aws-profile uses s2a-keychain to login to AWS using saml2aws and then exports the AWS_PROFILE variable
-
-# Interactively export AWS_PROFILE
-function aws-profile() {
-  # if provided an argument, use that as the profile
-  if [[ -n $1 ]]; then
-    export AWS_PROFILE=$1
-    export AWSCLIPARAMS="--profile=$1"
-  else
-    # otherwise, use fzf to select a profile
-    AWS_PROFILE=$(grep profile "${HOME}"/.aws/config |
-      awk '{print $2}' | sed 's,],,g' |
-      fzf --layout reverse --height=30% --border)
-    export AWS_PROFILE
-    export AWSCLIPARAMS="--profile=${AWS_PROFILE}"
-  fi
-
-  # # Check if we've already got a session
-  # if [[ -n $(aws --profile="${AWS_PROFILE}" sts get-caller-identity) ]]; then
-  #   echo "You already have a session, would you like to refresh it? (y/n)"
-  #   read -r REFRESH_SESSION
-  #   if [[ $REFRESH_SESSION == "n" ]]; then
-  #     exit 0
-  #   fi
-  # fi
-
-  # # Offer to start a tmux session if one isn't already running (tmux_attach will check if there are any sessions)
-  # if [[ -z $(tmux ls) ]]; then
-  #   echo "Would you like to start a tmux session? (y/n)"
-  #   read -r START_TMUX
-  #   if [[ $START_TMUX == "y" ]]; then
-  #     tmux_create "aws"
-  #   fi
-  # fi
-
-  s2a-keychain "$AWS_PROFILE"
-
-  echo "[You are now using the ${AWS_PROFILE} profile]"
-
-}
-
+# Requires saml2aws, fzf, and keychain_password
 alias aad=aws-profile
 alias awslogin=aws-profile
 alias aws-azure-login=aws-profile
+
+# shellcheck disable=SC2068 disable=SC2046 disable=SC2145
+function s2a() {
+  eval $($(command saml2aws) script --shell=bash --profile=$@)
+}
 
 # Logs into AWS using saml2aws and a password stored in keychain
 function s2a-keychain() {
@@ -701,26 +699,26 @@ function s2a-keychain() {
   unset IDPPW
 }
 
+# Interactively export AWS_PROFILE
+function aws-profile() {
+  # if provided an argument, use that as the profile
+  if [[ -n $1 ]]; then
+    export AWS_PROFILE=$1
+    export AWSCLIPARAMS="--profile=$1"
+  else
+    # otherwise, use fzf to select a profile
+    AWS_PROFILE=$(grep profile "${HOME}"/.aws/config |
+      awk '{print $2}' | sed 's,],,g' |
+      fzf --layout reverse --height=30% --border)
+    export AWS_PROFILE
+    export AWSCLIPARAMS="--profile=${AWS_PROFILE}"
+  fi
+  s2a-keychain "$AWS_PROFILE"
+
+  echo "[You are now using the ${AWS_PROFILE} profile]"
+}
+
 ### END AWS Auth ###
-
-# Prompts for a name and a password and stores it in keychain
-keychain_password_prompt() {
-  echo "Enter a name for the password:"
-  read -r name
-  echo "Enter the password:"
-  stty -echo # disable echoing the password
-  read -r password
-  security add-generic-password -s "$name" -a "$(whoami)" -w "$password"
-  stty echo # re-enable echoing
-}
-
-# Reads a password from keychain and outputs it
-# usage: keychain_password <service name to match on> <account>
-keychain_password() {
-  stty -echo # disable echoing the password
-  security find-generic-password -s "$1" -a "$(whoami)" -w
-  stty echo # re-enable echoing
-}
 
 # A function that checks ssh-add and adds my keys if they're not already added
 function ssh-add-keys() {
@@ -1076,6 +1074,18 @@ __update_chromium() {
   fi
 }
 
+# a function that checks for macOS OS updates and downloads them (without installing) then pops up a notification in the background
+function __update_macos() {
+  # check for updates
+  softwareupdate -l
+  if [[ $? -eq 0 ]]; then
+    # notify the user there are updates to download and that they may have to enter their password in the terminal
+    osascript -e 'display notification "macOS updates are available. You may need to enter your password in the terminal to download them." with title "macOS Update" action button "Show iTerm"'
+    # download updates
+    softwareupdate -d -a --no-scan --agree-to-license --background
+  fi
+}
+
 function ba() {
   # trap ctrl-c
   trap '' SIGINT
@@ -1099,6 +1109,12 @@ function ba() {
 
   echo "Upgrading apps in the foreground..."
   __upgrade_apps # >>"${log_file}"
+
+  echo "Checking and downloading macOS updates in the background..."
+  __update_macos >>"${log_file}" 2>&1 &
+
+  echo "Upgrading rust in the background..."
+  rustup update >>"${log_file}" 2>&1 &
 
   # list all background jobs
   jobs
@@ -1395,6 +1411,7 @@ a() {
 }
 
 rename_files() {
+  # see also, one liner -  find . -name "*sdc-maps*" -exec bash -c 'mv "$0" "${0/sdc/spl}"' {} \;
   local find_word="$1"
   local replace_word="$2"
   local files_to_rename=()
