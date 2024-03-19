@@ -197,3 +197,4 @@ alias '??'='copilot'
 alias wtf='copilot'
 
 alias idf='. $HOME/git/esp-idf/export.sh'
+alias o='tlm explain'
