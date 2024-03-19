@@ -87,3 +87,7 @@ set -m # reenable job output
 ### zoxide ###
 eval "$(zoxide init zsh)"
 ### zoxide ###
+
+# Load custom aliases
+if [ -f "/Users/samm/.config/fabric/fabric-bootstrap.inc" ]; then . "/Users/samm/.config/fabric/fabric-bootstrap.inc"; fi
+export PATH="$PATH:/Users/samm/Fltr"

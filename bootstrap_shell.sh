@@ -182,6 +182,7 @@ for dotfile in "${dotfiles[@]}"; do
 done
 
 link_dotfile "bat-config" "/Users/samm/.config/bat/config"
+link_dotfile "rsyncd.conf" "/Users/samm/.rsyncd.conf"
 
 echo "Do you want to enable touchID for sudo? [y/N]"
 read -r response

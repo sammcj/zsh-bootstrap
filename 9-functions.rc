@@ -65,7 +65,7 @@ git_wrapper() {
     git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
 
     # Fetch all branches in the background, silently
-    git fetch --all --quiet &>/dev/null &
+    git fetch --all --quiet #&>/dev/null &
 
     # Move back to the original directory
     cd -
