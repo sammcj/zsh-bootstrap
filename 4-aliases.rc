@@ -191,7 +191,7 @@ alias rotate='tweaker3 -vb -x -i'
 alias rotate_min_supports='tweaker3 -vb -x -min sur -i'
 
 # ML / Github Copilot
-alias copilot="gh copilot suggest"
+alias copilot="gh copilot suggest -t shell"
 alias copilot-explain="gh copilot explain"
 alias '??'='copilot'
 alias wtf='copilot'
