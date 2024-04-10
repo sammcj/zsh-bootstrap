@@ -58,8 +58,14 @@ git_wrapper() {
     shift
     command git clone --depth=1 "$@"
 
-    # Move into the cloned directory
-    cd "$(basename "$1" .git)"
+    # Move into the cloned directory (taking into account the destination directory might be provided)
+    if [[ $* == *" "* ]]; then
+      local dest_dir
+      dest_dir=$(echo "$*" | awk '{print $NF}')
+      cd "$dest_dir"
+    else
+      cd "$(basename "$1" .git)"
+    fi
 
     # Update the fetch configuration to track all upstream branches
     git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
@@ -129,6 +135,15 @@ function gbd() {
     command git branch --sort=-committerdate | fzf --header 'Delete Git Branch' --preview 'git diff --color=always {1}' --pointer='>' | xargs command git branch -d
   fi
 }
+
+# generate_commit_msg() {
+#   # This function generates a commit message using the ollama API
+#   # Map the function to a keybinding (e.g., gcm) in your .zshrc file:
+#   # bindkey '^Xg' generate_commit_msg
+#   local -r model="tinydolphin:1.1b- v2.8-q5_ K_ M"
+#   local -r prompt=$(git diff --cached --name-only | xargs -I{} echo "Why did you change {}?")
+#   local -r api_url="http://localhost:11434/api/generate"
+# }
 
 # A function that provides an untracked_files check for other functions
 function __staged_changes() {
@@ -1517,4 +1532,22 @@ function conda() {
   else
     command conda "$@"
   fi
+}
+
+# A function that pulls the latest llama.cpp git repo and compiles it
+function llama-build() {
+  local llamadir
+  llamadir=$HOME/git/llama.cpp/build
+  export BLAS_INCLUDE_DIRS=/opt/homebrew/Cellar/clblast/1.6.2/
+  pushd "${llamadir}" || return
+  # check if there are updates
+  local gitstatus
+  gitstatus=$(git pull)
+  if [[ $gitstatus == "Already up to date." ]]; then
+    echo "No updates to llama.cpp found"
+  else
+    echo "Updates to llama.cpp found, building and installing"
+    cmake . -Wno-dev -DLLAMA_CUDA=off -DLLAMA_METAL=on -DLLAMA_CLBLAST=on -DLLAMA_F16C=on -DBUILD_SHARED_LIBS=on -DLLAMA_BLAS=on -DLLAMA_BLAS_VENDOR=Apple -DLLAMA_BUILD_EXAMPLES=on -DLLAMA_BUILD_TESTS=on -DLLAMA_BUILD_SERVER=on -DLLAMA_CCACHE=on -DLLAMA_ALL_WARNINGS=off -DLLAMA_CURL=on -DLLAMA_METAL_EMBED_LIBRARY=on -DLLAMA_NATIVE=on -DLLAMA_SERVER_VERBOSE=on -DLLAMA_QKK_64=on && make -j 12 && make install
+  fi
+  popd || return
 }

@@ -126,6 +126,8 @@ function clone_repo() {
 function install_extras() {
   # This function is for installing things that are not available via homebrew, pip etc...
   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh # Install rust via rustup
+
+  curl -LsSf https://astral.sh/uv/install.sh | sh # Install uv via astral
 }
 
 function configure_settings() {

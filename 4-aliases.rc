@@ -198,3 +198,5 @@ alias wtf='copilot'
 
 alias idf='. $HOME/git/esp-idf/export.sh'
 alias o='tlm explain'
+
+alias obsidian='cd /Users/samm/Library/Mobile\ Documents/com~apple~CloudDocs/Obsidian/Main && ls -ltarh'
