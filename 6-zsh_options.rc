@@ -175,8 +175,12 @@ bindkey '\e[D' backward-char
 bindkey '\eOC' forward-char
 bindkey '\eOD' backward-char
 
-bindkey "5C" emacs-forward-word #control left
-bindkey "5D" backward-word      #control right
+# bindkey "5C" emacs-forward-word
+# bindkey "5D" backward-word
+bindkey "5C" forward-word #control left
+bindkey "5D" backward-word #control right
+bindkey "^[[1;5C" forward-word #control left in xterm/tmux
+bindkey "^[[1;5D" backward-word #control right in xterm/tmux
 
 bindkey "^[[A" history-search-backward # Search history with up arrow
 bindkey "^[[B" history-search-forward  # Search history with up arrow

@@ -190,6 +190,8 @@ alias ender='cd ~/git/sammcj/ender-configs/ && code .'
 alias rotate='tweaker3 -vb -x -i'
 alias rotate_min_supports='tweaker3 -vb -x -min sur -i'
 
+alias obsidian='cd /Users/samm/Library/Mobile\ Documents/com~apple~CloudDocs/Obsidian/Main && ls -ltarh'
+
 # ML / Github Copilot
 alias copilot="gh copilot suggest -t shell"
 alias copilot-explain="gh copilot explain"
@@ -198,5 +200,4 @@ alias wtf='copilot'
 
 alias idf='. $HOME/git/esp-idf/export.sh'
 alias o='tlm explain'
-
-alias obsidian='cd /Users/samm/Library/Mobile\ Documents/com~apple~CloudDocs/Obsidian/Main && ls -ltarh'
+alias hf="hfdownloader -c 10 -t \$HUGGINGFACE_TOKEN -j"
