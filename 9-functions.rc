@@ -1578,7 +1578,10 @@ function ol() {
 
   # if the first argument is -m use it as the model (e.g. ol -m tinydolphin:1.1b-v2.8-q5_K_M tell me a joke)
   if [[ $1 == "-m" ]]; then
-    cai ollama -m "$2" "${@:3}"
+    cai ollama "$2" "${@:3}"
+  # if the first argument is a string with a : in it, assume it's the model and use it
+  elif [[ $1 == *:* ]]; then
+    cai ollama "$1" "${@:2}"
   elif [[ $1 == "-h" ]]; then
     cai ollama -h
   # if -l, --list, or list (with no arguments) is provided, list the available models
