@@ -18,65 +18,104 @@ if ! ssh-add -l | grep -e 'ED25519\|RSA'; then
   ssh-add --apple-use-keychain ~/.ssh/id_*.key
 fi
 
-# Brew installs moved to Brewfile (brew bundle dump to generate)
-brew bundle
+function installHomebrew() {
+  if ! command -v brew &>/dev/null; then
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  fi
 
-# Git related
-pip3 install -U mu-repo # manim
+  # Brew installs moved to Brewfile (brew bundle dump to generate)
+  brew bundle
+}
 
-# # Markdown link checker
-# pip3 install linkcheckmd
+function installPythonPackages() {
+  curl -LsSf https://astral.sh/uv/install.sh | sh # Install uv via astral
 
-# ML/AI related
-# pip install shell-gpt
+  pip3 install -U mu-repo
+}
 
 # Ensure we don't have those pesky ^ in our package.json files
 npm config set save-exact=true
 
-npm install -G husky npm-check-updates eslint prettier editorconfig \
-  @typescript-eslint/parser typescript ts-node bash-language-server
-# aws-azure-login
+function installNpmPackages() {
+  npm install -g npm-check-updates eslint prettier editorconfig \
+    @typescript-eslint/parser typescript ts-node bash-language-server
+}
 
-go install github.com/rhysd/actionlint/cmd/actionlint@latest
-go install github.com/nao1215/gup@latest # gup - updates go packages
-go install github.com/jesseduffield/lazydocker@latest
-go install github.com/rs/dnstrace@latest
-# github.com/projectdiscovery/katana/cmd/katana@latest # website crawler/downloader
+function clone_repo() {
+  if [[ -d "$1" ]]; then
+    echo "Directory $1 already exists"
+    read -r -p "Do you want to replace it with a clone of the repo $2? [y/N] " response
+    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+      rm -rf "$1"
+      git clone "$2" "$1" --depth=1
+    fi
+  else
+    echo "No changes made to $1"
+  fi
+}
 
-# Install lazycli for building TUIs
-# Requires rust's cargo, either via homebrew rust / rust-up
-# cargo install --locked lazycli
-# Get install path to source
+function installGoPackages() {
+  go install github.com/rhysd/actionlint/cmd/actionlint@latest
+  go install github.com/nao1215/gup@latest # gup - updates go packages
+  go install github.com/jesseduffield/lazydocker@latest
+  go install github.com/rs/dnstrace@latest
 
-### asdf ###
+}
 
-## install plugins
-# languages
-asdf plugin-add nodejs https://github.com/asdf-vm/asdf-nodejs.git
-asdf plugin-add yarn https://github.com/twuni/asdf-yarn.git
-asdf plugin-add python https://github.com/danhper/asdf-python.git
-asdf plugin-add golang https://github.com/kennyp/asdf-golang.git
-# asdf plugin-add bundler https://github.com/jonathanmorley/asdf-bundler.git
-# asdf plugin-add ruby https://github.com/asdf-vm/asdf-ruby.git
-asdf plugin-add rust https://github.com/code-lever/asdf-rust.git
-# Tools that are only available via asdf
-asdf plugin-add action-validator https://github.com/mpalmer/action-validator.git
-asdf plugin-add semver https://github.com/mathew-fleisch/asdf-semver.git
-# # Terraform
-# asdf plugin-add tfenv https://github.com/carlduevel/asdf-tfenv.git
-# asdf plugin-add tfsec https://github.com/woneill/asdf-tfsec.git
-# asdf plugin-add terraform https://github.com/asdf-community/asdf-hashicorp.git
-# asdf plugin-add terraform-ls https://github.com/asdf-community/asdf-hashicorp.git
-# asdf plugin-add terraform-validator https://github.com/asdf-community/asdf-hashicorp.git
-# asdf plugin-add tfupdate https://github.com/yuokada/asdf-tfupdate.git
-# asdf plugin-add tfstate-lookup https://github.com/carnei-ro/asdf-tfstate-lookup.git
+function installCargoPackages() {
+  if ! command -v cargo &>/dev/null; then
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh # Install rust via rustup
+  fi
 
-# Install all asdf plugins
-asdf plugin-update --all
+  # Install cargo packages
+  cargo install cai code2prompt gitu lazycli
+}
 
-### End asdf ###
+function installAsdf() {
+  ### asdf ###
 
-##### End installs #####
+  ## install plugins
+  # languages
+  asdf plugin-add nodejs https://github.com/asdf-vm/asdf-nodejs.git
+  asdf plugin-add yarn https://github.com/twuni/asdf-yarn.git
+  asdf plugin-add golang https://github.com/kennyp/asdf-golang.git
+  asdf plugin-add rust https://github.com/code-lever/asdf-rust.git
+
+  # asdf plugin-add python https://github.com/danhper/asdf-python.git
+
+  # Tools that are only available via asdf
+  asdf plugin-add action-validator https://github.com/mpalmer/action-validator.git
+  asdf plugin-add semver https://github.com/mathew-fleisch/asdf-semver.git
+
+  # # Terraform
+  # asdf plugin-add tfenv https://github.com/carlduevel/asdf-tfenv.git
+  # asdf plugin-add tfsec https://github.com/woneill/asdf-tfsec.git
+  # asdf plugin-add terraform https://github.com/asdf-community/asdf-hashicorp.git
+  # asdf plugin-add terraform-ls https://github.com/asdf-community/asdf-hashicorp.git
+  # asdf plugin-add terraform-validator https://github.com/asdf-community/asdf-hashicorp.git
+  # asdf plugin-add tfupdate https://github.com/yuokada/asdf-tfupdate.git
+  # asdf plugin-add tfstate-lookup https://github.com/carnei-ro/asdf-tfstate-lookup.git
+
+  # Install all asdf plugins
+  asdf plugin-update --all
+}
+
+function installDockerCompose() {
+  # Docker compose v2
+  mkdir -p ~/.docker/cli-plugins/
+  chmod +x ~/.docker/cli-plugins/docker-compose
+  ln -sfn /opt/homebrew/opt/docker-compose/bin/docker-compose "${HOME}/.docker/cli-plugins/docker-compose"
+}
+
+function installZshZgen() {
+  mkdir -p "${HOME}/.zsh.d"
+  grep -q -F '/opt/homebrew/bin/zsh' /etc/shells || echo '/opt/homebrew/bin/zsh' | sudo tee -a /etc/shells
+  clone_repo "${HOME}/.zgen" "https://github.com/tarjoilija/zgen.git"
+}
+
+function installTmuxTpm() {
+  clone_repo "${HOME}/.tmux/plugins/tpm"
+}
 
 ## Local functions ##
 function link_dotfile() {
@@ -110,32 +149,8 @@ function link_dotfile() {
   fi
 }
 
-function clone_repo() {
-  if [[ -d "$1" ]]; then
-    echo "Directory $1 already exists"
-    read -r -p "Do you want to replace it with a clone of the repo $2? [y/N] " response
-    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
-      rm -rf "$1"
-      git clone "$2" "$1" --depth=1
-    fi
-  else
-    echo "No changes made to $1"
-  fi
-}
-
-function install_extras() {
-  # This function is for installing things that are not available via homebrew, pip etc...
-  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh # Install rust via rustup
-
-  curl -LsSf https://astral.sh/uv/install.sh | sh # Install uv via astral
-}
-
-function configure_settings() {
-  # This optional function is for configuring settings that aren't synced
-  # Not currently in use but might be useful in the future
-
-  # npm
-  #npm config set prefer-dedupe true # maybe?
+function gitConfig() {
+  clone_repo "${HOME}/.git/fuzzy" "https://github.com/bigH/git-fuzzy.git" && ln -s "${HOME}/.git/fuzzy/bin/git-fuzzy" "${HOME}/bin/git-fuzzy"
 
   # git
   git config --global branch.autoSetupMerge true
@@ -154,50 +169,52 @@ function configure_settings() {
   git config --global push.followtags true
   git maintenance start
   git maintenance register
+}
+
+function macOSConfig() {
+  # Completion plugins
+  gh completion -s zsh >/usr/local/share/zsh/site-functions/_gh
 
   # Increase the density of status bar icons
   defaults -currentHost write -globalDomain NSStatusItemSelectionPadding -int 6
+
+  echo "Do you want to enable touchID for sudo? [y/N]"
+  read -r response
+  if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+    source '9-functions.rc'
+    touchid_sudo
+  fi
 }
-## End local functions ##
 
-# Completion plugins
-gh completion -s zsh >/usr/local/share/zsh/site-functions/_gh
+function configureDotfiles() {
+  # Link dotfiles
+  dotfiles=(".gitignoreglobal" ".gitconfig" ".vimrc" ".gitconfig_nopush" ".gitconfig.private" ".dircolors" ".tmux.conf" ".zshrc" ".asdfrc")
+  for dotfile in "${dotfiles[@]}"; do
+    link_dotfile "$dotfile"
+  done
 
-# Docker compose v2
-mkdir -p ~/.docker/cli-plugins/
-chmod +x ~/.docker/cli-plugins/docker-compose
-ln -sfn /opt/homebrew/opt/docker-compose/bin/docker-compose "${HOME}/.docker/cli-plugins/docker-compose"
-####
+  link_dotfile "bat-config" "/Users/samm/.config/bat/config"
+  link_dotfile "rsyncd.conf" "/Users/samm/.rsyncd.conf"
+}
 
-mkdir -p "${HOME}/.zsh.d"
-grep -q -F '/opt/homebrew/bin/zsh' /etc/shells || echo '/opt/homebrew/bin/zsh' | sudo tee -a /etc/shells
+function main() {
+  installHomebrew
+  installPythonPackages
+  installGoPackages
+  installCargoPackages
+  installNpmPackages
 
-clone_repo "${HOME}/.zgen" "https://github.com/tarjoilija/zgen.git"
-clone_repo "${HOME}/.tmux/plugins/tpm" "https://github.com/tmux-plugins/tpm"
-clone_repo "${HOME}/.git/fuzzy" "https://github.com/bigH/git-fuzzy.git" && ln -s "${HOME}/.git/fuzzy/bin/git-fuzzy" "${HOME}/bin/git-fuzzy"
-# clone_repo "${HOME}/.nav" "https://github.com/betafcc/nav"
+  installDockerCompose
 
-# Link dotfiles
-dotfiles=(".gitignoreglobal" ".gitconfig" ".vimrc" ".gitconfig_nopush" ".gitconfig.private" ".dircolors" ".tmux.conf" ".zshrc" ".asdfrc")
-for dotfile in "${dotfiles[@]}"; do
-  link_dotfile "$dotfile"
-done
+  installZshZgen
+  installTmuxTpm
 
-link_dotfile "bat-config" "/Users/samm/.config/bat/config"
-link_dotfile "rsyncd.conf" "/Users/samm/.rsyncd.conf"
+  macOSConfig
+  gitConfig
+  configureDotfiles
+}
 
-echo "Do you want to enable touchID for sudo? [y/N]"
-read -r response
-if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
-  source '9-functions.rc'
-  touchid_sudo
-fi
-
-echo "Do you want to install extras? [y/N]"
-"$(declare -f install_extras)"
-read -r response
-if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
-  install_extras
-fi
+# Run the main functions to install and configure
+main
 
 echo "Done"

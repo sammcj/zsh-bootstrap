@@ -1128,6 +1128,8 @@ function ba() {
   echo "Checking and downloading macOS updates in the background..."
   __update_macos >>"${log_file}" 2>&1 &
 
+  # ~/bin/build_ollama.sh >>"${log_file}" 2>&1 &
+
   echo "Upgrading rust in the background..."
   rustup update >>"${log_file}" 2>&1 &
 
@@ -1535,7 +1537,7 @@ function conda() {
 }
 
 # A function that pulls the latest llama.cpp git repo and compiles it
-function llama-build() {
+function build_llama() {
   local llamadir
   llamadir=$HOME/git/llama.cpp/build
   export BLAS_INCLUDE_DIRS=/opt/homebrew/Cellar/clblast/1.6.2/
@@ -1551,4 +1553,52 @@ function llama-build() {
     #-DLLAMA_QKK_64=on -DLLAMA_BLAS=on
   fi
   popd || return
+}
+
+# a function that overrides pip commands with uv pip
+function pip() {
+  echo "using uv for pip..."
+  if [[ $1 == "install" ]]; then
+    uv pip install "${@:2}"
+  elif [[ $1 == "uninstall" ]]; then
+    uv pip uninstall "${@:2}"
+  else
+    command pip "$@"
+  fi
+}
+
+function ol() {
+  # Uses cai to prompt Ollama https://github.com/ad-si/cai/
+  # cargo install cai
+  CAI_DEFAULT_MODEL=${CAI_DEFAULT_MODEL:-tinydolphin:1.1b-v2.8-q5_K_M}
+
+  local model
+  local prompt
+  local default_prompt="tell me a joke"
+
+  # if the first argument is -m use it as the model (e.g. ol -m tinydolphin:1.1b-v2.8-q5_K_M tell me a joke)
+  if [[ $1 == "-m" ]]; then
+    cai ollama -m "$2" "${@:3}"
+  elif [[ $1 == "-h" ]]; then
+    cai ollama -h
+  # if -l, --list, or list (with no arguments) is provided, list the available models
+  elif [[ $1 == "-l" ]] || [[ $1 == "--list" ]] || [[ $1 == "list" ]] && [[ $# -eq 1 ]]; then
+    ollama list
+  # else if $1 is the only arg and it's li or --list-interactive, use fzf to select a model
+  elif [[ $1 == "li" ]] || [[ $1 == "--list-interactive" ]]; then
+
+    echo "Enter prompt (or just press enter to use the test prompt of '$default_prompt'):"
+    read -r prompt
+
+    if [[ -z $prompt ]]; then
+      prompt="$default_prompt"
+    fi
+
+    model=$(ollama list | grep -v embed | sort -k 3 -n | awk 'NR>1' | fzf --layout reverse --height=40% --border | awk '{print $1}')
+    export CAI_DEFAULT_MODEL="$model"
+
+    cai ollama "$model" \""$prompt"\"
+  else
+    cai ollama "$CAI_DEFAULT_MODEL" "${*}"
+  fi
 }
