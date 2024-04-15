@@ -1605,3 +1605,46 @@ function ol() {
     cai ollama "$CAI_DEFAULT_MODEL" "${*}"
   fi
 }
+
+function code2prompt() {
+  # wrap the code2prompt command in a function that sets a number of default excludes
+  # https://github.com/mufeedvh/code2prompt/
+  local arguments
+  local excludeFiles
+  local excludeFolders
+  local excludeExtensions
+  local templatesFolder
+  templatesFolder="${HOME}/git/code2prompt/templates"
+  excludeFiles=".editorconfig,.eslintignore,.eslintrc,tsconfig.json,.gitignore,.npmrc,LICENSE,esbuild.config.mjs,manifest.json,package-lock.json,\
+  version-bump.mjs,versions.json,yarn.lock,CONTRIBUTING.md,CHANGELOG.md,SECURITY.md,.nvmrc,.env,.env.production,.prettierrc,.prettierignore,.stylelintrc,\
+  CODEOWNERS,commitlint.config.js,renovate.json,pre-commit-config.yaml,.vimrc,poetry.lock,changelog.md,contributing.md,.pretterignore,.prettierrc.json,\
+  .prettierrc.yml,.prettierrc.js,.eslintrc.js,.eslintrc.json,.eslintrc.yml,.eslintrc.yaml,.stylelintrc.js,.stylelintrc.json,.stylelintrc.yml,.stylelintrc.yaml"
+  excludeFolders="screenshots,dist,node_modules,.git,.vscode,build,coverage,tmp,out,temp\
+  src/complete/completers/ai21,src/complete/completers/chatgpt,src/complete/completers/gooseai"
+  excludeExtensions="png,jpg,jpeg,gif,svg,mp4,webm,avi,mp3,wav,flac,zip,tar,gz,bz2,7z,iso,bin,exe,app,dmg,deb,rpm,apk,fig,xd,blend,fbx,obj,tmp,swp,\
+  lock,DS_Store,sqlite,log,sqlite3,dll,woff,woff2,ttf,eot,otf,ico,icns,csv,doc,docx,ppt,pptx,xls,xlsx,pdf,cmd,bat,dat,baseline"
+
+  echo "---"
+  echo "Available templates:"
+  ls -1 "$templatesFolder"
+  echo "---"
+
+  echo "Excluding files: $excludeFiles"
+  echo "Excluding folders: $excludeFolders"
+  echo "Run with -nn to disable the default excludes"
+
+  # array of build arguments
+  arguments=("--tokens")
+
+  # if -t and a template name is provided, append the template flag with the full path to the template to the arguments array
+  if [[ $1 == "-t" ]]; then
+    arguments+=("--template" "$templatesFolder/$2")
+    shift 2
+  fi
+
+  if [[ $1 == "-nn" ]]; then
+    command code2prompt "${arguments[@]}" "${@:2}" # remove the -nn flag
+  else
+    command code2prompt "${arguments[@]}" --exclude-files "$excludeFiles" --exclude-folders "$excludeFolders" --exclude "$excludeExtensions" "${*}"
+  fi
+}

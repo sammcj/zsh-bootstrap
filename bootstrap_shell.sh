@@ -30,7 +30,13 @@ function installHomebrew() {
 function installPythonPackages() {
   curl -LsSf https://astral.sh/uv/install.sh | sh # Install uv via astral
 
-  pip3 install -U mu-repo
+  pushd "$HOME"
+  uv venv
+  . venv/bin/activate
+  popd
+  uv pip3 install -U mu-repo oterm
+
+  oterm --install-completion zsh
 }
 
 # Ensure we don't have those pesky ^ in our package.json files
