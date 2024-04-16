@@ -1649,7 +1649,7 @@ function code2prompt() {
   fi
 }
 
-# A function that does an ollama cp of any models that start with sammcj to instead start with registry.icu.lol/ollama/<rest of the tag without sammcj>
+# A function that does an ollama cp of any models that start with sammcj to instead start with registry.domain/ollama/<rest of the tag without sammcj>
 function ollama_cp() {
   local models
   local registry
