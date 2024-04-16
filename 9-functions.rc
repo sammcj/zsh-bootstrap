@@ -1648,3 +1648,30 @@ function code2prompt() {
     command code2prompt "${arguments[@]}" --exclude-files "$excludeFiles" --exclude-folders "$excludeFolders" --exclude "$excludeExtensions" "${*}"
   fi
 }
+
+# A function that does an ollama cp of any models that start with sammcj to instead start with registry.icu.lol/ollama/<rest of the tag without sammcj>
+function ollama_cp() {
+  local models
+  local registry
+  registry=$(echo "$OLLAMA_REGISTRY" | sed 's/\//\\\//g')
+  # shellcheck disable=SC2207 # array assignment is intentional
+  models=($(ollama list | grep sammcj | grep -v grep | awk '{print $1}'))
+  # sort by smallest to largest (human readable MB/GB)
+  # calulate the total size of the models
+  total_size=$(ollama list | grep sammcj | grep -v grep | awk '{print $3}' | paste -sd+ - | bc)
+  echo "Total size of models to be considered: ${total_size}GB"
+  # shellcheck disable=SC2207
+  models=($(echo "${models[@]}" | tr ' ' '\n' | sort -h))
+  for model in "${models[@]}"; do
+    echo "Model: $model"
+    new_model=$(echo "$model" | gsed -e s/sammcj/"$registry"/ | tr '[:upper:]' '[:lower:]')
+    if ollama list | grep -q "$new_model"; then
+      echo "Model $new_model already exists, skipping"
+      continue
+    fi
+    echo "Copying $model to $new_model"
+    ollama cp "$model" "$new_model" && ollama rm "$model"
+    echo "Pushing $new_model"
+    ollama push "$new_model"
+  done
+}
