@@ -703,6 +703,7 @@ function s2a-keychain() {
   aws configure list --profile "${INPUT_PROFILE}"
 
   # Login to AWS
+  # /Users/samm/git/saml2aws-fork/dist/saml2aws_darwin_arm64/saml2aws
   saml2aws login -a "$INPUT_PROFILE" \
     --skip-prompt \
     --password="$IDPPW" \
@@ -1109,6 +1110,9 @@ function ba() {
   local log_file="${HOME}/.ba.log"
   local error_log="${HOME}/.ba.errors.log"
 
+  # link all ollama models to lm-studio
+  llamalink >>"${log_file}" 2>&1 &
+
   # update homebrew and all apps
   brew update >>"${error_log}" 2>&1
 
@@ -1132,6 +1136,9 @@ function ba() {
 
   echo "Upgrading rust in the background..."
   rustup update >>"${log_file}" 2>&1 &
+
+  echo "Updating Github Copilot CLI in the background..."
+  gh extension upgrade gh-copilot >>"${log_file}" 2>&1 &
 
   # list all background jobs
   jobs
@@ -1557,6 +1564,11 @@ function build_llama() {
 
 # a function that overrides pip commands with uv pip
 function pip() {
+  # if the first argument is -n, use the normal pip command
+  if [[ $1 == "-n" ]]; then
+    command pip "${@:2}"
+    return
+  fi
   echo "using uv for pip..."
   if [[ $1 == "install" ]]; then
     uv pip install "${@:2}"
@@ -1567,62 +1579,58 @@ function pip() {
   fi
 }
 
-function ol() {
-  # Uses cai to prompt Ollama https://github.com/ad-si/cai/
-  # cargo install cai
-  CAI_DEFAULT_MODEL=${CAI_DEFAULT_MODEL:-tinydolphin:1.1b-v2.8-q5_K_M}
+# function ol() {
+# # Uses cai to prompt Ollama https://github.com/ad-si/cai/
+# # cargo install cai
+# CAI_DEFAULT_MODEL=${CAI_DEFAULT_MODEL:-"registry.icu.lol/ollama/llama3-bartowski:8b-instruct-q8_0"}
 
-  local model
-  local prompt
-  local default_prompt="tell me a joke"
+# local model
+# local prompt
+# local default_prompt="tell me a joke"
 
-  # if the first argument is -m use it as the model (e.g. ol -m tinydolphin:1.1b-v2.8-q5_K_M tell me a joke)
-  if [[ $1 == "-m" ]]; then
-    cai ollama "$2" "${@:3}"
-  # if the first argument is a string with a : in it, assume it's the model and use it
-  elif [[ $1 == *:* ]]; then
-    cai ollama "$1" "${@:2}"
-  elif [[ $1 == "-h" ]]; then
-    cai ollama -h
-  # if -l, --list, or list (with no arguments) is provided, list the available models
-  elif [[ $1 == "-l" ]] || [[ $1 == "--list" ]] || [[ $1 == "list" ]] && [[ $# -eq 1 ]]; then
-    ollama list
-  # else if $1 is the only arg and it's li or --list-interactive, use fzf to select a model
-  elif [[ $1 == "li" ]] || [[ $1 == "--list-interactive" ]]; then
+# # if the first argument is -m use it as the model (e.g. ol -m "registry.icu.lol/ollama/llama3-bartowski:8b-instruct-q8_0" tell me a joke)
+# if [[ $1 == "-m" ]]; then
+#   cai ollama "$2" "${@:3}"
+# # if the first argument is a string with a : in it, assume it's the model and use it
+# elif [[ $1 == *:* ]]; then
+#   cai ollama "$1" "${@:2}"
+# elif [[ $1 == "-h" ]]; then
+#   cai ollama -h
+# # if -l, --list, or list (with no arguments) is provided, list the available models
+# elif [[ $1 == "-l" ]] || [[ $1 == "--list" ]] || [[ $1 == "list" ]] && [[ $# -eq 1 ]]; then
+#   ollama list
+# # else if $1 is the only arg and it's li or --list-interactive, use fzf to select a model
+# elif [[ $1 == "li" ]] || [[ $1 == "--list-interactive" ]]; then
 
-    echo "Enter prompt (or just press enter to use the test prompt of '$default_prompt'):"
-    read -r prompt
+#   echo "Enter prompt (or just press enter to use the test prompt of '$default_prompt'):"
+#   read -r prompt
 
-    if [[ -z $prompt ]]; then
-      prompt="$default_prompt"
-    fi
+#   if [[ -z $prompt ]]; then
+#     prompt="$default_prompt"
+#   fi
 
-    model=$(ollama list | grep -v embed | sort -k 3 -n | awk 'NR>1' | fzf --layout reverse --height=40% --border | awk '{print $1}')
-    export CAI_DEFAULT_MODEL="$model"
+#   model=$(ollama list | grep -v embed | sort -k 3 -n | awk 'NR>1' | fzf --layout reverse --height=40% --border | awk '{print $1}')
+#   export CAI_DEFAULT_MODEL="$model"
 
-    cai ollama "$model" \""$prompt"\"
-  else
-    cai ollama "$CAI_DEFAULT_MODEL" "${*}"
-  fi
-}
+#   cai ollama "$model" \""$prompt"\"
+# else
+#   cai ollama "$CAI_DEFAULT_MODEL" "${*}"
+# fi
+# }
 
 function code2prompt() {
   # wrap the code2prompt command in a function that sets a number of default excludes
   # https://github.com/mufeedvh/code2prompt/
-  local arguments
-  local excludeFiles
-  local excludeFolders
-  local excludeExtensions
-  local templatesFolder
+  local arguments excludeFiles excludeFolders templatesFolder excludeExtensions
   templatesFolder="${HOME}/git/code2prompt/templates"
   excludeFiles=".editorconfig,.eslintignore,.eslintrc,tsconfig.json,.gitignore,.npmrc,LICENSE,esbuild.config.mjs,manifest.json,package-lock.json,\
   version-bump.mjs,versions.json,yarn.lock,CONTRIBUTING.md,CHANGELOG.md,SECURITY.md,.nvmrc,.env,.env.production,.prettierrc,.prettierignore,.stylelintrc,\
   CODEOWNERS,commitlint.config.js,renovate.json,pre-commit-config.yaml,.vimrc,poetry.lock,changelog.md,contributing.md,.pretterignore,.prettierrc.json,\
   .prettierrc.yml,.prettierrc.js,.eslintrc.js,.eslintrc.json,.eslintrc.yml,.eslintrc.yaml,.stylelintrc.js,.stylelintrc.json,.stylelintrc.yml,.stylelintrc.yaml"
-  excludeFolders="screenshots,dist,node_modules,.git,.vscode,build,coverage,tmp,out,temp\
+  excludeFolders="screenshots,dist,node_modules,.git,.github,.vscode,build,coverage,tmp,out,temp\
   src/complete/completers/ai21,src/complete/completers/chatgpt,src/complete/completers/gooseai"
   excludeExtensions="png,jpg,jpeg,gif,svg,mp4,webm,avi,mp3,wav,flac,zip,tar,gz,bz2,7z,iso,bin,exe,app,dmg,deb,rpm,apk,fig,xd,blend,fbx,obj,tmp,swp,\
-  lock,DS_Store,sqlite,log,sqlite3,dll,woff,woff2,ttf,eot,otf,ico,icns,csv,doc,docx,ppt,pptx,xls,xlsx,pdf,cmd,bat,dat,baseline"
+  lock,DS_Store,sqlite,log,sqlite3,dll,woff,woff2,ttf,eot,otf,ico,icns,csv,doc,docx,ppt,pptx,xls,xlsx,pdf,cmd,bat,dat,baseline,ps1,bin,exe,app,tmp,diff,bmp,ico"
 
   echo "---"
   echo "Available templates:"
@@ -1665,13 +1673,34 @@ function ollama_cp() {
   for model in "${models[@]}"; do
     echo "Model: $model"
     new_model=$(echo "$model" | gsed -e s/sammcj/"$registry"/ | tr '[:upper:]' '[:lower:]')
-    if ollama list | grep -q "$new_model"; then
-      echo "Model $new_model already exists, skipping"
-      continue
-    fi
+    # if ollama list | grep -q "$new_model"; then
+    #   echo "Model $new_model already exists, skipping"
+    #   continue
+    # fi
     echo "Copying $model to $new_model"
     ollama cp "$model" "$new_model" && ollama rm "$model"
     echo "Pushing $new_model"
     ollama push "$new_model"
   done
+}
+
+# wrap the ollama command, if the parameter is pull with no other parameters pull all models
+function ollama() {
+  if [[ $1 == "pull" ]] && [[ $# -eq 1 ]]; then
+    echo "pulling all models..."
+    ollama list | awk '$1 !~ /^registry.icu.lol/ {print $1}' | while read -r model; do
+      echo "Pulling $model"
+      ollama pull "$model"
+    done
+  # a function that takes an Ollama model and copies it to the same name prefixed with registry.icu.lol/ollama/, then pushes it
+  elif [[ $1 == "tag" ]]; then
+    local model="$2"
+    local new_model="registry.icu.lol/ollama/${model}"
+    echo "Copying ${model} to ${new_model}"
+    ollama cp "$model" "$new_model"
+    echo "Pushing ${new_model}"
+    ollama push "$new_model"
+  else
+    command ollama "$@"
+  fi
 }

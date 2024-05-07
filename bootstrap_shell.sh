@@ -182,7 +182,7 @@ function macOSConfig() {
   gh completion -s zsh >/usr/local/share/zsh/site-functions/_gh
 
   # Increase the density of status bar icons
-  defaults -currentHost write -globalDomain NSStatusItemSelectionPadding -int 6
+  defaults -currentHost write -globalDomain NSStatusItemSelectionPadding -int 3
 
   echo "Do you want to enable touchID for sudo? [y/N]"
   read -r response

@@ -6,7 +6,7 @@ THIS_DIRECTORY="/Users/samm/Library/Mobile Documents/com~apple~CloudDocs/Dropbox
 ### Aliases ###
 
 # Directory Jumps
-alias d="cd ~/Downloads"
+alias d="cd ~/Downloads && ls -ltarh"
 alias icloud_drive="cd ~/Library/Mobile\ Documents/com\~apple\~CloudDocs/"
 
 # IDE Projects
@@ -197,7 +197,11 @@ alias copilot="gh copilot suggest -t shell"
 alias copilot-explain="gh copilot explain"
 alias '??'='copilot'
 alias wtf='copilot'
-
+alias l="ollama list"
+alias ol="mods"
 alias idf='. $HOME/git/esp-idf/export.sh'
 alias o='tlm explain'
 alias hf="hfdownloader -c 10 -t \$HUGGINGFACE_TOKEN -j"
+
+# uv
+alias venv='uv venv ; source .venv/bin/activate'
