@@ -21,7 +21,7 @@ if ! zgen saved; then
   # zgen oh-my-zsh
   zgen oh-my-zsh plugins/gitfast
   zgen oh-my-zsh plugins/command-not-found
-  zgen oh-my-zsh plugins/fzf
+  zgen oh-my-zsh plugins/fzf # https://github.com/ohmyzsh/ohmyzsh/issues/12412
   # zgen oh-my-zsh plugins/fnm
   # zgen oh-my-zsh plugins/docker
   zgen oh-my-zsh plugins/docker-compose

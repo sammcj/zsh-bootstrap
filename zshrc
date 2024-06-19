@@ -2,7 +2,7 @@
 
 # ~/.zshrc
 
-# set -x
+# set +x
 
 set +m # Make jobs quiet by default
 
@@ -47,11 +47,6 @@ fpath+=~/.zfunc
 
 set -m # reenable job output
 
-####### PROFILING #######
-# Uncomment below to enable debug timing
-# zprof
-#### END PROFILING ######
-
 # >>> mamba initialize >>>
 # !! Contents within this block are managed by 'mamba init' !!
 # export MAMBA_EXE='/opt/homebrew/opt/micromamba/bin/micromamba';
@@ -89,7 +84,6 @@ eval "$(zoxide init zsh)"
 ### zoxide ###
 
 # Load custom aliases
-if [ -f "/Users/samm/.config/fabric/fabric-bootstrap.inc" ]; then . "/Users/samm/.config/fabric/fabric-bootstrap.inc"; fi
 export PATH="$PATH:/Users/samm/Fltr"
 
 # tabtab source for electron-forge package
@@ -99,3 +93,9 @@ autoload -Uz compinit
 
 # Added by LM Studio CLI tool (lms)
 export PATH="$PATH:/Users/samm/.cache/lm-studio/bin"
+
+####### PROFILING #######
+# Uncomment below to enable debug timing
+# zprof
+#### END PROFILING ######
+if [ -f "/Users/samm/.config/fabric/fabric-bootstrap.inc" ]; then . "/Users/samm/.config/fabric/fabric-bootstrap.inc"; fi

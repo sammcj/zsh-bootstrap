@@ -153,22 +153,18 @@ function __staged_changes() {
   if [[ -n "$STAGED_FILES" ]]; then
     echo "Staged files:"
     echo "$STAGED_FILES"
-
-    # If there are changes that haven't been added, ask the user if they want to add them
-
+  else
+    echo "No staged changes to add."
     # Ask the user if they want to stage all changes
     echo "Do you want to add all changes to the commit? (y/n)"
     read -r yn
     if [[ "$yn" =~ ^[Yy]$ ]]; then
       # Stage all changes
-      git add -A
       git add .
     else
       echo "Staging cancelled by the user."
       return 1 # Return failure to indicate staging was not done
     fi
-  else
-    echo "No staged changes to add."
   fi
 }
 
@@ -1543,25 +1539,6 @@ function conda() {
   fi
 }
 
-# A function that pulls the latest llama.cpp git repo and compiles it
-function build_llama() {
-  local llamadir
-  llamadir=$HOME/git/llama.cpp/build
-  export BLAS_INCLUDE_DIRS=/opt/homebrew/Cellar/clblast/1.6.2/
-  pushd "${llamadir}" || return
-  # check if there are updates
-  local gitstatus
-  gitstatus=$(git pull)
-  if [[ $gitstatus == "Already up to date." ]]; then
-    echo "No updates to llama.cpp found"
-  else
-    echo "Updates to llama.cpp found, building and installing"
-    cmake . -Wno-dev -DLLAMA_CUDA=off -DLLAMA_METAL=on -DLLAMA_CLBLAST=on -DLLAMA_F16C=on -DBUILD_SHARED_LIBS=on -DLLAMA_BLAS_VENDOR=Apple -DLLAMA_BUILD_EXAMPLES=on -DLLAMA_BUILD_TESTS=on -DLLAMA_BUILD_SERVER=on -DLLAMA_CCACHE=on -DLLAMA_ALL_WARNINGS=off -DLLAMA_CURL=on -DLLAMA_METAL_EMBED_LIBRARY=on -DLLAMA_NATIVE=on -DLLAMA_SERVER_VERBOSE=on && make -j 12 && make install
-    #-DLLAMA_QKK_64=on -DLLAMA_BLAS=on
-  fi
-  popd || return
-}
-
 # a function that overrides pip commands with uv pip
 function pip() {
   # if the first argument is -n, use the normal pip command
@@ -1584,14 +1561,15 @@ function code2prompt() {
   # https://github.com/mufeedvh/code2prompt/
   local arguments excludeFiles excludeFolders templatesFolder excludeExtensions
   templatesFolder="${HOME}/git/code2prompt/templates"
-  excludeFiles=".editorconfig,.eslintignore,.eslintrc,tsconfig.json,.gitignore,.npmrc,LICENSE,esbuild.config.mjs,manifest.json,package-lock.json,\
-  version-bump.mjs,versions.json,yarn.lock,CONTRIBUTING.md,CHANGELOG.md,SECURITY.md,.nvmrc,.env,.env.production,.prettierrc,.prettierignore,.stylelintrc,\
+  excludeFiles=".editorconfig,.eslintignore,.eslintrc,tsconfig.json,.gitignore,.npmrc,LICENSE,LICENSE.md,esbuild.config.mjs,manifest.json,package-lock.json,\
+  version-bump.mjs,versions.json,yarn.lock,CONTRIBUTING,CONTRIBUTING.md,CHANGELOG,CHANGELOG.md,SECURITY,SECURITY.md,TODO.md,.nvmrc,.env,.env.production,.prettierrc,\
   CODEOWNERS,commitlint.config.js,renovate.json,pre-commit-config.yaml,.vimrc,poetry.lock,changelog.md,contributing.md,.pretterignore,.prettierrc.json,\
-  .prettierrc.yml,.prettierrc.js,.eslintrc.js,.eslintrc.json,.eslintrc.yml,.eslintrc.yaml,.stylelintrc.js,.stylelintrc.json,.stylelintrc.yml,.stylelintrc.yaml"
-  excludeFolders="screenshots,dist,node_modules,.git,.github,.vscode,build,coverage,tmp,out,temp\
+  .prettierrc.yml,.prettierrc.js,.eslintrc.js,.eslintrc.json,.eslintrc.yml,.eslintrc.yaml,.stylelintrc.js,.stylelintrc.json,.stylelintrc.yml,.stylelintrc.yaml\
+  .prettierignore,.stylelintrc,README.md,readme.md,go.sum,.pyc,.DS_Store,.gitattributes,.gitmodules,.gitpod.yml,.github,.gitlab-ci.yml,.gitignore,.git"
+  excludeFolders="screenshots,dist,node_modules,.git,.github,.vscode,build,coverage,.venv,venv,pyenv,tmp,out,temp,conda,mamba\
   src/complete/completers/ai21,src/complete/completers/chatgpt,src/complete/completers/gooseai"
-  excludeExtensions="png,jpg,jpeg,gif,svg,mp4,webm,avi,mp3,wav,flac,zip,tar,gz,bz2,7z,iso,bin,exe,app,dmg,deb,rpm,apk,fig,xd,blend,fbx,obj,tmp,swp,\
-  lock,DS_Store,sqlite,log,sqlite3,dll,woff,woff2,ttf,eot,otf,ico,icns,csv,doc,docx,ppt,pptx,xls,xlsx,pdf,cmd,bat,dat,baseline,ps1,bin,exe,app,tmp,diff,bmp,ico"
+  excludeExtensions="png,jpg,jpeg,gif,svg,mp4,webm,avi,mp3,wav,flac,zip,tar,gz,bz2,7z,iso,bin,exe,app,dmg,deb,rpm,apk,fig,xd,blend,fbx,obj,tmp,swp,pem,crt,key,cert,pub\
+  lock,DS_Store,sqlite,log,sqlite3,dll,woff,woff2,ttf,eot,otf,ico,icns,csv,doc,docx,ppt,pptx,xls,xlsx,pdf,cmd,bat,dat,baseline,ps1,bin,exe,app,tmp,diff,bmp,ico,diff,heic,hiec"
 
   echo "---"
   echo "Available templates:"
@@ -1611,7 +1589,7 @@ function code2prompt() {
     shift 2
   fi
 
-  if [[ $1 == "-nn" ]]; then
+  if [[ $1 == "-n" ]]; then
     command code2prompt "${arguments[@]}" "${@:2}" # remove the -nn flag
   else
     command code2prompt "${arguments[@]}" --exclude-files "$excludeFiles" --exclude-folders "$excludeFolders" --exclude "$excludeExtensions" "${*}"
@@ -1619,7 +1597,7 @@ function code2prompt() {
 }
 
 # A function that does an ollama cp of any models that start with sammcj to instead start with registry.domain/ollama/<rest of the tag without sammcj>
-function ollama_cp() {
+function ollama-cp() {
   local models
   local registry
   registry=$(echo "$OLLAMA_REGISTRY" | sed 's/\//\\\//g')
@@ -1645,23 +1623,41 @@ function ollama_cp() {
   done
 }
 
-# wrap the ollama command, if the parameter is pull with no other parameters pull all models
-function ollama() {
-  if [[ $1 == "pull" ]] && [[ $# -eq 1 ]]; then
-    echo "pulling all models..."
-    ollama list | awk '$1 !~ /^'"${OLLAMA_REGISTRY}"'/ {print $1}' | while read -r model; do
+function ollama-pull-all() {
+  local BATCH_SIZE
+  local PULL_LOCAL_REGISTRY_MODELS
+  PULL_LOCAL_REGISTRY_MODELS=true
+  BATCH_SIZE=3
+
+  if $PULL_LOCAL_REGISTRY_MODELS; then
+    echo "pulling all models in batches of ${BATCH_SIZE}..."
+    ollama list | awk '$1 {print $1}' | while read -r model; do
+      # pull the modules in parallel batches
+      batch_count=$(jobs -p | wc -l)
+      if [ "$batch_count" -ge "$BATCH_SIZE" ]; then
+        sleep 1
+        wait -n
+      fi
       echo "Pulling $model"
-      ollama pull "$model"
+      ollama pull "$model" &
     done
-  # a function that takes an Ollama model and copies it to the same name prefixed with ${OLLAMA_REGISTRY}/ollama/, then pushes it
-  elif [[ $1 == "tag" ]]; then
-    local model="$2"
-    local new_model="${OLLAMA_REGISTRY}/ollama/${model}"
-    echo "Copying ${model} to ${new_model}"
-    ollama cp "$model" "$new_model"
-    echo "Pushing ${new_model}"
-    ollama push "$new_model"
   else
-    command ollama "$@"
+    echo "pulling all models not in the local registry in batches of ${BATCH_SIZE}..."
+    ollama list | awk '$1 !~ /^${OLLAMA_REGISTRY}/ {print $1}' | while read -r model; do
+      # pull the modules in parallel batches
+      batch_count=$(jobs -p | wc -l)
+      if [ "$batch_count" -ge "$BATCH_SIZE" ]; then
+        sleep 1
+        wait -n
+      fi
+      echo "Pulling $model"
+      ollama pull "$model" &
+    done
   fi
+
+  # wait for all background jobs to finish
+  wait
+
+  echo "All models pulled"
+
 }

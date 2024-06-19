@@ -55,10 +55,10 @@ export _FMT_END="\e[0m" # end of line stop formatting
 # export COMMANDLINE_ARGS="${COMMANDLINE_ARGS:-$COMMANDLINE_ARGS --skip-torch-cuda-test --upcast-sampling --opt-sub-quad-attention}" # --use-cpu interrogate
 export HF_HUB_ENABLE_HF_TRANSFER=1
 export CONDA_SUBDIR=osx-arm64
-export OLLAMA_NUM_PARALLEL=8
+export OLLAMA_NUM_PARALLEL=3
 export OLLAMA_MAX_LOADED_MODELS=3
-export OLLAMA_KEEP_ALIVE=15
-export OLLAMA_LLAMA_EXTRA_ARGS="-fa,-cb"
+export OLLAMA_KEEP_ALIVE=6h
+export OLLAMA_FLASH_ATTENTION=1
 
 # if running on macos
 # if [[ "$OSTYPE" == "darwin"* ]]; then

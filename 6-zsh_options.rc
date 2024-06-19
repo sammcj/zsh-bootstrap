@@ -244,3 +244,22 @@ setopt correct
 # bindkey '^[[1;5C' nav-forward # cmd + right
 # bindkey '^[[1;5D' nav-back    # cmd + left
 # #
+
+# Bind ctrl+g to run the command 'git status'
+_git_status() {
+  git status
+  zle redisplay
+}
+zle -N _git_status
+bindkey '^g' '_git_status' # ctrl + g
+
+# Bind ctrl+l to run sgpt with all text on the command line as a single quoted argument
+_sgptline() {
+  LINE=$LBUFFER
+  echo -e "\n"
+  sgpt "'$LINE'"
+  LBUFFER=""
+  zle redisplay
+}
+zle -N _sgptline
+bindkey '^l' '_sgptline' # ctrl + l

@@ -49,6 +49,7 @@ alias gitwip="git add .; git commit -n -m 'minor updates'; git push"
 alias hotfix-checkout="checkout-hotfix"
 alias hotfix-commit="commit-hotfix"
 alias hotfix="checkout-hotfix"
+alias L="ls -ltarh"
 alias j="checkout-jira"
 alias jira-checkout="checkout-jira"
 alias jira-commit="commit-jira"
@@ -92,7 +93,7 @@ alias rmid="ssh-keygen -R"
 # alias a=aria
 alias dmesg="dmesg -LT"
 alias cpuinfo="sysctl -n machdep.cpu.brand_string"
-alias psql="/Applications/Postgres.app/Contents/Versions/latest/bin/psql"
+# alias psql="/Applications/Postgres.app/Contents/Versions/latest/bin/psql"
 alias fastmail_you_there_bro="openssl s_client -connect imap.fastmail.com:993 -crlf"
 alias zmv='noglob zmv -W'
 alias mc='yazi'
@@ -197,7 +198,8 @@ alias copilot="gh copilot suggest -t shell"
 alias copilot-explain="gh copilot explain"
 alias '??'='copilot'
 alias wtf='copilot'
-alias l="ollama list"
+alias l="gollama -l"
+alias gl="gollama"
 alias ol="mods"
 alias idf='. $HOME/git/esp-idf/export.sh'
 alias o='tlm explain'
@@ -205,3 +207,6 @@ alias hf="hfdownloader -c 10 -t \$HUGGINGFACE_TOKEN -j"
 
 # uv
 alias venv='uv venv ; source .venv/bin/activate'
+
+### AWS ###
+alias aws-rds-list-instances="aws rds describe-db-instances --region ap-southeast-2 --query \"DBInstances[].{Instance: DBInstanceIdentifier, Class: DBInstanceClass, Endpoint: Endpoint.Address, Status: DBInstanceStatus}\" --output text | sed -r 's/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g'"
