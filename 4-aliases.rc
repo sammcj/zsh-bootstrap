@@ -12,6 +12,8 @@ alias icloud_drive="cd ~/Library/Mobile\ Documents/com\~apple\~CloudDocs/"
 # IDE Projects
 #shellcheck disable=SC2139
 alias zshconfig="code '${THIS_DIRECTORY}'"
+# shellcheck disable=SC2139
+alias wezedit="code '${HOME}'/.config/wezterm/wezterm.lua"
 #shellcheck disable=SC2139
 alias zshconfigd="cd '${THIS_DIRECTORY}'"
 
@@ -198,12 +200,16 @@ alias copilot="gh copilot suggest -t shell"
 alias copilot-explain="gh copilot explain"
 alias '??'='copilot'
 alias wtf='copilot'
-alias l="gollama -l"
+alias l="OLLAMA_HOST=http://localhost:11434 gollama -l"
+alias i="ingest"
+alias code2prompt="ingest"
+alias ln="gollama -l"
 alias gl="gollama"
 alias ol="mods"
 alias idf='. $HOME/git/esp-idf/export.sh'
 alias o='tlm explain'
 alias hf="hfdownloader -c 10 -t \$HUGGINGFACE_TOKEN -j"
+alias imagesearch="sisi search"
 
 # uv
 alias venv='uv venv ; source .venv/bin/activate'

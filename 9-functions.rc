@@ -1556,72 +1556,32 @@ function pip() {
   fi
 }
 
-function code2prompt() {
-  # wrap the code2prompt command in a function that sets a number of default excludes
-  # https://github.com/mufeedvh/code2prompt/
-  local arguments excludeFiles excludeFolders templatesFolder excludeExtensions
-  templatesFolder="${HOME}/git/code2prompt/templates"
-  excludeFiles=".editorconfig,.eslintignore,.eslintrc,tsconfig.json,.gitignore,.npmrc,LICENSE,LICENSE.md,esbuild.config.mjs,manifest.json,package-lock.json,\
-  version-bump.mjs,versions.json,yarn.lock,CONTRIBUTING,CONTRIBUTING.md,CHANGELOG,CHANGELOG.md,SECURITY,SECURITY.md,TODO.md,.nvmrc,.env,.env.production,.prettierrc,\
-  CODEOWNERS,commitlint.config.js,renovate.json,pre-commit-config.yaml,.vimrc,poetry.lock,changelog.md,contributing.md,.pretterignore,.prettierrc.json,\
-  .prettierrc.yml,.prettierrc.js,.eslintrc.js,.eslintrc.json,.eslintrc.yml,.eslintrc.yaml,.stylelintrc.js,.stylelintrc.json,.stylelintrc.yml,.stylelintrc.yaml\
-  .prettierignore,.stylelintrc,README.md,readme.md,go.sum,.pyc,.DS_Store,.gitattributes,.gitmodules,.gitpod.yml,.github,.gitlab-ci.yml,.gitignore,.git"
-  excludeFolders="screenshots,dist,node_modules,.git,.github,.vscode,build,coverage,.venv,venv,pyenv,tmp,out,temp,conda,mamba\
-  src/complete/completers/ai21,src/complete/completers/chatgpt,src/complete/completers/gooseai"
-  excludeExtensions="png,jpg,jpeg,gif,svg,mp4,webm,avi,mp3,wav,flac,zip,tar,gz,bz2,7z,iso,bin,exe,app,dmg,deb,rpm,apk,fig,xd,blend,fbx,obj,tmp,swp,pem,crt,key,cert,pub\
-  lock,DS_Store,sqlite,log,sqlite3,dll,woff,woff2,ttf,eot,otf,ico,icns,csv,doc,docx,ppt,pptx,xls,xlsx,pdf,cmd,bat,dat,baseline,ps1,bin,exe,app,tmp,diff,bmp,ico,diff,heic,hiec"
-
-  echo "---"
-  echo "Available templates:"
-  ls -1 "$templatesFolder"
-  echo "---"
-
-  echo "Excluding files: $excludeFiles"
-  echo "Excluding folders: $excludeFolders"
-  echo "Run with -nn to disable the default excludes"
-
-  # array of build arguments
-  arguments=("--tokens")
-
-  # if -t and a template name is provided, append the template flag with the full path to the template to the arguments array
-  if [[ $1 == "-t" ]]; then
-    arguments+=("--template" "$templatesFolder/$2")
-    shift 2
-  fi
-
-  if [[ $1 == "-n" ]]; then
-    command code2prompt "${arguments[@]}" "${@:2}" # remove the -nn flag
-  else
-    command code2prompt "${arguments[@]}" --exclude-files "$excludeFiles" --exclude-folders "$excludeFolders" --exclude "$excludeExtensions" "${*}"
-  fi
-}
-
 # A function that does an ollama cp of any models that start with sammcj to instead start with registry.domain/ollama/<rest of the tag without sammcj>
-function ollama-cp() {
-  local models
-  local registry
-  registry=$(echo "$OLLAMA_REGISTRY" | sed 's/\//\\\//g')
-  # shellcheck disable=SC2207 # array assignment is intentional
-  models=($(ollama list | grep sammcj | grep -v grep | awk '{print $1}'))
-  # sort by smallest to largest (human readable MB/GB)
-  # calulate the total size of the models
-  total_size=$(ollama list | grep sammcj | grep -v grep | awk '{print $3}' | paste -sd+ - | bc)
-  echo "Total size of models to be considered: ${total_size}GB"
-  # shellcheck disable=SC2207
-  models=($(echo "${models[@]}" | tr ' ' '\n' | sort -h))
-  for model in "${models[@]}"; do
-    echo "Model: $model"
-    new_model=$(echo "$model" | gsed -e s/sammcj/"$registry"/ | tr '[:upper:]' '[:lower:]')
-    # if ollama list | grep -q "$new_model"; then
-    #   echo "Model $new_model already exists, skipping"
-    #   continue
-    # fi
-    echo "Copying $model to $new_model"
-    ollama cp "$model" "$new_model" && ollama rm "$model"
-    echo "Pushing $new_model"
-    ollama push "$new_model"
-  done
-}
+# function ollama-cp() {
+#   local models
+#   local registry
+#   registry=$(echo "$OLLAMA_REGISTRY" | sed 's/\//\\\//g')
+#   # shellcheck disable=SC2207 # array assignment is intentional
+#   models=($(ollama list | grep sammcj | grep -v grep | awk '{print $1}'))
+#   # sort by smallest to largest (human readable MB/GB)
+#   # calulate the total size of the models
+#   total_size=$(ollama list | grep sammcj | grep -v grep | awk '{print $3}' | paste -sd+ - | bc)
+#   echo "Total size of models to be considered: ${total_size}GB"
+#   # shellcheck disable=SC2207
+#   models=($(echo "${models[@]}" | tr ' ' '\n' | sort -h))
+#   for model in "${models[@]}"; do
+#     echo "Model: $model"
+#     new_model=$(echo "$model" | gsed -e s/sammcj/"$registry"/ | tr '[:upper:]' '[:lower:]')
+#     # if ollama list | grep -q "$new_model"; then
+#     #   echo "Model $new_model already exists, skipping"
+#     #   continue
+#     # fi
+#     echo "Copying $model to $new_model"
+#     ollama cp "$model" "$new_model" && ollama rm "$model"
+#     echo "Pushing $new_model"
+#     ollama push "$new_model"
+#   done
+# }
 
 function ollama-pull-all() {
   local BATCH_SIZE

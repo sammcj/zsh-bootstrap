@@ -201,6 +201,10 @@ function configureDotfiles() {
 
   link_dotfile "bat-config" "/Users/samm/.config/bat/config"
   link_dotfile "rsyncd.conf" "/Users/samm/.rsyncd.conf"
+
+  # TODO: clean this up
+  ln -s /Users/samm/Library/Mobile\ Documents/com~apple~CloudDocs/Dropbox\ Import/dotfiles/aider/.aider.conf.yml $HOME/.aider.conf.yml
+  ln -s /Users/samm/Library/Mobile\ Documents/com~apple~CloudDocs/Dropbox\ Import/dotfiles/aider/.aider.models.json $HOME/.aider.models.json
 }
 
 function main() {

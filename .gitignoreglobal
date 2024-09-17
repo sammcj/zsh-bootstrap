@@ -23,3 +23,9 @@ Session.vim
 
 # Trunk linter for vscode (can be included per repo)
 .trunk
+
+#AI
+.aider*
+
+#vscode
+**/.vscode
