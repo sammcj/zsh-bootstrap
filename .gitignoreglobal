@@ -29,3 +29,7 @@ Session.vim
 
 #vscode
 **/.vscode
+
+#cmake
+CMakeFiles/*
+CMakeCache.txt

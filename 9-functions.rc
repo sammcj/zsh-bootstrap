@@ -1621,3 +1621,48 @@ function ollama-pull-all() {
   echo "All models pulled"
 
 }
+
+function aws-sso() {
+  if [[ -z $1 ]]; then
+    echo "Usage: aws-sso <profile>"
+    return 1
+  fi
+  aws sso login --profile "$1"
+  eval "$(aws configure export-credentials --format env --profile "$1")"
+  export AWS_PROFILE="$1"
+  export AWS_REGION=ap-southeast-2
+}
+alias aws-ai="aws-sso aisandpit"
+
+ollama_extend_models() {
+  local ctx_size=${1:-32768}
+
+  # Prompt the user if they want to proceed
+  read -r -p "This will create longer context (${ctx_size}) models for all ollama models. Do you want to proceed? (y/n): " choice
+  if [[ $choice != [yY] ]]; then
+    echo "Aborting..."
+    return 1
+  fi
+
+  # Run ollama ls and process each line
+  ollama ls | tail -n +2 | while read -r line; do
+    # Extract model name
+    model_name=$(echo "$line" | awk '{print $1}')
+
+    # Split model name into base name and variant
+    base_name=$(echo "$model_name" | cut -d':' -f1)
+    variant=$(echo "$model_name" | cut -d':' -f2)
+
+    # Create Modelfile
+    cat >"Modelfile-$model_name" <<EOF
+FROM $model_name
+
+PARAMETER num_ctx $ctx_size
+EOF
+
+    # Create extended model
+    ollama create "$base_name-$ctx_size:$variant" -f "Modelfile-$model_name"
+
+    echo "Created extended model: $base_name-$ctx_size:$variant"
+  done
+}

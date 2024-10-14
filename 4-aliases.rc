@@ -12,6 +12,7 @@ alias icloud_drive="cd ~/Library/Mobile\ Documents/com\~apple\~CloudDocs/"
 # IDE Projects
 #shellcheck disable=SC2139
 alias zshconfig="code '${THIS_DIRECTORY}'"
+alias zzshconfig="zed '${THIS_DIRECTORY}'"
 # shellcheck disable=SC2139
 alias wezedit="code '${HOME}'/.config/wezterm/wezterm.lua"
 #shellcheck disable=SC2139
@@ -146,6 +147,7 @@ alias backblaze_edit='code /Library/Backblaze.bzpkg/bzdata/bzexcluderules_editab
 
 alias scripts='cd ~/git/scripts'
 alias nzb="cd ~/git/sammcj/nzb-docker"
+alias nzbdocker="open vscode://vscode-remote/ssh-remote+nas/root/git/nzb-docker/.vscode/nas-docker.code-workspace"
 
 ### Suffix Aliases ###
 
