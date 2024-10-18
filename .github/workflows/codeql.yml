@@ -19,15 +19,15 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4
+        uses: actions/checkout@eef61447b9ff4aafe5dcd4e0bbf5d482be7e7871 # v4
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@d39d31e687223d841ef683f52467bd88e9b21c14 # v3
+        uses: github/codeql-action/init@f779452ac5af1c261dce0346a8f964149f49322b # v3
 
       # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
       # If this step fails, then you should remove it and run the build manually (see below)
       - name: Autobuild
-        uses: github/codeql-action/autobuild@d39d31e687223d841ef683f52467bd88e9b21c14 # v3
+        uses: github/codeql-action/autobuild@f779452ac5af1c261dce0346a8f964149f49322b # v3
 
       - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@d39d31e687223d841ef683f52467bd88e9b21c14 # v3
+        uses: github/codeql-action/analyze@f779452ac5af1c261dce0346a8f964149f49322b # v3
