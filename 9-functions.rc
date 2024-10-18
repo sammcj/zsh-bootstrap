@@ -409,53 +409,53 @@ function git_prompt_long_sha() {
   SHA=$(command git rev-parse HEAD 2>/dev/null) && echo "$ZSH_THEME_GIT_PROMPT_SHA_BEFORE$SHA$ZSH_THEME_GIT_PROMPT_SHA_AFTER"
 }
 
-# Get the status of the working tree
-function git_prompt_status() {
-  local INDEX STATUS
-  INDEX=$(command git status --porcelain -b 2>/dev/null)
-  STATUS=""
-  if eval "$(echo "$INDEX" | command grep -E '^\?\? ' &>/dev/null)"; then
-    STATUS="$ZSH_THEME_GIT_PROMPT_UNTRACKED$STATUS"
-  fi
-  if eval "$(echo "$INDEX" | grep '^A  ' &>/dev/null)"; then
-    STATUS="$ZSH_THEME_GIT_PROMPT_ADDED$STATUS"
-  elif eval "$(echo "$INDEX" | grep '^M  ' &>/dev/null)"; then
-    STATUS="$ZSH_THEME_GIT_PROMPT_ADDED$STATUS"
-  fi
-  if eval "$(echo "$INDEX" | grep '^ M ' &>/dev/null)"; then
-    STATUS="$ZSH_THEME_GIT_PROMPT_MODIFIED$STATUS"
-  elif eval "$(echo "$INDEX" | grep '^AM ' &>/dev/null)"; then
-    STATUS="$ZSH_THEME_GIT_PROMPT_MODIFIED$STATUS"
-  elif eval "$(echo "$INDEX" | grep '^ T ' &>/dev/null)"; then
-    STATUS="$ZSH_THEME_GIT_PROMPT_MODIFIED$STATUS"
-  fi
-  if eval "$(echo "$INDEX" | grep '^R  ' &>/dev/null)"; then
-    STATUS="$ZSH_THEME_GIT_PROMPT_RENAMED$STATUS"
-  fi
-  if eval "$(echo "$INDEX" | grep '^ D ' &>/dev/null)"; then
-    STATUS="$ZSH_THEME_GIT_PROMPT_DELETED$STATUS"
-  elif eval "$(echo "$INDEX" | grep '^D  ' &>/dev/null)"; then
-    STATUS="$ZSH_THEME_GIT_PROMPT_DELETED$STATUS"
-  elif eval "$(echo "$INDEX" | grep '^AD ' &>/dev/null)"; then
-    STATUS="$ZSH_THEME_GIT_PROMPT_DELETED$STATUS"
-  fi
-  if eval "$(command git rev-parse --verify refs/stash >/dev/null 2>&1)"; then
-    STATUS="$ZSH_THEME_GIT_PROMPT_STASHED$STATUS"
-  fi
-  if eval "$(echo "$INDEX" | grep '^UU ' &>/dev/null)"; then
-    STATUS="$ZSH_THEME_GIT_PROMPT_UNMERGED$STATUS"
-  fi
-  if eval "$(echo "$INDEX" | grep '^## [^ ]\+ .*ahead' &>/dev/null)"; then
-    STATUS="$ZSH_THEME_GIT_PROMPT_AHEAD$STATUS"
-  fi
-  if eval "$(echo "$INDEX" | grep '^## [^ ]\+ .*behind' &>/dev/null)"; then
-    STATUS="$ZSH_THEME_GIT_PROMPT_BEHIND$STATUS"
-  fi
-  if eval "$(echo "$INDEX" | grep '^## [^ ]\+ .*diverged' &>/dev/null)"; then
-    STATUS="$ZSH_THEME_GIT_PROMPT_DIVERGED$STATUS"
-  fi
-  echo "$STATUS"
-}
+# # Get the status of the working tree
+# function git_prompt_status() {
+#   local INDEX STATUS
+#   INDEX=$(command git status --porcelain -b 2>/dev/null)
+#   STATUS=""
+#   if eval "$(echo "$INDEX" | command grep -E '^\?\? ' &>/dev/null)"; then
+#     STATUS="$ZSH_THEME_GIT_PROMPT_UNTRACKED$STATUS"
+#   fi
+#   if eval "$(echo "$INDEX" | grep '^A  ' &>/dev/null)"; then
+#     STATUS="$ZSH_THEME_GIT_PROMPT_ADDED$STATUS"
+#   elif eval "$(echo "$INDEX" | grep '^M  ' &>/dev/null)"; then
+#     STATUS="$ZSH_THEME_GIT_PROMPT_ADDED$STATUS"
+#   fi
+#   if eval "$(echo "$INDEX" | grep '^ M ' &>/dev/null)"; then
+#     STATUS="$ZSH_THEME_GIT_PROMPT_MODIFIED$STATUS"
+#   elif eval "$(echo "$INDEX" | grep '^AM ' &>/dev/null)"; then
+#     STATUS="$ZSH_THEME_GIT_PROMPT_MODIFIED$STATUS"
+#   elif eval "$(echo "$INDEX" | grep '^ T ' &>/dev/null)"; then
+#     STATUS="$ZSH_THEME_GIT_PROMPT_MODIFIED$STATUS"
+#   fi
+#   if eval "$(echo "$INDEX" | grep '^R  ' &>/dev/null)"; then
+#     STATUS="$ZSH_THEME_GIT_PROMPT_RENAMED$STATUS"
+#   fi
+#   if eval "$(echo "$INDEX" | grep '^ D ' &>/dev/null)"; then
+#     STATUS="$ZSH_THEME_GIT_PROMPT_DELETED$STATUS"
+#   elif eval "$(echo "$INDEX" | grep '^D  ' &>/dev/null)"; then
+#     STATUS="$ZSH_THEME_GIT_PROMPT_DELETED$STATUS"
+#   elif eval "$(echo "$INDEX" | grep '^AD ' &>/dev/null)"; then
+#     STATUS="$ZSH_THEME_GIT_PROMPT_DELETED$STATUS"
+#   fi
+#   if eval "$(command git rev-parse --verify refs/stash >/dev/null 2>&1)"; then
+#     STATUS="$ZSH_THEME_GIT_PROMPT_STASHED$STATUS"
+#   fi
+#   if eval "$(echo "$INDEX" | grep '^UU ' &>/dev/null)"; then
+#     STATUS="$ZSH_THEME_GIT_PROMPT_UNMERGED$STATUS"
+#   fi
+#   if eval "$(echo "$INDEX" | grep '^## [^ ]\+ .*ahead' &>/dev/null)"; then
+#     STATUS="$ZSH_THEME_GIT_PROMPT_AHEAD$STATUS"
+#   fi
+#   if eval "$(echo "$INDEX" | grep '^## [^ ]\+ .*behind' &>/dev/null)"; then
+#     STATUS="$ZSH_THEME_GIT_PROMPT_BEHIND$STATUS"
+#   fi
+#   if eval "$(echo "$INDEX" | grep '^## [^ ]\+ .*diverged' &>/dev/null)"; then
+#     STATUS="$ZSH_THEME_GIT_PROMPT_DIVERGED$STATUS"
+#   fi
+#   echo "$STATUS"
+# }
 
 # #  TODO: replace this with something more standard, this was a temporary workaround for poor performance of the stock oh-my-zsh git plugin
 # # Compares the provided version of git to the version installed and on path

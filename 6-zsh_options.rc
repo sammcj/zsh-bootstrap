@@ -263,3 +263,9 @@ _sgptline() {
 }
 zle -N _sgptline
 bindkey '^l' '_sgptline' # ctrl + l
+
+
+# https://github.com/ohmyzsh/ohmyzsh/wiki/Settings
+
+# Oh My Zsh will print a red ellipsis to indicate that Zsh is still processing a completion request
+export COMPLETION_WAITING_DOTS=true

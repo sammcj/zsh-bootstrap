@@ -41,13 +41,14 @@ if ! zgen saved; then
     zdharma-continuum/fast-syntax-highlighting
 
     # git related
-    olivierverdier/zsh-git-prompt
     peterhurford/git-it-on.zsh
 
     # fzf wrappers
     sunlei/zsh-ssh
     bigH/git-fuzzy
 EOPLUGINS
+
+  # olivierverdier/zsh-git-prompt # hasn't been updated in 9 years
 
   # MichaelAquilina/zsh-you-should-us
   # paulirish/git-open
