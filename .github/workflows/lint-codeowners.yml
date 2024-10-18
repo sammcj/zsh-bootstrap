@@ -26,7 +26,7 @@ permissions:
 jobs:
   lint-codeowners:
     name: "Lint CODEOWNERS file"
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@0ad4b8fadaa221de15dcec353f45205ec38ea70b # v4
