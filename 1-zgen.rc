@@ -40,6 +40,8 @@ if ! zgen saved; then
     zsh-users/zsh-history-substring-search
     zdharma-continuum/fast-syntax-highlighting
 
+    ocodo/ollama_zsh_completion
+
     # git related
     peterhurford/git-it-on.zsh
 

@@ -3,7 +3,8 @@
 # allow recommending extensions in repos
 !**/.vscode/extensions.json
 !.vscode/extensions.json
-.vscode/*
+**/.vscode/*
+**/.vscode
 .idea
 *.swp
 *.swo
@@ -33,3 +34,14 @@ Session.vim
 #cmake
 CMakeFiles/*
 CMakeCache.txt
+
+**/*.log
+**/*.pem
+**/*.key
+**/*.crt
+**/*.csr
+**/*.cer
+**/*.pfx
+**/*.p12
+
+**/*.pdf

@@ -1418,7 +1418,7 @@ function touchid_sudo() {
 a() {
   # Run aria2c with the specified options
   aria2c \
-    --split=8 \
+    --split=12 \
     --always-resume=true \
     --enable-http-pipelining=true \
     --http-accept-gzip=true \
