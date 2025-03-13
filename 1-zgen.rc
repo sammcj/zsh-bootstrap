@@ -40,8 +40,6 @@ if ! zgen saved; then
     zsh-users/zsh-history-substring-search
     zdharma-continuum/fast-syntax-highlighting
 
-    ocodo/ollama_zsh_completion
-
     # git related
     peterhurford/git-it-on.zsh
 
@@ -49,23 +47,7 @@ if ! zgen saved; then
     sunlei/zsh-ssh
     bigH/git-fuzzy
 EOPLUGINS
-
-  # olivierverdier/zsh-git-prompt # hasn't been updated in 9 years
-
-  # MichaelAquilina/zsh-you-should-us
-  # paulirish/git-open
-  # lukechilds/zsh-better-npm-completion
-  # 3v1n0/zsh-bash-completions-fallback
-  # mrkmg/borgbackup-zsh-completion
-  # torifat/npms
-
-  ## zsh completion generator ##
-  # zgen load RobSis/zsh-completion-generator # Disabled for now as was the cause of 25% of my load time
-
-  ## Not in use at present ##
-  # nnao45/zsh-kubectl-completion
-  # trejo08/kubecolor-zsh
-  # ascii-soup/zsh-url-highlighter
+  # ocodo/ollama_zsh_completion
 
   # save zgen cache
   zgen save

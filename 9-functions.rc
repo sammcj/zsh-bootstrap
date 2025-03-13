@@ -1109,6 +1109,9 @@ function ba() {
   # link all ollama models to lm-studio
   llamalink >>"${log_file}" 2>&1 &
 
+  # update vscode packages
+  code --update-extensions >>"${log_file}" 2>&1 &
+
   # update homebrew and all apps
   brew update >>"${error_log}" 2>&1
 
@@ -1634,6 +1637,10 @@ function aws-sso() {
 }
 alias aws-ai="aws-sso aisandpit"
 
+function aws-nas() {
+  /Users/samm/Library/Mobile\ Documents/com~apple~CloudDocs/Dropbox\ Import/dotfiles/shell_config/update-aws-creds.sh aisandpit
+}
+
 ollama_extend_models() {
   local ctx_size=${1:-32768}
 
@@ -1665,4 +1672,12 @@ EOF
 
     echo "Created extended model: $base_name-$ctx_size:$variant"
   done
+}
+
+if_not_in_vscode() {
+  # if not running in vscode, run the rest of the arguments
+  # requires setting RUNNING_IN_VSCODE to true in vscode's terminal env settings
+  if [ -z "$RUNNING_IN_VSCODE" ]; then
+    "$@"
+  fi
 }

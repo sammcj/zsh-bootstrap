@@ -1,3 +1,5 @@
+# Amazon Q pre block. Keep at the top of this file.
+# [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh"
 # shellcheck disable=SC2148 disable=SC1090 shell=bash
 
 # ~/.zshrc
@@ -40,7 +42,7 @@ source /opt/homebrew/Cellar/fzf/*/shell/key-bindings.zsh
 # Enable direnv - https://direnv.net
 # eval "$(direnv hook zsh)"
 
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+if_not_in_vscode test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 zstyle ':completion:*' menu select
 fpath+=~/.zfunc
@@ -88,14 +90,20 @@ export PATH="$PATH:/Users/samm/Fltr"
 
 # tabtab source for electron-forge package
 # uninstall by removing these lines or running `tabtab uninstall electron-forge`
-[[ -f /Users/samm/.npm/_npx/6913fdfd1ea7a741/node_modules/tabtab/.completions/electron-forge.zsh ]] && . /Users/samm/.npm/_npx/6913fdfd1ea7a741/node_modules/tabtab/.completions/electron-forge.zsh
-autoload -Uz compinit
+# [[ -f /Users/samm/.npm/_npx/6913fdfd1ea7a741/node_modules/tabtab/.completions/electron-forge.zsh ]] && . /Users/samm/.npm/_npx/6913fdfd1ea7a741/node_modules/tabtab/.completions/electron-forge.zsh
 
 # Added by LM Studio CLI tool (lms)
 export PATH="$PATH:/Users/samm/.cache/lm-studio/bin"
+if [ -f "/Users/samm/.config/fabric/fabric-bootstrap.inc" ] && if_not_in_vscode; then . "/Users/samm/.config/fabric/fabric-bootstrap.inc"; fi
+
+fpath+=~/.zfunc
+
+export PATH="/opt/homebrew/opt/tcl-tk@8/bin:$PATH"
+
+# Amazon Q post block. Keep at the bottom of this file.
+# [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
 
 ####### PROFILING #######
 # Uncomment below to enable debug timing
 # zprof
 #### END PROFILING ######
-if [ -f "/Users/samm/.config/fabric/fabric-bootstrap.inc" ]; then . "/Users/samm/.config/fabric/fabric-bootstrap.inc"; fi

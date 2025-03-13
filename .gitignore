@@ -193,3 +193,6 @@ hugo_stats.json
 hugo.linux
 hugo.darwin
 /.hugo_build.lock
+
+# aws thing I'm trying
+update-aws-creds.sh
