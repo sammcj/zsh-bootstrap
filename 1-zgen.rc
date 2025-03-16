@@ -44,9 +44,9 @@ if ! zgen saved; then
     peterhurford/git-it-on.zsh
 
     # fzf wrappers
-    sunlei/zsh-ssh
     bigH/git-fuzzy
 EOPLUGINS
+  # sunlei/zsh-ssh
   # ocodo/ollama_zsh_completion
 
   # save zgen cache

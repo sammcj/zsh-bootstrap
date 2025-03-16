@@ -1,3 +1,4 @@
+## AMAZON Q MAKES EVERYTHING SLOWWWWWW
 # Amazon Q pre block. Keep at the top of this file.
 # [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh"
 # shellcheck disable=SC2148 disable=SC1090 shell=bash
@@ -32,7 +33,7 @@ if [[ -d $HOME/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/d
 fi
 
 ## Add ssh keys to agent if not already added
-ssh-add-keys
+# ssh-add-keys # TODO: disabled 2025-03-16 to see if it helps performance, reenable if ssh stops working
 
 ### Below are items added by installer scripts (usually homebrew) ####
 
@@ -42,7 +43,7 @@ source /opt/homebrew/Cellar/fzf/*/shell/key-bindings.zsh
 # Enable direnv - https://direnv.net
 # eval "$(direnv hook zsh)"
 
-if_not_in_vscode test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+if_not_in_vscode bg_silent test -e "${HOME}/.iterm2_shell_integration.zsh" && bg_silent source "${HOME}/.iterm2_shell_integration.zsh"
 
 zstyle ':completion:*' menu select
 fpath+=~/.zfunc
@@ -102,6 +103,12 @@ export PATH="/opt/homebrew/opt/tcl-tk@8/bin:$PATH"
 
 # Amazon Q post block. Keep at the bottom of this file.
 # [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/samm/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/samm/Downloads/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/samm/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/samm/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
 
 ####### PROFILING #######
 # Uncomment below to enable debug timing
