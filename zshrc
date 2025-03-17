@@ -1,8 +1,20 @@
-## AMAZON Q MAKES EVERYTHING SLOWWWWWW
 # Amazon Q pre block. Keep at the top of this file.
+### q slow debugging ###
+# date
+# echo "STARTING: amazon q pre block loading from .zshrc"
+# # set zsh to echo verbose
+# set -x
+# ###
 # [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh"
-# shellcheck disable=SC2148 disable=SC1090 shell=bash
+# ### q slow debugging ###
+# date
+# # unset zsh to echo verbose
+# set +x
+# echo "DONE: amazon q pre block loaded from .zshrc"
+###
+## AMAZON Q MAKES EVERYTHING SLOWWWWWW
 
+# shellcheck disable=SC2148 disable=SC1090 shell=bash
 # ~/.zshrc
 
 # set +x
@@ -102,15 +114,18 @@ fpath+=~/.zfunc
 export PATH="/opt/homebrew/opt/tcl-tk@8/bin:$PATH"
 
 # Amazon Q post block. Keep at the bottom of this file.
-# [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
-
-# The next line updates PATH for the Google Cloud SDK.
+# # The next line updates PATH for the Google Cloud SDK.
 if [ -f '/Users/samm/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/samm/Downloads/google-cloud-sdk/path.zsh.inc'; fi
 
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/samm/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/samm/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
 
-####### PROFILING #######
-# Uncomment below to enable debug timing
+# # Amazon Q post block. Keep at the bottom of this file.
+# [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
+
+# ####### PROFILING #######
+# # Uncomment below to enable debug timing
 # zprof
-#### END PROFILING ######
+# #### END PROFILING ######
+
+# echo ".zshrc loaded now"
