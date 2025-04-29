@@ -56,3 +56,6 @@ esac
 export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
 export PATH="/opt/homebrew/opt/qt@5/bin:$PATH"
 export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
+
+# to fix Library not loaded: @rpath/libllama.dylib
+export PATH="${HOME}/git/llama.cpp/bin:$PATH"

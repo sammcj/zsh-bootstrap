@@ -1419,18 +1419,23 @@ function touchid_sudo() {
 }
 
 a() {
+  # Extract filename from the URL (the part after the last slash)
+  local filename=$(basename "$1")
+
   # Run aria2c with the specified options
   aria2c \
     --split=12 \
     --always-resume=true \
     --enable-http-pipelining=true \
     --http-accept-gzip=true \
-    --max-connection-per-server=10 \
+    --max-connection-per-server=15 \
     --max-concurrent-downloads=8 \
     --auto-file-renaming=false \
+    --content-disposition-default-utf8=true \
+    --out="$filename" \
     "$1"
 
-  echo "downloaded ${1}"
+  echo "downloaded ${1} as ${filename}"
 }
 
 rename_files() {

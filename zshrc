@@ -19,8 +19,10 @@
 
 # set +x
 
-set +m # Make jobs quiet by default
-
+# only run set +m if we're interactive
+if [[ $- == *i* ]]; then
+    set +m # Make jobs quiet by default
+fi
 # There is an alias to jump to the directory with the various
 # included zsh configs, simply type `zshconfig` at the prompt.
 
@@ -60,7 +62,10 @@ if_not_in_vscode bg_silent test -e "${HOME}/.iterm2_shell_integration.zsh" && bg
 zstyle ':completion:*' menu select
 fpath+=~/.zfunc
 
-set -m # reenable job output
+# only run set -m if we're interactive
+if [[ $- == *i* ]]; then
+    set -m # reenable job output
+fi
 
 # >>> mamba initialize >>>
 # !! Contents within this block are managed by 'mamba init' !!
