@@ -1420,20 +1420,58 @@ function touchid_sudo() {
 
 a() {
   # Extract filename from the URL (the part after the last slash)
-  local filename=$(basename "$1")
+  local filename
+  filename=$(basename "$1")
 
-  # Run aria2c with the specified options
-  aria2c \
-    --split=12 \
-    --always-resume=true \
-    --enable-http-pipelining=true \
-    --http-accept-gzip=true \
-    --max-connection-per-server=15 \
-    --max-concurrent-downloads=8 \
-    --auto-file-renaming=false \
-    --content-disposition-default-utf8=true \
-    --out="$filename" \
-    "$1"
+  # Base aria2c options
+  local aria_opts=(
+    --split=16
+    --always-resume=true
+    --max-tries=10
+    --retry-wait=3
+    --enable-http-pipelining=true
+    --http-accept-gzip=true
+    --max-connection-per-server=16
+    --max-concurrent-downloads=3
+    --min-split-size=1M
+    --auto-file-renaming=false
+    --content-disposition-default-utf8=true
+    --disk-cache=64M
+    --file-allocation=prealloc
+    --out="$filename"
+  )
+
+  # Check if URL is from Huggingface
+  if [[ "$1" == *"huggingface.co"* ]] || [[ "$1" == *"hf.co"* ]]; then
+    # Check if HUGGINGFACE_TOKEN is set
+    if [ -z "${HUGGINGFACE_TOKEN}" ]; then
+      echo "Warning: HUGGINGFACE_TOKEN is not set. You may experience rate limiting."
+    else
+      # Verify token is valid by making a test request to the newer endpoint
+      echo "Verifying Huggingface token..."
+      local token_check
+      token_check=$(curl -s -I -H "Authorization: Bearer ${HUGGINGFACE_TOKEN}" "https://huggingface.co/api/whoami-v2" | grep -c "HTTP/2 200")
+
+      if [ "$token_check" -eq 1 ]; then
+        echo "✅ Huggingface token is valid."
+        aria_opts+=(--header="Authorization: Bearer ${HUGGINGFACE_TOKEN}")
+      else
+        echo "⚠️ Huggingface token appears to be invalid. Downloads may be rate limited."
+        echo "Note: If your token starts with 'hf_', this is expected format for newer tokens."
+        # shellcheck disable=SC2162
+        read -p "Continue anyway? (y/n): " confirm
+        if [[ "$confirm" != "y" ]]; then
+          echo "Download cancelled."
+          return 1
+        fi
+        # Add the token anyway as it might still work for downloads even if validation fails
+        aria_opts+=(--header="Authorization: Bearer ${HUGGINGFACE_TOKEN}")
+      fi
+    fi
+  fi
+
+  # Run aria2c with the assembled options
+  aria2c "${aria_opts[@]}" "$1"
 
   echo "downloaded ${1} as ${filename}"
 }
