@@ -1433,7 +1433,7 @@ a() {
     --http-accept-gzip=true
     --max-connection-per-server=16
     --max-concurrent-downloads=5
-    --min-split-size=1M
+    --min-split-size=10M
     --auto-file-renaming=false
     --content-disposition-default-utf8=true
     --disk-cache=64M
