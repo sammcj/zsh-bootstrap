@@ -1427,12 +1427,12 @@ a() {
   local aria_opts=(
     --split=16
     --always-resume=true
-    --max-tries=10
+    --max-tries=15
     --retry-wait=3
     --enable-http-pipelining=true
     --http-accept-gzip=true
     --max-connection-per-server=16
-    --max-concurrent-downloads=3
+    --max-concurrent-downloads=5
     --min-split-size=1M
     --auto-file-renaming=false
     --content-disposition-default-utf8=true
