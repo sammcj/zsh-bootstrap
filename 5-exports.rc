@@ -12,7 +12,8 @@ export MU_REPO_SERIAL=false
 export EDITOR=vim
 
 # colima / docker
-export DOCKER_HOST="unix://$HOME/.colima/docker.sock"
+# export DOCKER_HOST="unix://$HOME/.colima/docker.sock"
+# export DOCKER_HOST="unix:///Users/samm/.colima/default/docker.sock"
 
 # Tells 'less' not to paginate if less than a page
 export LESS="-F -X $LESS"

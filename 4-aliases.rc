@@ -92,7 +92,7 @@ alias flushdns='sudo discoveryutil udnsflushcaches'
 alias httpserver='sudo python3 -m http.server 80'
 alias cc='colorize.py'
 alias rmid="ssh-keygen -R"
-# alias aria="aria2c -s 5 -j 5 -x 5 -c --enable-http-pipelining=true --http-accept-gzip=true --max-connection-per-server=10"
+# alias aria="aria2c -s 5 -j 5 -x 5 -c --enable-http-pipelining=true --http-accept-gzip=true --max-connection-per-server=10 --content-disposition-default-utf8=true"
 # alias a=aria
 alias dmesg="dmesg -LT"
 alias cpuinfo="sysctl -n machdep.cpu.brand_string"
@@ -197,7 +197,11 @@ alias rotate_min_supports='tweaker3 -vb -x -min sur -i'
 
 alias obsidian='cd /Users/samm/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/Main && ls -ltarh'
 
-# ML / Github Copilot
+# ML / AI
+# shellcheck disable=SC2139
+alias clinerules="code /Users/samm/Library/Mobile\ Documents/com\~apple\~CloudDocs/Documents/Cline"
+alias clinerulesd="cd /Users/samm/Library/Mobile\ Documents/com\~apple\~CloudDocs/Documents/Cline"
+alias sync_ollama_models="${HOME}/git/sammcj/scripts/ollama/export_ollama_model.py"
 alias copilot="gh copilot suggest -t shell"
 alias copilot-explain="gh copilot explain"
 alias '??'='copilot'
