@@ -8,13 +8,13 @@ eval "$(/opt/homebrew/bin/fnm env --use-on-cd --corepack-enabled)"
 eval "$(saml2aws --completion-script-zsh)"
 
 #asdf
-. /opt/homebrew/opt/asdf/libexec/asdf.sh
+# . /opt/homebrew/opt/asdf/libexec/asdf.sh
 
 #pyenv
 export PYENV_ROOT="$HOME/.pyenv"
 command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
-# uv
+
 . ~/.venv/bin/activate
 
 # # pnpm
@@ -30,6 +30,6 @@ eval "$(pyenv init -)"
 # nav bindkeys
 
 #cargo
-if [ -d "$HOME/.cargo/env" ]; then
+if [ -f "$HOME/.cargo/env" ]; then
   . "$HOME/.cargo/env"
 fi

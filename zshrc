@@ -1,11 +1,28 @@
-# shellcheck disable=SC2148 disable=SC1090 shell=bash
+# Amazon Q pre block. Keep at the top of this file.
+### q slow debugging ###
+# date
+# echo "STARTING: amazon q pre block loading from .zshrc"
+# # set zsh to echo verbose
+# set -x
+# ###
+# [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh"
+# ### q slow debugging ###
+# date
+# # unset zsh to echo verbose
+# set +x
+# echo "DONE: amazon q pre block loaded from .zshrc"
+###
+## AMAZON Q MAKES EVERYTHING SLOWWWWWW
 
+# shellcheck disable=SC2148 disable=SC1090 shell=bash
 # ~/.zshrc
 
 # set +x
 
-set +m # Make jobs quiet by default
-
+# only run set +m if we're interactive
+if [[ $- == *i* ]]; then
+    set +m # Make jobs quiet by default
+fi
 # There is an alias to jump to the directory with the various
 # included zsh configs, simply type `zshconfig` at the prompt.
 
@@ -30,7 +47,7 @@ if [[ -d $HOME/Library/Mobile\ Documents/com\~apple\~CloudDocs/Dropbox\ Import/d
 fi
 
 ## Add ssh keys to agent if not already added
-ssh-add-keys
+# ssh-add-keys # TODO: disabled 2025-03-16 to see if it helps performance, reenable if ssh stops working
 
 ### Below are items added by installer scripts (usually homebrew) ####
 
@@ -40,12 +57,15 @@ source /opt/homebrew/Cellar/fzf/*/shell/key-bindings.zsh
 # Enable direnv - https://direnv.net
 # eval "$(direnv hook zsh)"
 
-test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+if_not_in_vscode bg_silent test -e "${HOME}/.iterm2_shell_integration.zsh" && bg_silent source "${HOME}/.iterm2_shell_integration.zsh"
 
 zstyle ':completion:*' menu select
 fpath+=~/.zfunc
 
-set -m # reenable job output
+# only run set -m if we're interactive
+if [[ $- == *i* ]]; then
+    set -m # reenable job output
+fi
 
 # >>> mamba initialize >>>
 # !! Contents within this block are managed by 'mamba init' !!
@@ -88,14 +108,29 @@ export PATH="$PATH:/Users/samm/Fltr"
 
 # tabtab source for electron-forge package
 # uninstall by removing these lines or running `tabtab uninstall electron-forge`
-[[ -f /Users/samm/.npm/_npx/6913fdfd1ea7a741/node_modules/tabtab/.completions/electron-forge.zsh ]] && . /Users/samm/.npm/_npx/6913fdfd1ea7a741/node_modules/tabtab/.completions/electron-forge.zsh
-autoload -Uz compinit
+# [[ -f /Users/samm/.npm/_npx/6913fdfd1ea7a741/node_modules/tabtab/.completions/electron-forge.zsh ]] && . /Users/samm/.npm/_npx/6913fdfd1ea7a741/node_modules/tabtab/.completions/electron-forge.zsh
 
 # Added by LM Studio CLI tool (lms)
 export PATH="$PATH:/Users/samm/.cache/lm-studio/bin"
+if [ -f "/Users/samm/.config/fabric/fabric-bootstrap.inc" ] && if_not_in_vscode; then . "/Users/samm/.config/fabric/fabric-bootstrap.inc"; fi
 
-####### PROFILING #######
-# Uncomment below to enable debug timing
+fpath+=~/.zfunc
+
+export PATH="/opt/homebrew/opt/tcl-tk@8/bin:$PATH"
+
+# Amazon Q post block. Keep at the bottom of this file.
+# # The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/samm/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/samm/Downloads/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/samm/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/samm/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
+
+# # Amazon Q post block. Keep at the bottom of this file.
+# [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
+
+# ####### PROFILING #######
+# # Uncomment below to enable debug timing
 # zprof
-#### END PROFILING ######
-if [ -f "/Users/samm/.config/fabric/fabric-bootstrap.inc" ]; then . "/Users/samm/.config/fabric/fabric-bootstrap.inc"; fi
+# #### END PROFILING ######
+
+# echo ".zshrc loaded now"
