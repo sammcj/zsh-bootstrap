@@ -5,7 +5,11 @@
 # # set zsh to echo verbose
 # set -x
 # ###
-# [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh"
+# only run if LOADING_Q is true
+if [[ "$LOADING_Q" == "true" ]]; then
+    # Amazon Q post block. Keep at the bottom of this file.
+    [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh"
+fi
 # ### q slow debugging ###
 # date
 # # unset zsh to echo verbose
@@ -118,15 +122,17 @@ fpath+=~/.zfunc
 
 export PATH="/opt/homebrew/opt/tcl-tk@8/bin:$PATH"
 
-# Amazon Q post block. Keep at the bottom of this file.
 # # The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/samm/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/samm/Downloads/google-cloud-sdk/path.zsh.inc'; fi
+if [ -f '/Users/samm/Downloads/google-cloud-sdk/path.zsh.inc' ] && if_not_in_vscode; then . '/Users/samm/Downloads/google-cloud-sdk/path.zsh.inc'; fi
 
 # The next line enables shell command completion for gcloud.
-if [ -f '/Users/samm/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/samm/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
+if [ -f '/Users/samm/Downloads/google-cloud-sdk/completion.zsh.inc' ] && if_not_in_vscode; then . '/Users/samm/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
 
 # # Amazon Q post block. Keep at the bottom of this file.
-# [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
+if [[ "$LOADING_Q" == "true" ]]; then
+# Amazon Q post block. Keep at the bottom of this file.
+    [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
+fi
 
 # ####### PROFILING #######
 # # Uncomment below to enable debug timing
@@ -134,3 +140,8 @@ if [ -f '/Users/samm/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/
 # #### END PROFILING ######
 
 # echo ".zshrc loaded now"
+
+# >>> CLOI_HISTORY_SETTINGS >>>
+setopt INC_APPEND_HISTORY
+setopt SHARE_HISTORY
+# <<< CLOI_HISTORY_SETTINGS <<<

@@ -52,3 +52,4 @@ EOPLUGINS
   # save zgen cache
   zgen save
 fi
+

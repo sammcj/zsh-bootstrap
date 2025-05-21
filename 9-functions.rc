@@ -1425,13 +1425,13 @@ a() {
 
   # Base aria2c options
   local aria_opts=(
-    --split=16
+    --split=12
     --always-resume=true
     --max-tries=15
     --retry-wait=3
     --enable-http-pipelining=true
     --http-accept-gzip=true
-    --max-connection-per-server=16
+    --max-connection-per-server=14
     --max-concurrent-downloads=5
     --min-split-size=10M
     --auto-file-renaming=false
@@ -1723,4 +1723,39 @@ if_not_in_vscode() {
   if [ -z "$RUNNING_IN_VSCODE" ]; then
     "$@"
   fi
+}
+
+# Amazon Q wrapper because their Q CLI installer completely hoses terminal performance
+# https://github.com/aws/amazon-q-developer-cli/issues/844
+# https://github.com/aws/amazon-q-developer-cli/discussions/202
+# doesn't quite work yet as their MCP integrations seem to fail, e.g
+# failed installing shell integration bash pre post into .bashrc err=Integration not installed: /Users/samm/.bashrc does not source pre integration
+# Failed installing shell integration bash pre post into .profile err=File does not exist: /Users/samm/.profile
+# Failed installing shell integration zsh pre post into .zshrc err=Integration not installed: /Users/samm/.zshrc does not source pre integration
+# Failed installing shell integration zsh pre post into .zprofile err=Integration not installed: /Users/samm/.zprofile does not source pre integration
+q() {
+  # Amazon Q pre block for .zprofile
+  [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zprofile.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zprofile.pre.zsh"
+  # Amazon Q post block for .zprofile
+  [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zprofile.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zprofile.post.zsh"
+
+  # Amazon Q pre block for .zshrc
+  [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh"
+  # Amazon Q post block for .zshrc
+  [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
+
+  command /Users/samm/.local/bin/q "$@"
+}
+
+cline-workflows() {
+  SOURCE_DIR="/Users/samm/git/sammcj/agentic-coding/Cline/Rules/workflows"
+  DEST_DIR=.clinerules/workflows
+
+  read -r -p "This will copy all workflows from $SOURCE_DIR to $DEST_DIR. Do you want to proceed? (y/n): " choice
+  if [[ $choice != [yY] ]]; then
+    echo "Aborting..."
+    return 1
+  fi
+  mkdir -p $DEST_DIR
+  cp -r $SOURCE_DIR/*.md $DEST_DIR/
 }

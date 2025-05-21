@@ -1,10 +1,11 @@
 # Editors
 **/.dccache
-# allow recommending extensions in repos
-!**/.vscode/extensions.json
-!.vscode/extensions.json
+
+**/.vscode/extensions.json
 **/.vscode/*
 **/.vscode
+.vscode/settings.json
+**/.vscode/settings.json
 .idea
 *.swp
 *.swo
@@ -45,3 +46,10 @@ CMakeCache.txt
 **/*.p12
 
 **/*.pdf
+
+DEV_TASKS.md
+DEVELOPMENT_TASKS.md
+DEV_PLAN.md
+DEVELOPMENT_PLAN.md
+
+**/.repomix
