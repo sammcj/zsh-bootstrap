@@ -152,6 +152,9 @@ bindkey '^[[Z' autosuggest-accept # shift + tab  | autosuggest
 bindkey '\e[1~' beginning-of-line
 bindkey '\e[4~' end-of-line
 
+# Fix ctrl+a to go to beginning of line (was bound to self-insert)
+bindkey '^A' beginning-of-line
+
 # Incremental search is elite!
 bindkey -M vicmd "/" history-incremental-search-backward
 bindkey -M vicmd "?" history-incremental-search-forward
