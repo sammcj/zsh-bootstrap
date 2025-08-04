@@ -1790,3 +1790,14 @@ cline-workflows() {
   mkdir -p $DEST_DIR
   cp -r $SOURCE_DIR/*.md $DEST_DIR/
 }
+
+# Override cd to handle 'cd -' with zoxide compatibility
+cd() {
+  # If called with '-' argument, use zoxide's z - instead
+  if [[ "$1" == "-" ]]; then
+    z -
+  else
+    # For all other cases, use zoxide's cd (which is already overridden by zoxide init)
+    builtin cd "$@"
+  fi
+}

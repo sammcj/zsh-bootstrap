@@ -139,6 +139,7 @@ export ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 bindkey '^I' complete-word        # tab          | complete
 bindkey '^[[Z' autosuggest-accept # shift + tab  | autosuggest
 
+
 # Autocomplete kubectl for k alias
 # complete -F __start_kubectl k
 # compdef __start_kubectl k
