@@ -145,3 +145,8 @@ fi
 setopt INC_APPEND_HISTORY
 setopt SHARE_HISTORY
 # <<< CLOI_HISTORY_SETTINGS <<<
+
+export PATH="$HOME/.local/bin:$PATH"
+
+
+[[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"

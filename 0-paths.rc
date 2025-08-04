@@ -12,8 +12,8 @@ export PATH="${PATH}:${HOME}/go/bin"
 # macOS Sonoma fix
 export PATH="/sbin:${PATH}"
 
-# added by Miniconda3 installer
-export PATH="/Users/samm/miniconda3/bin:${PATH}"
+# # added by Miniconda3 installer
+# export PATH="/Users/samm/miniconda3/bin:${PATH}"
 
 # cargo
 export PATH="${HOME}/.cargo/bin:${PATH}"
@@ -25,24 +25,24 @@ export PATH="${HOME}/.cargo/bin:${PATH}"
 
 #source $HOME/.helm/helmenv.sh
 
-function conda_init() {
+# function conda_init() {
 
-  # >>> conda initialize >>>
-  # !! Contents within this block are managed by 'conda init' !!
-  __conda_setup="$('/opt/homebrew/Caskroom/mambaforge/base/bin/conda' 'shell.zsh' 'hook' 2>/dev/null)"
-  if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-  # else
-  #   if [ -f "/opt/homebrew/Caskroom/mambaforge/base/etc/profile.d/conda.sh" ]; then
-  #     # . "/opt/homebrew/Caskroom/mambaforge/base/etc/profile.d/conda.sh"  # commented out by conda initialize
-  #   else
-  #     # export PATH="/opt/homebrew/Caskroom/mambaforge/base/bin:$PATH"  # commented out by conda initialize
-  #   fi
-  fi
-  unset __conda_setup
-  # <<< conda initialize <<<
+#   # >>> conda initialize >>>
+#   # !! Contents within this block are managed by 'conda init' !!
+#   __conda_setup="$('/opt/homebrew/Caskroom/mambaforge/base/bin/conda' 'shell.zsh' 'hook' 2>/dev/null)"
+#   if [ $? -eq 0 ]; then
+#     eval "$__conda_setup"
+#   # else
+#   #   if [ -f "/opt/homebrew/Caskroom/mambaforge/base/etc/profile.d/conda.sh" ]; then
+#   #     # . "/opt/homebrew/Caskroom/mambaforge/base/etc/profile.d/conda.sh"  # commented out by conda initialize
+#   #   else
+#   #     # export PATH="/opt/homebrew/Caskroom/mambaforge/base/bin:$PATH"  # commented out by conda initialize
+#   #   fi
+#   fi
+#   unset __conda_setup
+#   # <<< conda initialize <<<
 
-}
+# }
 
 # pnpm
 export PNPM_HOME="/Users/samm/Library/pnpm"

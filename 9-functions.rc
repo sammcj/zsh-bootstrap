@@ -1112,6 +1112,12 @@ function ba() {
   # update vscode packages
   code --update-extensions >>"${log_file}" 2>&1 &
 
+  # Update Claude Code
+  claude update >>"${log_file}" 2>&1 &
+
+  npm install -g --upgrade @qwen-code/qwen-code@latest @google/gemini-cli
+  uv tool install claude-monitor -U
+
   # update homebrew and all apps
   brew update >>"${error_log}" 2>&1
 
@@ -1156,6 +1162,8 @@ function ba() {
 
   # wait for all background jobs to finish
   wait
+  # fix chromedriver quarantine
+  xattr -c /opt/homebrew/Caskroom/chromedriver/*/chromedriver-mac-arm64/chromedriver
   fg # bring the last background job to the foreground
 
   compdump # recompile zsh completion files
@@ -1192,6 +1200,7 @@ function __upgrade_packages() {
 
   pip3 install -U pip
   npm i -g npm-check-updates
+  npm i -g @google/gemini-cli
   \ncu --global
   echo | vim +PluginInstall +qall &>/dev/null
 
@@ -1677,8 +1686,30 @@ function aws-sso() {
   eval "$(aws configure export-credentials --format env --profile "$1")"
   export AWS_PROFILE="$1"
   export AWS_REGION=ap-southeast-2
+
+  # Create a temporary file only user can access for short-lived, rotating credentials
+  mkdir -p "${HOME}/.tmp"
+  local aws_creds_file
+  aws_creds_file="${HOME}/.tmp/awltmp"
+  rm -f "$aws_creds_file"
+  touch "$aws_creds_file"
+  chmod 600 "$aws_creds_file"
+
+  # Export AWS credentials to the temporary file
+  cat > "$aws_creds_file" << EOF
+export AWS_SESSION_TOKEN='$AWS_SESSION_TOKEN'
+export AWS_ACCESS_KEY_ID='$AWS_ACCESS_KEY_ID'
+export AWS_SECRET_ACCESS_KEY='$AWS_SECRET_ACCESS_KEY'
+export AWS_PROFILE='$AWS_PROFILE'
+export AWS_REGION='$AWS_REGION'
+EOF
+
+  echo "Run the following in other terminals to source the credentials:"
+  echo "source $aws_creds_file"
 }
 alias aws-ai="aws-sso aisandpit"
+# shellcheck disable=SC2139
+alias awl="source ${HOME}/.tmp/awltmp"
 
 function aws-nas() {
   /Users/samm/Library/Mobile\ Documents/com~apple~CloudDocs/Dropbox\ Import/dotfiles/shell_config/update-aws-creds.sh aisandpit
