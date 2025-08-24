@@ -1106,22 +1106,34 @@ function ba() {
   local log_file="${HOME}/.ba.log"
   local error_log="${HOME}/.ba.errors.log"
 
+  if [[ -f "${log_file}" ]]; then
+    mv -f "${log_file}" "${log_file}.1"
+  fi
+  touch "$log_file"
+
   # link all ollama models to lm-studio
   llamalink >>"${log_file}" 2>&1 &
 
   # update vscode packages
   code --update-extensions >>"${log_file}" 2>&1 &
+  gh extension upgrade --all >>"${log_file}" 2>&1 &
 
   # Update Claude Code
   claude update >>"${log_file}" 2>&1 &
 
-  npm install -g --upgrade @qwen-code/qwen-code@latest @google/gemini-cli
-  uv tool install claude-monitor -U
+  # Update global npm packages (which is just claude code, gemini-cli, claude-code-router, and qwen-code)
+  npm-check-updates -g -u
+  npm install -g --upgrade @qwen-code/qwen-code@latest @google/gemini-cli \
+    @musistudio/claude-code-router @anthropic-ai/claude-code@latest ccusage \
+    ccstatusline@latest ccexp@latest vibe-kanban@latest >>"${log_file}" 2>&1 &
+
+  # claudekit@latest
+
+  uv tool install claude-monitor -U >>"${log_file}" 2>&1 &
+  uv tool install claude-code-tools >>"${log_file}" 2>&1 &
 
   # update homebrew and all apps
   brew update >>"${error_log}" 2>&1
-
-  mv "${log_file}" "${log_file}.1"
 
   echo "Upgrading shell and packages in the background, tail -f ${log_file} for details."
 
@@ -1200,7 +1212,6 @@ function __upgrade_packages() {
 
   pip3 install -U pip
   npm i -g npm-check-updates
-  npm i -g @google/gemini-cli
   \ncu --global
   echo | vim +PluginInstall +qall &>/dev/null
 
@@ -1683,27 +1694,32 @@ function aws-sso() {
     return 1
   fi
   aws sso login --profile "$1"
-  eval "$(aws configure export-credentials --format env --profile "$1")"
+
+  # Set the profile and region in current shell
   export AWS_PROFILE="$1"
   export AWS_REGION=ap-southeast-2
+
+  # Get the credentials using AWS CLI and set them in the current shell
+  eval "$(aws configure export-credentials --format env --profile "$1")"
 
   # Create a temporary file only user can access for short-lived, rotating credentials
   mkdir -p "${HOME}/.tmp"
   local aws_creds_file
   aws_creds_file="${HOME}/.tmp/awltmp"
   rm -f "$aws_creds_file"
-  touch "$aws_creds_file"
-  chmod 600 "$aws_creds_file"
 
-  # Export AWS credentials to the temporary file
+  # Write the current environment variables to the file
   cat > "$aws_creds_file" << EOF
 export AWS_SESSION_TOKEN='$AWS_SESSION_TOKEN'
 export AWS_ACCESS_KEY_ID='$AWS_ACCESS_KEY_ID'
 export AWS_SECRET_ACCESS_KEY='$AWS_SECRET_ACCESS_KEY'
-export AWS_PROFILE='$AWS_PROFILE'
-export AWS_REGION='$AWS_REGION'
+export AWS_PROFILE='$1'
+export AWS_REGION='ap-southeast-2'
 EOF
 
+  chmod 600 "$aws_creds_file"
+
+  echo "AWS credentials exported to $aws_creds_file"
   echo "Run the following in other terminals to source the credentials:"
   echo "source $aws_creds_file"
 }
@@ -1800,4 +1816,109 @@ cd() {
     # For all other cases, use zoxide's cd (which is already overridden by zoxide init)
     builtin cd "$@"
   fi
+}
+
+# Function to list and display comments made by GitHub Copilot on the current PR
+copilot-comments() {
+  local -r current_branch="$(git branch --show-current 2>/dev/null)" || {
+    printf "Error: Not in a git repository or no current branch\n" >&2
+    return 1
+  }
+
+  local base_branch pr_num general_reviews inline_comments all_prs
+
+  # Use printf instead of echo for better portability and consistency
+  base_branch="$(gh repo view --json defaultBranch --jq '.defaultBranch.name' 2>/dev/null)" || base_branch="main"
+  pr_num="$(gh pr list --head "${current_branch}" --base "${base_branch}" --json number --jq '.[0].number' 2>/dev/null)" || pr_num=""
+
+  if [[ -z "${pr_num}" || "${pr_num}" == "null" ]]; then
+    printf "No open PR found for current branch %s\n" "${current_branch}"
+
+    if all_prs="$(gh pr list --base "${base_branch}" --json number,title,headRefName --jq '.[] | "PR #\(.number): \(.title) (branch: \(.headRefName))"' 2>/dev/null)" && [[ -n "${all_prs}" ]]; then
+      printf "All open PRs to %s:\n%s\n" "${base_branch}" "${all_prs}"
+    fi
+    return 1
+  fi
+
+  # Helper function to reduce code duplication
+  _fetch_copilot_data() {
+    local -r endpoint="$1"
+    local -r jq_filter="$2"
+    gh api "repos/:owner/:repo/pulls/${pr_num}/${endpoint}" 2>/dev/null | jq -r "${jq_filter}" 2>/dev/null || true
+  }
+
+  general_reviews="$(_fetch_copilot_data "reviews" '.[] | select(.user.login == "Copilot") | .body')"
+  inline_comments="$(_fetch_copilot_data "comments" '.[] | select(.user.login == "Copilot") | "\(.path) (line \(.line))\n\(.body)\n" + ("=" * 50) + "\n"')"
+
+  if [[ -n "${general_reviews}" || -n "${inline_comments}" ]]; then
+    printf "I submitted the changes to Github Copilot to review, keep in mind that Github Copilot doesn't use a very strong AI model so it may not be accurate.\n"
+
+    printf "🤖 GitHub Copilot comments on PR #%s:\n" "${pr_num}"
+
+    if [[ -n "${general_reviews}" ]]; then
+      printf "## Copilot review comments\n"
+      printf "%s\n" "${general_reviews}\n------\n"
+    fi
+
+    if [[ -n "${inline_comments}" ]]; then
+      printf "\n## Copilot inline comments\n"
+      printf "%s\n" "${inline_comments}"
+    fi
+
+    printf "⚠️ Be mindful that GitHub Copilot's comments may be inaccurate. Ignore any invalid or out of context comments. Please review them carefully before applying any changes. Discuss recommendations with me if the path forward is unclear.\n"
+  fi
+}
+
+# Quick navigation to git repositories, optionally taking a subdirectory as an argument
+_git_nav() {
+    local cmd="$1"
+    shift  # Remove the command from arguments
+    local base_dir
+
+    case "$cmd" in
+        "gs")
+            base_dir="$HOME/git/sammcj"
+            ;;
+        "gm")
+            base_dir="$HOME/git/mantel"
+            ;;
+        "g")
+            base_dir="$HOME/git"
+            ;;
+        *)
+            echo "Unknown git navigation command: $cmd"
+            return 1
+            ;;
+    esac
+
+    if [[ $# -eq 0 ]]; then
+        cd "$base_dir"
+    else
+        local target_dir="$base_dir/$1"
+        if [[ -d "$target_dir" ]]; then
+            cd "$target_dir"
+        else
+            cd "$base_dir"
+            echo "Directory '$1' not found in $base_dir"
+        fi
+    fi
+}
+# Use the git quick navigation function
+gs() { _git_nav "gs" "$@"; }
+gm() { _git_nav "gm" "$@"; }
+g() { _git_nav "g" "$@"; }
+
+
+fcs() {
+  # https://github.com/pchalasani/claude-code-tools#-find-claude-session
+  # fcs "keyword1,keyword2,keyword3"   # Search in current project
+  # fcs "keywords" -g  Search across all Claude projects
+
+  # Check if user is asking for help
+  if [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]]; then
+    find-claude-session --help
+    return
+  fi
+  # Run find-claude-session in shell mode and evaluate the output
+  eval "$(find-claude-session --shell "$@" | sed '/^$/d')"
 }

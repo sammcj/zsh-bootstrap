@@ -69,6 +69,7 @@ export ENABLE_ANALYTICS=0
 export CLAUDE_CODE_ENABLE_TELEMETRY=0
 export DISABLE_TELEMETRY=1
 export DISABLE_ANALYTICS=1
+export POSTHOG_API_ENDPOINT=""
 
 # OpenCode
 export LOCAL_ENDPOINT=https://ollama.icu.lol/v1

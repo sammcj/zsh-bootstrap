@@ -55,3 +55,11 @@ DEVELOPMENT_PLAN.md
 **/.repomix
 
 **/.bevel
+
+.claude/settings.local.json
+.gemini/settings.local.json
+
+# Ignore CLAUDE.md files in root of git directories (excluding sammcj and mantel)
+/Users/samm/git/*/CLAUDE.md
+!/Users/samm/git/sammcj/*/CLAUDE.md
+!/Users/samm/git/mantel/*/CLAUDE.md
