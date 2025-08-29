@@ -1121,13 +1121,8 @@ function ba() {
   # Update Claude Code
   claude update >>"${log_file}" 2>&1 &
 
-  # Update global npm packages (which is just claude code, gemini-cli, claude-code-router, and qwen-code)
-  npm-check-updates -g -u
-  npm install -g --upgrade @qwen-code/qwen-code@latest @google/gemini-cli \
-    @musistudio/claude-code-router @anthropic-ai/claude-code@latest ccusage \
-    ccstatusline@latest ccexp@latest vibe-kanban@latest >>"${log_file}" 2>&1 &
-
-  # claudekit@latest
+  # Update global npm packages (if they match the allowlist)
+  npm-global-update
 
   uv tool install claude-monitor -U >>"${log_file}" 2>&1 &
   uv tool install claude-code-tools >>"${log_file}" 2>&1 &
@@ -1922,3 +1917,193 @@ fcs() {
   # Run find-claude-session in shell mode and evaluate the output
   eval "$(find-claude-session --shell "$@" | sed '/^$/d')"
 }
+
+
+# NPM Package Updater Function to update all global packages with error recovery
+# Automatically handles ENOTEMPTY errors by removing problematic directories
+# and reinstalling packages individually when batch install fails
+npm-global-update() {
+    # Define allowed package patterns (substring matches)
+    local allowed_patterns
+    allowed_patterns=("claude-code" "gemini-cli" "qwen-code" "ccstatusline" "claude-code-router" "claudekit" "ccusage" "npm-check-updates" "playwright" "ccexp" "vibe-kanban" "claude-monitor")
+
+    echo "🔍 Checking for global package updates..."
+
+    # Run npm-check-updates and capture output
+    local ncu_output
+    ncu_output=$(npm-check-updates -g 2>/dev/null)
+
+    if [[ $? -ne 0 ]]; then
+        echo "❌ Failed to run npm-check-updates. Make sure it's installed globally."
+        return 1
+    fi
+
+    # Extract package updates (lines with →)
+    local updates
+    updates=$(echo "$ncu_output" | grep "→" | sed 's/^ *//')
+
+    if [[ -z "$updates" ]]; then
+        echo "✅ All global packages are up to date!"
+        return 0
+    fi
+
+    echo "Package upgrade allowlist: ${allowed_patterns[*]}"
+    echo "-----------------------------------"
+    echo "📦 Found updates:"
+    echo "$updates"
+    echo
+
+    # Parse package names and versions, filtering by allowed patterns
+    local packages=()
+    while IFS= read -r line; do
+        if [[ -n "$line" ]]; then
+            # Extract package@version from "package 1.0.0 → 1.0.1" format
+            local pkg_name new_version
+            pkg_name=$(echo "$line" | awk '{print $1}')
+            new_version=$(echo "$line" | awk '{print $4}')
+
+            # Check if package matches any allowed pattern
+            local matches_pattern=false
+            for pattern in "${allowed_patterns[@]}"; do
+                if [[ "$pkg_name" == *"$pattern"* ]]; then
+                    matches_pattern=true
+                    break
+                fi
+            done
+
+            if [[ "$matches_pattern" == true ]]; then
+                packages+=("${pkg_name}@${new_version}")
+            fi
+        fi
+    done <<< "$updates"
+
+    if [[ ${#packages[@]} -eq 0 ]]; then
+        echo "❌ No packages found to update"
+        return 1
+    fi
+
+    echo "🚀 Attempting to install ${#packages[@]} update(s)..."
+
+    # Try to install all packages at once
+    local install_output install_exit_code
+    install_output=$(npm -g install "${packages[@]}" 2>&1)
+    install_exit_code=$?
+
+    if [[ $install_exit_code -eq 0 ]]; then
+        echo "✅ All packages updated successfully!"
+        return 0
+    fi
+
+    # If batch install failed, check if it's due to ENOTEMPTY errors
+    if echo "$install_output" | grep -q "ENOTEMPTY"; then
+        echo "⚠️  Batch install failed due to ENOTEMPTY errors. Trying individual recovery..."
+        echo
+
+        # Extract failed package paths from error output
+        local failed_packages=()
+        while IFS= read -r error_line; do
+            if [[ "$error_line" == "npm error path "* ]]; then
+                # Extract path using string manipulation instead of regex
+                local error_path="${error_line#npm error path }"
+                # Extract package name from path
+                local pkg_from_path
+                pkg_from_path=$(basename "$error_path")
+                failed_packages+=("$error_path:$pkg_from_path")
+            fi
+        done <<< "$install_output"
+
+        # Process each failed package
+        local recovery_needed=()
+        for package_info in "${failed_packages[@]}"; do
+            local path_part name_part
+            path_part="${package_info%%:*}"
+            name_part="${package_info##*:}"
+
+            # Find corresponding package@version from our list
+            local target_package=""
+            for pkg in "${packages[@]}"; do
+                local pkg_name
+                pkg_name="${pkg%%@*}"
+                if [[ "$name_part" == "$pkg_name" ]] || [[ "$path_part" =~ $pkg_name$ ]]; then
+                    target_package="$pkg"
+                    break
+                fi
+            done
+
+            if [[ -n "$target_package" ]]; then
+                recovery_needed+=("$path_part:$target_package")
+            fi
+        done
+
+        # Remove and reinstall each problematic package
+        for recovery_info in "${recovery_needed[@]}"; do
+            local path_to_remove package_to_install
+            path_to_remove="${recovery_info%%:*}"
+            package_to_install="${recovery_info##*:}"
+
+            echo "🔧 Fixing ${package_to_install}..."
+            echo "   Removing: $path_to_remove"
+
+            if [[ -d "$path_to_remove" ]]; then
+                rm -rf "$path_to_remove"
+                npm -g uninstall "${package_to_install%%@*}" 2>/dev/null
+                if [[ $? -eq 0 ]]; then
+                    echo "   ✅ Removed successfully"
+                else
+                    echo "   ❌ Failed to remove $path_to_remove"
+                    continue
+                fi
+            else
+                echo "   ⚠️  Path doesn't exist: $path_to_remove"
+            fi
+
+            echo "   Installing: $package_to_install"
+            if npm -g install "$package_to_install"; then
+                echo "   ✅ Installed successfully"
+            else
+                echo "   ❌ Failed to install $package_to_install"
+            fi
+            echo
+        done
+
+        # Try to install any remaining packages that weren't in the error list
+        local remaining_packages=()
+        for pkg in "${packages[@]}"; do
+            local pkg_name
+            pkg_name="${pkg%%@*}"
+            local found_in_errors=false
+
+            for recovery_info in "${recovery_needed[@]}"; do
+                local recovery_pkg
+                recovery_pkg="${recovery_info##*:}"
+                if [[ "$pkg" == "$recovery_pkg" ]]; then
+                    found_in_errors=true
+                    break
+                fi
+            done
+
+            if [[ "$found_in_errors" == false ]]; then
+                remaining_packages+=("$pkg")
+            fi
+        done
+
+        if [[ ${#remaining_packages[@]} -gt 0 ]]; then
+            echo "🔄 Installing remaining packages..."
+            for pkg in "${remaining_packages[@]}"; do
+                echo "   Installing: $pkg"
+                if npm -g install "$pkg"; then
+                    echo "   ✅ Installed successfully"
+                else
+                    echo "   ❌ Failed to install $pkg"
+                fi
+            done
+        fi
+
+        echo "🏁 Recovery process completed!"
+    else
+        echo "❌ Batch install failed with different error:"
+        echo "$install_output"
+        return 1
+    fi
+}
+alias ngu="npm-global-update"

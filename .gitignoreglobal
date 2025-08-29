@@ -63,3 +63,12 @@ DEVELOPMENT_PLAN.md
 /Users/samm/git/*/CLAUDE.md
 !/Users/samm/git/sammcj/*/CLAUDE.md
 !/Users/samm/git/mantel/*/CLAUDE.md
+
+# Ignore local only CLAUDE files
+**/CLAUDE.local.md
+
+
+**/.crush
+**/.serena/cache
+**/.serena/logs
+**/.serena/memories
