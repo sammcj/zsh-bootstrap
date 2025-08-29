@@ -1925,7 +1925,7 @@ fcs() {
 npm-global-update() {
     # Define allowed package patterns (substring matches)
     local allowed_patterns
-    allowed_patterns=("claude-code" "gemini-cli" "qwen-code" "ccstatusline" "claude-code-router" "claudekit" "ccusage" "npm-check-updates" "playwright" "ccexp" "vibe-kanban" "claude-monitor")
+    allowed_patterns=("@anthropic-ai/claude-code" "@google/gemini-cli" "@qwen-code/qwen-code" "ccstatusline" "claude-code-router" "claudekit" "ccusage" "npm-check-updates" "playwright" "ccexp" "vibe-kanban" "claude-monitor" "@vscode/vsce" "yaml-language-server" "typescript-language-server" "typescript" "corepack")
 
     echo "🔍 Checking for global package updates..."
 
@@ -1965,7 +1965,7 @@ npm-global-update() {
             # Check if package matches any allowed pattern
             local matches_pattern=false
             for pattern in "${allowed_patterns[@]}"; do
-                if [[ "$pkg_name" == *"$pattern"* ]]; then
+                if [[ "$pkg_name" == "$pattern" ]]; then # it was  *"$pattern"*, but that's unsafe
                     matches_pattern=true
                     break
                 fi
