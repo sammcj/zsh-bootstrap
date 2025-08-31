@@ -1,0 +1,214 @@
+# shellcheck disable=SC2148 disable=SC1090 shell=bash
+
+# Aliases and functions for AI tools (Note exports are still in 5-exports.rc)
+
+### Aliases ###
+# shellcheck disable=SC2139
+alias clinerules="code /Users/samm/Library/Mobile\ Documents/com\~apple\~CloudDocs/Documents/Cline"
+alias clinerulesd="cd /Users/samm/Library/Mobile\ Documents/com\~apple\~CloudDocs/Documents/Cline"
+alias sync_ollama_models="${HOME}/git/sammcj/scripts/ollama/export_ollama_model.py"
+alias copilot="gh copilot suggest -t shell"
+alias copilot-explain="gh copilot explain"
+alias '??'='copilot'
+alias '???'='copilot-comments'
+alias wtf='copilot'
+alias l="OLLAMA_HOST=http://localhost:11434 gollama -l"
+alias i="ingest"
+alias code2prompt="ingest"
+alias ln="gollama -l"
+alias gl="gollama"
+alias ol="mods"
+alias idf='. $HOME/git/esp-idf/export.sh'
+alias o='tlm explain'
+alias hf="hfdownloader -c 10 -t \$HUGGINGFACE_TOKEN -j"
+alias imagesearch="sisi search"
+alias gemini="gemini --yolo"
+alias kanban="npx -y vibe-kanban"
+alias claude="~/.claude/local/claude --dangerously-skip-permissions"
+alias cc='claude --dangerously-skip-permissions'
+alias ollama-sync-manifests='rsync -avr --progress --partial --files-from=<(ssh root@nas "cd /mnt/llm/ollama/models/manifests/registry.ollama.ai && find . -type f -newermt \$(date -d \"1 day ago\" +\%Y-\%m-\%d) -print0") --from0 root@nas:/mnt/llm/ollama/models/manifests/registry.ollama.ai/ /Users/samm/.ollama/models/manifests/registry.ollama.ai/'
+alias ollama-sync-models='rsync -avr --progress --partial --files-from=<(ssh root@nas "cd /mnt/llm/ollama/models/blobs && find . -type f -newermt \$(date -d \"1 day ago\" +\%Y-\%m-\%d) -print0") --from0 root@nas:/mnt/llm/ollama/models/blobs/ /Users/samm/.ollama/models/blobs/'
+alias ollama-sync="ollama-sync-models && ollama-sync-manifests"
+
+
+### Functions ###
+
+copilot-comments() {
+  # Function to list and display comments made by GitHub Copilot on the current PR
+  local -r current_branch="$(git branch --show-current 2>/dev/null)" || {
+    printf "Error: Not in a git repository or no current branch\n" >&2
+    return 1
+  }
+
+  local base_branch pr_num general_reviews inline_comments all_prs
+
+  # Use printf instead of echo for better portability and consistency
+  base_branch="$(gh repo view --json defaultBranch --jq '.defaultBranch.name' 2>/dev/null)" || base_branch="main"
+  pr_num="$(gh pr list --head "${current_branch}" --base "${base_branch}" --json number --jq '.[0].number' 2>/dev/null)" || pr_num=""
+
+  if [[ -z "${pr_num}" || "${pr_num}" == "null" ]]; then
+    printf "No open PR found for current branch %s\n" "${current_branch}"
+
+    if all_prs="$(gh pr list --base "${base_branch}" --json number,title,headRefName --jq '.[] | "PR #\(.number): \(.title) (branch: \(.headRefName))"' 2>/dev/null)" && [[ -n "${all_prs}" ]]; then
+      printf "All open PRs to %s:\n%s\n" "${base_branch}" "${all_prs}"
+    fi
+    return 1
+  fi
+
+  # Helper function to reduce code duplication
+  _fetch_copilot_data() {
+    local -r endpoint="$1"
+    local -r jq_filter="$2"
+    gh api "repos/:owner/:repo/pulls/${pr_num}/${endpoint}" 2>/dev/null | jq -r "${jq_filter}" 2>/dev/null || true
+  }
+
+  general_reviews="$(_fetch_copilot_data "reviews" '.[] | select(.user.login == "Copilot") | .body')"
+  inline_comments="$(_fetch_copilot_data "comments" '.[] | select(.user.login == "Copilot") | "\(.path) (line \(.line))\n\(.body)\n" + ("=" * 50) + "\n"')"
+
+  if [[ -n "${general_reviews}" || -n "${inline_comments}" ]]; then
+    printf "I submitted the changes to Github Copilot to review, keep in mind that Github Copilot doesn't use a very strong AI model so it may not be accurate.\n"
+
+    printf "🤖 GitHub Copilot comments on PR #%s:\n" "${pr_num}"
+
+    if [[ -n "${general_reviews}" ]]; then
+      printf "## Copilot review comments\n"
+      printf "%s\n" "${general_reviews}\n------\n"
+    fi
+
+    if [[ -n "${inline_comments}" ]]; then
+      printf "\n## Copilot inline comments\n"
+      printf "%s\n" "${inline_comments}"
+    fi
+
+    printf "⚠️ Be mindful that GitHub Copilot's comments may be inaccurate. Ignore any invalid or out of context comments. Please review them carefully before applying any changes. Discuss recommendations with me if the path forward is unclear.\n"
+  fi
+}
+
+
+### Claude Code ###
+fcs() {
+  # https://github.com/pchalasani/claude-code-tools#-find-claude-session
+  # fcs "keyword1,keyword2,keyword3"   # Search in current project
+  # fcs "keywords" -g  Search across all Claude projects
+
+  # Check if user is asking for help
+  if [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]]; then
+    find-claude-session --help
+    return
+  fi
+  # Run find-claude-session in shell mode and evaluate the output
+  eval "$(find-claude-session --shell "$@" | sed '/^$/d')"
+}
+
+
+function ollama-pull-all() {
+  local BATCH_SIZE
+  local PULL_LOCAL_REGISTRY_MODELS
+  PULL_LOCAL_REGISTRY_MODELS=true
+  BATCH_SIZE=3
+
+  if $PULL_LOCAL_REGISTRY_MODELS; then
+    echo "pulling all models in batches of ${BATCH_SIZE}..."
+    ollama list | awk '$1 {print $1}' | while read -r model; do
+      # pull the modules in parallel batches
+      batch_count=$(jobs -p | wc -l)
+      if [ "$batch_count" -ge "$BATCH_SIZE" ]; then
+        sleep 1
+        wait -n
+      fi
+      echo "Pulling $model"
+      ollama pull "$model" &
+    done
+  else
+    echo "pulling all models not in the local registry in batches of ${BATCH_SIZE}..."
+    ollama list | awk '$1 !~ /^${OLLAMA_REGISTRY}/ {print $1}' | while read -r model; do
+      # pull the modules in parallel batches
+      batch_count=$(jobs -p | wc -l)
+      if [ "$batch_count" -ge "$BATCH_SIZE" ]; then
+        sleep 1
+        wait -n
+      fi
+      echo "Pulling $model"
+      ollama pull "$model" &
+    done
+  fi
+
+  # wait for all background jobs to finish
+  wait
+
+  echo "All models pulled"
+
+}
+
+
+
+ollama_extend_models() {
+  local ctx_size=${1:-32768}
+
+  # Prompt the user if they want to proceed
+  read -r -p "This will create longer context (${ctx_size}) models for all ollama models. Do you want to proceed? (y/n): " choice
+  if [[ $choice != [yY] ]]; then
+    echo "Aborting..."
+    return 1
+  fi
+
+  # Run ollama ls and process each line
+  ollama ls | tail -n +2 | while read -r line; do
+    # Extract model name
+    model_name=$(echo "$line" | awk '{print $1}')
+
+    # Split model name into base name and variant
+    base_name=$(echo "$model_name" | cut -d':' -f1)
+    variant=$(echo "$model_name" | cut -d':' -f2)
+
+    # Create Modelfile
+    cat >"Modelfile-$model_name" <<EOF
+FROM $model_name
+
+PARAMETER num_ctx $ctx_size
+EOF
+
+    # Create extended model
+    ollama create "$base_name-$ctx_size:$variant" -f "Modelfile-$model_name"
+
+    echo "Created extended model: $base_name-$ctx_size:$variant"
+  done
+}
+
+
+# A function that does an ollama cp of any models that start with sammcj to instead start with registry.domain/ollama/<rest of the tag without sammcj>
+# function ollama-cp() {
+#   local models
+#   local registry
+#   registry=$(echo "$OLLAMA_REGISTRY" | sed 's/\//\\\//g')
+#   # shellcheck disable=SC2207 # array assignment is intentional
+#   models=($(ollama list | grep sammcj | grep -v grep | awk '{print $1}'))
+#   # sort by smallest to largest (human readable MB/GB)
+#   # calulate the total size of the models
+#   total_size=$(ollama list | grep sammcj | grep -v grep | awk '{print $3}' | paste -sd+ - | bc)
+#   echo "Total size of models to be considered: ${total_size}GB"
+#   # shellcheck disable=SC2207
+#   models=($(echo "${models[@]}" | tr ' ' '\n' | sort -h))
+#   for model in "${models[@]}"; do
+#     echo "Model: $model"
+#     new_model=$(echo "$model" | gsed -e s/sammcj/"$registry"/ | tr '[:upper:]' '[:lower:]')
+#     # if ollama list | grep -q "$new_model"; then
+#     #   echo "Model $new_model already exists, skipping"
+#     #   continue
+#     # fi
+#     echo "Copying $model to $new_model"
+#     ollama cp "$model" "$new_model" && ollama rm "$model"
+#     echo "Pushing $new_model"
+#     ollama push "$new_model"
+#   done
+# }
+
+
+# generate_commit_msg() {
+#   # This function generates a commit message using the ollama API
+#   # Map the function to a keybinding (e.g., gcm) in your .zshrc file:
+#   # bindkey '^Xg' generate_commit_msg
+#   local -r model="tinydolphin:1.1b- v2.8-q5_ K_ M"
+#   local -r prompt=$(git diff --cached --name-only | xargs -I{} echo "Why did you change {}?")
+#   local -r api_url="http://localhost:11434/api/generate"
+# }

@@ -1,4 +1,0 @@
-# shellcheck disable=SC2148 disable=SC1090 shell=bash
-#
-# Reminder: you can save with fabric by piping text to save, e.g. pbpaste|save
-#

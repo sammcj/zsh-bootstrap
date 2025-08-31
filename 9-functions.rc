@@ -136,14 +136,6 @@ function gbd() {
   fi
 }
 
-# generate_commit_msg() {
-#   # This function generates a commit message using the ollama API
-#   # Map the function to a keybinding (e.g., gcm) in your .zshrc file:
-#   # bindkey '^Xg' generate_commit_msg
-#   local -r model="tinydolphin:1.1b- v2.8-q5_ K_ M"
-#   local -r prompt=$(git diff --cached --name-only | xargs -I{} echo "Why did you change {}?")
-#   local -r api_url="http://localhost:11434/api/generate"
-# }
 
 # A function that provides an untracked_files check for other functions
 function __staged_changes() {
@@ -1112,7 +1104,7 @@ function ba() {
   touch "$log_file"
 
   # link all ollama models to lm-studio
-  llamalink >>"${log_file}" 2>&1 &
+  gollama -L -H >>"${log_file}" 2>&1 &
 
   # update vscode packages
   code --update-extensions >>"${log_file}" 2>&1 &
@@ -1144,7 +1136,7 @@ function ba() {
   echo "Checking and downloading macOS updates in the background..."
   __update_macos >>"${log_file}" 2>&1 &
 
-  # ~/bin/build_ollama.sh >>"${log_file}" 2>&1 &
+  /Users/samm/bin/build_ollama.sh >>"${log_file}" 2>&1 &
 
   echo "Upgrading rust in the background..."
   rustup update >>"${log_file}" 2>&1 &
@@ -1617,72 +1609,6 @@ function pip() {
   fi
 }
 
-# A function that does an ollama cp of any models that start with sammcj to instead start with registry.domain/ollama/<rest of the tag without sammcj>
-# function ollama-cp() {
-#   local models
-#   local registry
-#   registry=$(echo "$OLLAMA_REGISTRY" | sed 's/\//\\\//g')
-#   # shellcheck disable=SC2207 # array assignment is intentional
-#   models=($(ollama list | grep sammcj | grep -v grep | awk '{print $1}'))
-#   # sort by smallest to largest (human readable MB/GB)
-#   # calulate the total size of the models
-#   total_size=$(ollama list | grep sammcj | grep -v grep | awk '{print $3}' | paste -sd+ - | bc)
-#   echo "Total size of models to be considered: ${total_size}GB"
-#   # shellcheck disable=SC2207
-#   models=($(echo "${models[@]}" | tr ' ' '\n' | sort -h))
-#   for model in "${models[@]}"; do
-#     echo "Model: $model"
-#     new_model=$(echo "$model" | gsed -e s/sammcj/"$registry"/ | tr '[:upper:]' '[:lower:]')
-#     # if ollama list | grep -q "$new_model"; then
-#     #   echo "Model $new_model already exists, skipping"
-#     #   continue
-#     # fi
-#     echo "Copying $model to $new_model"
-#     ollama cp "$model" "$new_model" && ollama rm "$model"
-#     echo "Pushing $new_model"
-#     ollama push "$new_model"
-#   done
-# }
-
-function ollama-pull-all() {
-  local BATCH_SIZE
-  local PULL_LOCAL_REGISTRY_MODELS
-  PULL_LOCAL_REGISTRY_MODELS=true
-  BATCH_SIZE=3
-
-  if $PULL_LOCAL_REGISTRY_MODELS; then
-    echo "pulling all models in batches of ${BATCH_SIZE}..."
-    ollama list | awk '$1 {print $1}' | while read -r model; do
-      # pull the modules in parallel batches
-      batch_count=$(jobs -p | wc -l)
-      if [ "$batch_count" -ge "$BATCH_SIZE" ]; then
-        sleep 1
-        wait -n
-      fi
-      echo "Pulling $model"
-      ollama pull "$model" &
-    done
-  else
-    echo "pulling all models not in the local registry in batches of ${BATCH_SIZE}..."
-    ollama list | awk '$1 !~ /^${OLLAMA_REGISTRY}/ {print $1}' | while read -r model; do
-      # pull the modules in parallel batches
-      batch_count=$(jobs -p | wc -l)
-      if [ "$batch_count" -ge "$BATCH_SIZE" ]; then
-        sleep 1
-        wait -n
-      fi
-      echo "Pulling $model"
-      ollama pull "$model" &
-    done
-  fi
-
-  # wait for all background jobs to finish
-  wait
-
-  echo "All models pulled"
-
-}
-
 function aws-sso() {
   if [[ -z $1 ]]; then
     echo "Usage: aws-sso <profile>"
@@ -1724,39 +1650,6 @@ alias awl="source ${HOME}/.tmp/awltmp"
 
 function aws-nas() {
   /Users/samm/Library/Mobile\ Documents/com~apple~CloudDocs/Dropbox\ Import/dotfiles/shell_config/update-aws-creds.sh aisandpit
-}
-
-ollama_extend_models() {
-  local ctx_size=${1:-32768}
-
-  # Prompt the user if they want to proceed
-  read -r -p "This will create longer context (${ctx_size}) models for all ollama models. Do you want to proceed? (y/n): " choice
-  if [[ $choice != [yY] ]]; then
-    echo "Aborting..."
-    return 1
-  fi
-
-  # Run ollama ls and process each line
-  ollama ls | tail -n +2 | while read -r line; do
-    # Extract model name
-    model_name=$(echo "$line" | awk '{print $1}')
-
-    # Split model name into base name and variant
-    base_name=$(echo "$model_name" | cut -d':' -f1)
-    variant=$(echo "$model_name" | cut -d':' -f2)
-
-    # Create Modelfile
-    cat >"Modelfile-$model_name" <<EOF
-FROM $model_name
-
-PARAMETER num_ctx $ctx_size
-EOF
-
-    # Create extended model
-    ollama create "$base_name-$ctx_size:$variant" -f "Modelfile-$model_name"
-
-    echo "Created extended model: $base_name-$ctx_size:$variant"
-  done
 }
 
 if_not_in_vscode() {
@@ -1813,56 +1706,6 @@ cd() {
   fi
 }
 
-# Function to list and display comments made by GitHub Copilot on the current PR
-copilot-comments() {
-  local -r current_branch="$(git branch --show-current 2>/dev/null)" || {
-    printf "Error: Not in a git repository or no current branch\n" >&2
-    return 1
-  }
-
-  local base_branch pr_num general_reviews inline_comments all_prs
-
-  # Use printf instead of echo for better portability and consistency
-  base_branch="$(gh repo view --json defaultBranch --jq '.defaultBranch.name' 2>/dev/null)" || base_branch="main"
-  pr_num="$(gh pr list --head "${current_branch}" --base "${base_branch}" --json number --jq '.[0].number' 2>/dev/null)" || pr_num=""
-
-  if [[ -z "${pr_num}" || "${pr_num}" == "null" ]]; then
-    printf "No open PR found for current branch %s\n" "${current_branch}"
-
-    if all_prs="$(gh pr list --base "${base_branch}" --json number,title,headRefName --jq '.[] | "PR #\(.number): \(.title) (branch: \(.headRefName))"' 2>/dev/null)" && [[ -n "${all_prs}" ]]; then
-      printf "All open PRs to %s:\n%s\n" "${base_branch}" "${all_prs}"
-    fi
-    return 1
-  fi
-
-  # Helper function to reduce code duplication
-  _fetch_copilot_data() {
-    local -r endpoint="$1"
-    local -r jq_filter="$2"
-    gh api "repos/:owner/:repo/pulls/${pr_num}/${endpoint}" 2>/dev/null | jq -r "${jq_filter}" 2>/dev/null || true
-  }
-
-  general_reviews="$(_fetch_copilot_data "reviews" '.[] | select(.user.login == "Copilot") | .body')"
-  inline_comments="$(_fetch_copilot_data "comments" '.[] | select(.user.login == "Copilot") | "\(.path) (line \(.line))\n\(.body)\n" + ("=" * 50) + "\n"')"
-
-  if [[ -n "${general_reviews}" || -n "${inline_comments}" ]]; then
-    printf "I submitted the changes to Github Copilot to review, keep in mind that Github Copilot doesn't use a very strong AI model so it may not be accurate.\n"
-
-    printf "🤖 GitHub Copilot comments on PR #%s:\n" "${pr_num}"
-
-    if [[ -n "${general_reviews}" ]]; then
-      printf "## Copilot review comments\n"
-      printf "%s\n" "${general_reviews}\n------\n"
-    fi
-
-    if [[ -n "${inline_comments}" ]]; then
-      printf "\n## Copilot inline comments\n"
-      printf "%s\n" "${inline_comments}"
-    fi
-
-    printf "⚠️ Be mindful that GitHub Copilot's comments may be inaccurate. Ignore any invalid or out of context comments. Please review them carefully before applying any changes. Discuss recommendations with me if the path forward is unclear.\n"
-  fi
-}
 
 # Quick navigation to git repositories, optionally taking a subdirectory as an argument
 _git_nav() {
@@ -1904,28 +1747,13 @@ gm() { _git_nav "gm" "$@"; }
 g() { _git_nav "g" "$@"; }
 
 
-fcs() {
-  # https://github.com/pchalasani/claude-code-tools#-find-claude-session
-  # fcs "keyword1,keyword2,keyword3"   # Search in current project
-  # fcs "keywords" -g  Search across all Claude projects
-
-  # Check if user is asking for help
-  if [[ "$1" == "--help" ]] || [[ "$1" == "-h" ]]; then
-    find-claude-session --help
-    return
-  fi
-  # Run find-claude-session in shell mode and evaluate the output
-  eval "$(find-claude-session --shell "$@" | sed '/^$/d')"
-}
-
-
 # NPM Package Updater Function to update all global packages with error recovery
 # Automatically handles ENOTEMPTY errors by removing problematic directories
 # and reinstalling packages individually when batch install fails
 npm-global-update() {
     # Define allowed package patterns (substring matches)
     local allowed_patterns
-    allowed_patterns=("@anthropic-ai/claude-code" "@google/gemini-cli" "@qwen-code/qwen-code" "ccstatusline" "claude-code-router" "claudekit" "ccusage" "npm-check-updates" "playwright" "ccexp" "vibe-kanban" "claude-monitor" "@vscode/vsce" "yaml-language-server" "typescript-language-server" "typescript" "corepack")
+    allowed_patterns=("@anthropic-ai/claude-code" "@google/gemini-cli" "@qwen-code/qwen-code" "ccstatusline" "claude-code-router" "claudekit" "ccusage" "npm-check-updates" "playwright" "ccexp" "vibe-kanban" "@vscode/vsce" "yaml-language-server" "typescript-language-server" "typescript" "corepack" "npm")
 
     echo "🔍 Checking for global package updates..."
 
@@ -2107,3 +1935,321 @@ npm-global-update() {
     fi
 }
 alias ngu="npm-global-update"
+
+# g2rg - Grep to Ripgrep Converter
+# A complete solution for converting grep commands to ripgrep syntax
+#
+# Features:
+# - Manual conversion: g2rg "grep -ri 'pattern' ." or g2rg "-ri 'pattern' ."
+# - Auto-conversion: grep commands automatically use ripgrep in interactive shells
+# - Bypass: Use grep -og or grep --use-grep to use original grep
+#
+# Usage: source this file in your .zshrc
+
+# ============================================================================
+# Manual conversion function
+# ============================================================================
+
+g2rg() {
+    if [[ $# -eq 0 ]]; then
+        echo "Usage: g2rg <grep-command>"
+        echo "Example: g2rg \"grep -ri 'nodejs' . --exclude-dir .git\""
+        echo "Example: g2rg \"-ri 'nodejs' . --exclude-dir .git\""
+        return 1
+    fi
+
+    local input="$*"
+    local output="rg"
+    local pattern=""
+    local search_path="."
+    local glob_excludes=()
+
+    # Check if input starts with 'grep' and remove it
+    if [[ $input == grep\ * ]]; then
+        input=${input#grep }
+    fi
+
+    # Split input into array
+    local -a words
+    words=("${=input}")
+
+    local i=1
+    local pattern_found=false
+
+    while [[ $i -le ${#words[@]} ]]; do
+        local word=${words[$i]}
+
+        # Handle combined flags like -ri, -rn, etc.
+        if [[ $word =~ ^-[a-zA-Z]{2,}$ ]] && [[ $word != --* ]]; then
+            # Split combined flags (e.g., -ri becomes -r -i)
+            local flags=${word#-}
+            for (( j=1; j<=${#flags}; j++ )); do
+                local flag=${flags:$((j-1)):1}
+                case $flag in
+                    r|R)
+                        # ripgrep is recursive by default
+                        ;;
+                    i)
+                        output="$output -i"
+                        ;;
+                    v)
+                        output="$output -v"
+                        ;;
+                    n)
+                        output="$output -n"
+                        ;;
+                    H)
+                        output="$output -H"
+                        ;;
+                    h)
+                        output="$output -h"
+                        ;;
+                    l)
+                        output="$output -l"
+                        ;;
+                    L)
+                        output="$output -L"
+                        ;;
+                    c)
+                        output="$output -c"
+                        ;;
+                    w)
+                        output="$output -w"
+                        ;;
+                    x)
+                        output="$output -x"
+                        ;;
+                    *)
+                        # Unknown single flag, pass it through
+                        output="$output -$flag"
+                        ;;
+                esac
+            done
+        else
+            case $word in
+            -r|-R|--recursive)
+                # ripgrep is recursive by default
+                ;;
+            -i|--ignore-case)
+                output="$output -i"
+                ;;
+            -v|--invert-match)
+                output="$output -v"
+                ;;
+            -n|--line-number)
+                output="$output -n"
+                ;;
+            -H|--with-filename)
+                output="$output -H"
+                ;;
+            -h|--no-filename)
+                output="$output -h"
+                ;;
+            -l|--files-with-matches)
+                output="$output -l"
+                ;;
+            -L|--files-without-match)
+                output="$output --files-without-match"
+                ;;
+            -c|--count)
+                output="$output -c"
+                ;;
+            -w|--word-regexp)
+                output="$output -w"
+                ;;
+            -x|--line-regexp)
+                output="$output -x"
+                ;;
+            -A*)
+                if [[ $word == "-A" ]]; then
+                    ((i++))
+                    local num=${words[$i]}
+                    output="$output -A $num"
+                else
+                    local num=${word#-A}
+                    output="$output -A $num"
+                fi
+                ;;
+            -B*)
+                if [[ $word == "-B" ]]; then
+                    ((i++))
+                    local num=${words[$i]}
+                    output="$output -B $num"
+                else
+                    local num=${word#-B}
+                    output="$output -B $num"
+                fi
+                ;;
+            -C*)
+                if [[ $word == "-C" ]]; then
+                    ((i++))
+                    local num=${words[$i]}
+                    output="$output -C $num"
+                else
+                    local num=${word#-C}
+                    output="$output -C $num"
+                fi
+                ;;
+            --exclude-dir)
+                ((i++))
+                local dir_pattern=${words[$i]}
+                dir_pattern=${dir_pattern//\'/}
+                dir_pattern=${dir_pattern//\"/}
+                if [[ $dir_pattern == */* ]]; then
+                    glob_excludes+=("!$dir_pattern")
+                else
+                    glob_excludes+=("!$dir_pattern/*")
+                fi
+                ;;
+            --exclude)
+                ((i++))
+                local file_pattern=${words[$i]}
+                file_pattern=${file_pattern//\'/}
+                file_pattern=${file_pattern//\"/}
+                glob_excludes+=("!$file_pattern")
+                ;;
+            -*)
+                output="$output $word"
+                ;;
+            *)
+                if [[ $pattern_found == false ]]; then
+                    pattern=$word
+                    pattern=${pattern//\'/}
+                    pattern=${pattern//\"/}
+                    pattern_found=true
+                else
+                    search_path=$word
+                fi
+                ;;
+            esac
+        fi
+        ((i++))
+    done
+
+    # Build the final ripgrep command
+    if [[ -n $pattern ]]; then
+        output="$output '$pattern'"
+    fi
+
+    output="$output $search_path"
+
+    for exclude in "${glob_excludes[@]}"; do
+        output="$output --glob '$exclude'"
+    done
+
+    echo "$output"
+}
+
+# Convert and execute
+g2rg-exec() {
+    local rg_command
+    rg_command=$(g2rg "$@")
+    echo "Executing: $rg_command"
+    eval "$rg_command"
+}
+
+# ============================================================================
+# Automatic grep interception (interactive shells only)
+# ============================================================================
+
+if [[ -o interactive ]] || [[ -n $ZSH_VERSION ]]; then
+
+    # Store the original grep command path
+    if [[ -z $__ORIGINAL_GREP_PATH ]]; then
+        __ORIGINAL_GREP_PATH="$(which grep)"
+    fi
+
+    # Function to call original grep
+    __original_grep() {
+        "$__ORIGINAL_GREP_PATH" "$@"
+    }
+
+    # Override grep function
+    grep() {
+        # Check if ripgrep is available
+        if ! command -v rg &> /dev/null; then
+            echo "Warning: ripgrep (rg) not found, falling back to original grep" >&2
+            __original_grep "$@"
+            return $?
+        fi
+
+        # Check if user wants to bypass auto-conversion
+        if [[ $1 == "--use-grep" ]] || [[ $1 == "-og" ]]; then
+            shift
+            __original_grep "$@"
+            return $?
+        fi
+
+        # Build the grep command string for g2rg
+        local grep_cmd="grep"
+        for arg in "$@"; do
+            if [[ $arg =~ [[:space:]] ]]; then
+                grep_cmd="$grep_cmd '$arg'"
+            else
+                grep_cmd="$grep_cmd $arg"
+            fi
+        done
+
+        # Convert using g2rg function
+        local rg_cmd
+        rg_cmd=$(g2rg "$grep_cmd")
+
+        # Show conversion if verbose mode is enabled
+        if [[ -n $GREP_TO_RG_VERBOSE ]]; then
+            echo "# Converting: $grep_cmd" >&2
+            echo "# Running: $rg_cmd" >&2
+        fi
+
+        # Execute the ripgrep command
+        eval "$rg_cmd"
+    }
+
+    # ========================================================================
+    # Helper functions
+    # ========================================================================
+
+    # Use original grep
+    original-grep() {
+        __original_grep "$@"
+    }
+
+    # Toggle verbose mode
+    grep-verbose-on() {
+        export GREP_TO_RG_VERBOSE=1
+        echo "grep-to-rg verbose mode enabled"
+    }
+
+    grep-verbose-off() {
+        unset GREP_TO_RG_VERBOSE
+        echo "grep-to-rg verbose mode disabled"
+    }
+
+    # Disable auto-conversion
+    grep-auto-off() {
+        unfunction grep 2>/dev/null
+        echo "grep auto-conversion disabled (source again to re-enable)"
+    }
+
+    # Show status
+    grep-status() {
+        echo "g2rg Status:"
+        echo "  Auto-conversion: $(if [[ $(type -w grep) == "grep: function" ]]; then echo "enabled"; else echo "disabled"; fi)"
+        echo "  Verbose mode: $(if [[ -n $GREP_TO_RG_VERBOSE ]]; then echo "enabled"; else echo "disabled"; fi)"
+        echo "  Ripgrep available: $(if command -v rg &> /dev/null; then echo "yes"; else echo "no"; fi)"
+        echo ""
+        echo "Commands:"
+        echo "  g2rg \"command\"        - Convert grep command to ripgrep"
+        echo "  g2rg-exec \"command\"   - Convert and execute"
+        echo "  grep -og              - Use original grep (bypass conversion)"
+        echo "  original-grep         - Use original grep"
+        echo "  grep-verbose-on/off   - Toggle conversion display"
+        echo "  grep-auto-off         - Disable auto-conversion"
+        echo "  grep-status           - Show this status"
+    }
+
+    # Show initial notice (only once per session)
+    if [[ -z $GREP_TO_RG_LOADED ]]; then
+        export GREP_TO_RG_LOADED=1
+    fi
+
+fi

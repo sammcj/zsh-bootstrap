@@ -63,7 +63,8 @@ set nocursorline                " disabled because it makes keyboard repeat too 
 set ruler
 set visualbell
 set scrolloff=8                 " start scrolling before reaching the bottom.
-set rtp+=/opt/homebrew/bin/fzf
+" set rtp+=/opt/homebrew/bin/fzf
+set rtp+=/opt/homebrew/opt/fzf
 set encoding=UTF-8
 set laststatus=2             " always show status line.
 set magic                       " For regular expressions turn magic on
