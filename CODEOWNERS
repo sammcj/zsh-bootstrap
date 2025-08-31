@@ -1,2 +1,5 @@
 # Sam McLeod
 *.sh @sammcj
+*.rc @sammcj
+*.conf @sammcj
+*.md @sammcj
