@@ -26,9 +26,6 @@ alias gemini="gemini --yolo"
 alias kanban="npx -y vibe-kanban"
 alias claude="~/.claude/local/claude --dangerously-skip-permissions"
 alias cc='claude --dangerously-skip-permissions'
-alias ollama-sync-manifests='rsync -avr --progress --partial --files-from=<(ssh root@nas "cd /mnt/llm/ollama/models/manifests/registry.ollama.ai && find . -type f -newermt \$(date -d \"1 day ago\" +\%Y-\%m-\%d) -print0") --from0 root@nas:/mnt/llm/ollama/models/manifests/registry.ollama.ai/ /Users/samm/.ollama/models/manifests/registry.ollama.ai/'
-alias ollama-sync-models='rsync -avr --progress --partial --files-from=<(ssh root@nas "cd /mnt/llm/ollama/models/blobs && find . -type f -newermt \$(date -d \"1 day ago\" +\%Y-\%m-\%d) -print0") --from0 root@nas:/mnt/llm/ollama/models/blobs/ /Users/samm/.ollama/models/blobs/'
-alias ollama-sync="ollama-sync-models && ollama-sync-manifests"
 
 
 ### Functions ###
