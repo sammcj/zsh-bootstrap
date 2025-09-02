@@ -1753,7 +1753,7 @@ g() { _git_nav "g" "$@"; }
 npm-global-update() {
     # Define allowed package patterns (substring matches)
     local allowed_patterns
-    allowed_patterns=("@anthropic-ai/claude-code" "@google/gemini-cli" "@qwen-code/qwen-code" "ccstatusline" "claude-code-router" "claudekit" "ccusage" "npm-check-updates" "playwright" "ccexp" "vibe-kanban" "@vscode/vsce" "yaml-language-server" "typescript-language-server" "typescript" "corepack" "npm")
+    allowed_patterns=("@anthropic-ai/claude-code" "@google/gemini-cli" "@qwen-code/qwen-code" "ccstatusline" "claude-code-router" "claudekit" "ccusage" "npm-check-updates" "playwright" "ccexp" "vibe-kanban" "@vscode/vsce" "yaml-language-server" "typescript-language-server" "typescript" "corepack" "npm" "pnpm" "jest" "tweakcc" "@modelcontextprotocol/inspector")
 
     echo "🔍 Checking for global package updates..."
 
@@ -1969,15 +1969,15 @@ g2rg() {
         input=${input#grep }
     fi
 
-    # Split input into array
-    local -a words
-    words=("${=input}")
+    # Parse arguments whilst preserving quoted strings
+    local -a args
+    eval "args=($input)"
 
     local i=1
     local pattern_found=false
 
-    while [[ $i -le ${#words[@]} ]]; do
-        local word=${words[$i]}
+    while [[ $i -le ${#args[@]} ]]; do
+        local word=${args[$i]}
 
         # Handle combined flags like -ri, -rn, etc.
         if [[ $word =~ ^-[a-zA-Z]{2,}$ ]] && [[ $word != --* ]]; then
@@ -2027,100 +2027,94 @@ g2rg() {
             done
         else
             case $word in
-            -r|-R|--recursive)
-                # ripgrep is recursive by default
-                ;;
-            -i|--ignore-case)
-                output="$output -i"
-                ;;
-            -v|--invert-match)
-                output="$output -v"
-                ;;
-            -n|--line-number)
-                output="$output -n"
-                ;;
-            -H|--with-filename)
-                output="$output -H"
-                ;;
-            -h|--no-filename)
-                output="$output -h"
-                ;;
-            -l|--files-with-matches)
-                output="$output -l"
-                ;;
-            -L|--files-without-match)
-                output="$output --files-without-match"
-                ;;
-            -c|--count)
-                output="$output -c"
-                ;;
-            -w|--word-regexp)
-                output="$output -w"
-                ;;
-            -x|--line-regexp)
-                output="$output -x"
-                ;;
-            -A*)
-                if [[ $word == "-A" ]]; then
+                -r|-R|--recursive)
+                    # ripgrep is recursive by default
+                    ;;
+                -i|--ignore-case)
+                    output="$output -i"
+                    ;;
+                -v|--invert-match)
+                    output="$output -v"
+                    ;;
+                -n|--line-number)
+                    output="$output -n"
+                    ;;
+                -H|--with-filename)
+                    output="$output -H"
+                    ;;
+                -h|--no-filename)
+                    output="$output -h"
+                    ;;
+                -l|--files-with-matches)
+                    output="$output -l"
+                    ;;
+                -L|--files-without-match)
+                    output="$output --files-without-match"
+                    ;;
+                -c|--count)
+                    output="$output -c"
+                    ;;
+                -w|--word-regexp)
+                    output="$output -w"
+                    ;;
+                -x|--line-regexp)
+                    output="$output -x"
+                    ;;
+                -A*)
+                    if [[ $word == "-A" ]]; then
+                        ((i++))
+                        local num=${args[$i]}
+                        output="$output -A $num"
+                    else
+                        local num=${word#-A}
+                        output="$output -A $num"
+                    fi
+                    ;;
+                -B*)
+                    if [[ $word == "-B" ]]; then
+                        ((i++))
+                        local num=${args[$i]}
+                        output="$output -B $num"
+                    else
+                        local num=${word#-B}
+                        output="$output -B $num"
+                    fi
+                    ;;
+                -C*)
+                    if [[ $word == "-C" ]]; then
+                        ((i++))
+                        local num=${args[$i]}
+                        output="$output -C $num"
+                    else
+                        local num=${word#-C}
+                        output="$output -C $num"
+                    fi
+                    ;;
+                --exclude-dir)
                     ((i++))
-                    local num=${words[$i]}
-                    output="$output -A $num"
-                else
-                    local num=${word#-A}
-                    output="$output -A $num"
-                fi
-                ;;
-            -B*)
-                if [[ $word == "-B" ]]; then
+                    local dir_pattern=${args[$i]}
+                    if [[ $dir_pattern == */* ]]; then
+                        glob_excludes+=("!$dir_pattern")
+                    else
+                        glob_excludes+=("!$dir_pattern/*")
+                    fi
+                    ;;
+                --exclude)
                     ((i++))
-                    local num=${words[$i]}
-                    output="$output -B $num"
-                else
-                    local num=${word#-B}
-                    output="$output -B $num"
-                fi
-                ;;
-            -C*)
-                if [[ $word == "-C" ]]; then
-                    ((i++))
-                    local num=${words[$i]}
-                    output="$output -C $num"
-                else
-                    local num=${word#-C}
-                    output="$output -C $num"
-                fi
-                ;;
-            --exclude-dir)
-                ((i++))
-                local dir_pattern=${words[$i]}
-                dir_pattern=${dir_pattern//\'/}
-                dir_pattern=${dir_pattern//\"/}
-                if [[ $dir_pattern == */* ]]; then
-                    glob_excludes+=("!$dir_pattern")
-                else
-                    glob_excludes+=("!$dir_pattern/*")
-                fi
-                ;;
-            --exclude)
-                ((i++))
-                local file_pattern=${words[$i]}
-                file_pattern=${file_pattern//\'/}
-                file_pattern=${file_pattern//\"/}
-                glob_excludes+=("!$file_pattern")
-                ;;
-            -*)
-                output="$output $word"
-                ;;
-            *)
-                if [[ $pattern_found == false ]]; then
-                    pattern=$word
-                    pattern=${pattern//\'/}
-                    pattern=${pattern//\"/}
-                    pattern_found=true
-                else
-                    search_path=$word
-                fi
-                ;;
+                    local file_pattern=${args[$i]}
+                    glob_excludes+=("!$file_pattern")
+                    ;;
+                -*)
+                    output="$output $word"
+                    ;;
+                *)
+                    if [[ $pattern_found == false ]]; then
+                        pattern=$word
+                        pattern_found=true
+                    else
+                        search_path=$word
+                    fi
+                    ;;
             esac
         fi
         ((i++))
@@ -2128,13 +2122,15 @@ g2rg() {
 
     # Build the final ripgrep command
     if [[ -n $pattern ]]; then
-        output="$output '$pattern'"
+        # Escape the pattern properly for ripgrep
+        pattern=${pattern//\\/\\\\}  # Escape backslashes
+        output="$output $(printf %q "$pattern")"
     fi
 
     output="$output $search_path"
 
     for exclude in "${glob_excludes[@]}"; do
-        output="$output --glob '$exclude'"
+        output="$output --glob $(printf %q "$exclude")"
     done
 
     echo "$output"
@@ -2164,7 +2160,127 @@ if [[ -o interactive ]] || [[ -n $ZSH_VERSION ]]; then
         "$__ORIGINAL_GREP_PATH" "$@"
     }
 
-    # Override grep function
+    # Direct argument version of g2rg for the grep function
+    g2rg-direct() {
+        local output="rg"
+        local pattern=""
+        local search_path="."
+        local glob_excludes=()
+        local pattern_found=false
+
+        local i=1
+        while [[ $i -le $# ]]; do
+            local word=${@:$i:1}
+
+            # Handle combined flags like -ri, -rn, etc.
+            if [[ $word =~ ^-[a-zA-Z]{2,}$ ]] && [[ $word != --* ]]; then
+                # Split combined flags (e.g., -ri becomes -r -i)
+                local flags=${word#-}
+                for (( j=1; j<=${#flags}; j++ )); do
+                    local flag=${flags:$((j-1)):1}
+                    case $flag in
+                        r|R) ;; # ripgrep is recursive by default
+                        i) output="$output -i" ;;
+                        v) output="$output -v" ;;
+                        n) output="$output -n" ;;
+                        H) output="$output -H" ;;
+                        h) output="$output -h" ;;
+                        l) output="$output -l" ;;
+                        L) output="$output -L" ;;
+                        c) output="$output -c" ;;
+                        w) output="$output -w" ;;
+                        x) output="$output -x" ;;
+                        *) output="$output -$flag" ;;
+                    esac
+                done
+            else
+                case $word in
+                    -r|-R|--recursive) ;; # ripgrep is recursive by default
+                    -i|--ignore-case) output="$output -i" ;;
+                    -v|--invert-match) output="$output -v" ;;
+                    -n|--line-number) output="$output -n" ;;
+                    -H|--with-filename) output="$output -H" ;;
+                    -h|--no-filename) output="$output -h" ;;
+                    -l|--files-with-matches) output="$output -l" ;;
+                    -L|--files-without-match) output="$output --files-without-match" ;;
+                    -c|--count) output="$output -c" ;;
+                    -w|--word-regexp) output="$output -w" ;;
+                    -x|--line-regexp) output="$output -x" ;;
+                    -A*)
+                        if [[ $word == "-A" ]]; then
+                            ((i++))
+                            local num=${@:$i:1}
+                            output="$output -A $num"
+                        else
+                            local num=${word#-A}
+                            output="$output -A $num"
+                        fi
+                        ;;
+                    -B*)
+                        if [[ $word == "-B" ]]; then
+                            ((i++))
+                            local num=${@:$i:1}
+                            output="$output -B $num"
+                        else
+                            local num=${word#-B}
+                            output="$output -B $num"
+                        fi
+                        ;;
+                    -C*)
+                        if [[ $word == "-C" ]]; then
+                            ((i++))
+                            local num=${@:$i:1}
+                            output="$output -C $num"
+                        else
+                            local num=${word#-C}
+                            output="$output -C $num"
+                        fi
+                        ;;
+                    --exclude-dir)
+                        ((i++))
+                        local dir_pattern=${@:$i:1}
+                        if [[ $dir_pattern == */* ]]; then
+                            glob_excludes+=("!$dir_pattern")
+                        else
+                            glob_excludes+=("!$dir_pattern/*")
+                        fi
+                        ;;
+                    --exclude)
+                        ((i++))
+                        local file_pattern=${@:$i:1}
+                        glob_excludes+=("!$file_pattern")
+                        ;;
+                    -*)
+                        output="$output $word"
+                        ;;
+                    *)
+                        if [[ $pattern_found == false ]]; then
+                            pattern=$word
+                            pattern_found=true
+                        else
+                            search_path=$word
+                        fi
+                        ;;
+                esac
+            fi
+            ((i++))
+        done
+
+        # Build the final ripgrep command
+        if [[ -n $pattern ]]; then
+            output="$output $(printf %q "$pattern")"
+        fi
+
+        output="$output $search_path"
+
+        for exclude in "${glob_excludes[@]}"; do
+            output="$output --glob $(printf %q "$exclude")"
+        done
+
+        echo "$output"
+    }
+
+    # Enhanced grep override function
     grep() {
         # Check if ripgrep is available
         if ! command -v rg &> /dev/null; then
@@ -2180,23 +2296,13 @@ if [[ -o interactive ]] || [[ -n $ZSH_VERSION ]]; then
             return $?
         fi
 
-        # Build the grep command string for g2rg
-        local grep_cmd="grep"
-        for arg in "$@"; do
-            if [[ $arg =~ [[:space:]] ]]; then
-                grep_cmd="$grep_cmd '$arg'"
-            else
-                grep_cmd="$grep_cmd $arg"
-            fi
-        done
-
-        # Convert using g2rg function
+        # Pass arguments directly instead of building a string
         local rg_cmd
-        rg_cmd=$(g2rg "$grep_cmd")
+        rg_cmd=$(g2rg-direct "$@")
 
         # Show conversion if verbose mode is enabled
         if [[ -n $GREP_TO_RG_VERBOSE ]]; then
-            echo "# Converting: $grep_cmd" >&2
+            echo "# Converting grep with ${#@} arguments" >&2
             echo "# Running: $rg_cmd" >&2
         fi
 
