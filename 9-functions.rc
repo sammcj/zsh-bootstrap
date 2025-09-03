@@ -2160,17 +2160,16 @@ if [[ -o interactive ]] || [[ -n $ZSH_VERSION ]]; then
         "$__ORIGINAL_GREP_PATH" "$@"
     }
 
-    # Direct argument version of g2rg for the grep function
-    g2rg-direct() {
+    # Direct argument version of g2rg for stdin input
+    g2rg-direct-stdin() {
         local output="rg"
         local pattern=""
-        local search_path="."
         local glob_excludes=()
         local pattern_found=false
 
         local i=1
         while [[ $i -le $# ]]; do
-            local word=${@:$i:1}
+            local word="${!i}"
 
             # Handle combined flags like -ri, -rn, etc.
             if [[ $word =~ ^-[a-zA-Z]{2,}$ ]] && [[ $word != --* ]]; then
@@ -2179,7 +2178,9 @@ if [[ -o interactive ]] || [[ -n $ZSH_VERSION ]]; then
                 for (( j=1; j<=${#flags}; j++ )); do
                     local flag=${flags:$((j-1)):1}
                     case $flag in
-                        r|R) ;; # ripgrep is recursive by default
+                        r|R)
+                            # ripgrep reads stdin when no files specified
+                            ;;
                         i) output="$output -i" ;;
                         v) output="$output -v" ;;
                         n) output="$output -n" ;;
@@ -2195,7 +2196,9 @@ if [[ -o interactive ]] || [[ -n $ZSH_VERSION ]]; then
                 done
             else
                 case $word in
-                    -r|-R|--recursive) ;; # ripgrep is recursive by default
+                    -r|-R|--recursive)
+                        # not relevant for stdin
+                        ;;
                     -i|--ignore-case) output="$output -i" ;;
                     -v|--invert-match) output="$output -v" ;;
                     -n|--line-number) output="$output -n" ;;
@@ -2209,7 +2212,7 @@ if [[ -o interactive ]] || [[ -n $ZSH_VERSION ]]; then
                     -A*)
                         if [[ $word == "-A" ]]; then
                             ((i++))
-                            local num=${@:$i:1}
+                            local num="${!i}"
                             output="$output -A $num"
                         else
                             local num=${word#-A}
@@ -2219,7 +2222,7 @@ if [[ -o interactive ]] || [[ -n $ZSH_VERSION ]]; then
                     -B*)
                         if [[ $word == "-B" ]]; then
                             ((i++))
-                            local num=${@:$i:1}
+                            local num="${!i}"
                             output="$output -B $num"
                         else
                             local num=${word#-B}
@@ -2229,7 +2232,116 @@ if [[ -o interactive ]] || [[ -n $ZSH_VERSION ]]; then
                     -C*)
                         if [[ $word == "-C" ]]; then
                             ((i++))
-                            local num=${@:$i:1}
+                            local num="${!i}"
+                            output="$output -C $num"
+                        else
+                            local num=${word#-C}
+                            output="$output -C $num"
+                        fi
+                        ;;
+                    --exclude-dir|--exclude)
+                        ((i++))
+                        # Skip exclude patterns for stdin - not relevant
+                        ;;
+                    -*)
+                        output="$output $word"
+                        ;;
+                    *)
+                        if [[ $pattern_found == false ]]; then
+                            pattern=$word
+                            pattern_found=true
+                        fi
+                        # Skip additional arguments (would be file paths) for stdin
+                        ;;
+                esac
+            fi
+            ((i++))
+        done
+
+        # Build the final ripgrep command for stdin
+        if [[ -n $pattern ]]; then
+            output="$output $(printf %q "$pattern")"
+        fi
+
+        # Don't add any file paths - ripgrep will read from stdin
+
+        echo "$output"
+    }
+
+    # Direct argument version of g2rg for the grep function
+    g2rg-direct() {
+        local output="rg"
+        local pattern=""
+        local search_path="."
+        local glob_excludes=()
+        local pattern_found=false
+
+        local i=1
+        while [[ $i -le $# ]]; do
+            local word="${!i}"
+
+            # Handle combined flags like -ri, -rn, etc.
+            if [[ $word =~ ^-[a-zA-Z]{2,}$ ]] && [[ $word != --* ]]; then
+                # Split combined flags (e.g., -ri becomes -r -i)
+                local flags=${word#-}
+                for (( j=1; j<=${#flags}; j++ )); do
+                    local flag=${flags:$((j-1)):1}
+                    case $flag in
+                        r|R)
+                            # ripgrep is recursive by default
+                            ;;
+                        i) output="$output -i" ;;
+                        v) output="$output -v" ;;
+                        n) output="$output -n" ;;
+                        H) output="$output -H" ;;
+                        h) output="$output -h" ;;
+                        l) output="$output -l" ;;
+                        L) output="$output -L" ;;
+                        c) output="$output -c" ;;
+                        w) output="$output -w" ;;
+                        x) output="$output -x" ;;
+                        *) output="$output -$flag" ;;
+                    esac
+                done
+            else
+                case $word in
+                    -r|-R|--recursive)
+                        # ripgrep is recursive by default
+                        ;;
+                    -i|--ignore-case) output="$output -i" ;;
+                    -v|--invert-match) output="$output -v" ;;
+                    -n|--line-number) output="$output -n" ;;
+                    -H|--with-filename) output="$output -H" ;;
+                    -h|--no-filename) output="$output -h" ;;
+                    -l|--files-with-matches) output="$output -l" ;;
+                    -L|--files-without-match) output="$output --files-without-match" ;;
+                    -c|--count) output="$output -c" ;;
+                    -w|--word-regexp) output="$output -w" ;;
+                    -x|--line-regexp) output="$output -x" ;;
+                    -A*)
+                        if [[ $word == "-A" ]]; then
+                            ((i++))
+                            local num="${!i}"
+                            output="$output -A $num"
+                        else
+                            local num=${word#-A}
+                            output="$output -A $num"
+                        fi
+                        ;;
+                    -B*)
+                        if [[ $word == "-B" ]]; then
+                            ((i++))
+                            local num="${!i}"
+                            output="$output -B $num"
+                        else
+                            local num=${word#-B}
+                            output="$output -B $num"
+                        fi
+                        ;;
+                    -C*)
+                        if [[ $word == "-C" ]]; then
+                            ((i++))
+                            local num="${!i}"
                             output="$output -C $num"
                         else
                             local num=${word#-C}
@@ -2238,7 +2350,7 @@ if [[ -o interactive ]] || [[ -n $ZSH_VERSION ]]; then
                         ;;
                     --exclude-dir)
                         ((i++))
-                        local dir_pattern=${@:$i:1}
+                        local dir_pattern="${!i}"
                         if [[ $dir_pattern == */* ]]; then
                             glob_excludes+=("!$dir_pattern")
                         else
@@ -2247,7 +2359,7 @@ if [[ -o interactive ]] || [[ -n $ZSH_VERSION ]]; then
                         ;;
                     --exclude)
                         ((i++))
-                        local file_pattern=${@:$i:1}
+                        local file_pattern="${!i}"
                         glob_excludes+=("!$file_pattern")
                         ;;
                     -*)
@@ -2296,13 +2408,24 @@ if [[ -o interactive ]] || [[ -n $ZSH_VERSION ]]; then
             return $?
         fi
 
+        # Check if stdin is being piped
+        local use_stdin=false
+        if [[ ! -t 0 ]]; then
+            use_stdin=true
+        fi
+
         # Pass arguments directly instead of building a string
         local rg_cmd
-        rg_cmd=$(g2rg-direct "$@")
+        if [[ $use_stdin == true ]]; then
+            rg_cmd=$(g2rg-direct-stdin "$@")
+        else
+            rg_cmd=$(g2rg-direct "$@")
+        fi
 
         # Show conversion if verbose mode is enabled
         if [[ -n $GREP_TO_RG_VERBOSE ]]; then
             echo "# Converting grep with ${#@} arguments" >&2
+            echo "# Using stdin: $use_stdin" >&2
             echo "# Running: $rg_cmd" >&2
         fi
 
