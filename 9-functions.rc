@@ -1941,8 +1941,8 @@ alias ngu="npm-global-update"
 #
 # Features:
 # - Manual conversion: g2rg "grep -ri 'pattern' ." or g2rg "-ri 'pattern' ."
-# - Auto-conversion: grep commands automatically use ripgrep in interactive shells
-# - Bypass: Use grep -og or grep --use-grep to use original grep
+# - Command conversion: rgrep [grep-args] - converts and executes grep commands using ripgrep
+# - Original grep is preserved and accessible via the standard grep command
 #
 # Usage: source this file in your .zshrc
 
@@ -1984,7 +1984,8 @@ g2rg() {
             # Split combined flags (e.g., -ri becomes -r -i)
             local flags=${word#-}
             for (( j=1; j<=${#flags}; j++ )); do
-                local flag=${flags:$((j-1)):1}
+                local pos=$((j-1))
+                local flag=${flags:$pos:1}
                 case $flag in
                     r|R)
                         # ripgrep is recursive by default
@@ -2145,20 +2146,10 @@ g2rg-exec() {
 }
 
 # ============================================================================
-# Automatic grep interception (interactive shells only)
+# rgrep function (interactive shells only)
 # ============================================================================
 
 if [[ -o interactive ]] || [[ -n $ZSH_VERSION ]]; then
-
-    # Store the original grep command path
-    if [[ -z $__ORIGINAL_GREP_PATH ]]; then
-        __ORIGINAL_GREP_PATH="$(which grep)"
-    fi
-
-    # Function to call original grep
-    __original_grep() {
-        "$__ORIGINAL_GREP_PATH" "$@"
-    }
 
     # Direct argument version of g2rg for stdin input
     g2rg-direct-stdin() {
@@ -2167,16 +2158,18 @@ if [[ -o interactive ]] || [[ -n $ZSH_VERSION ]]; then
         local glob_excludes=()
         local pattern_found=false
 
+        local args=("$@")
         local i=1
         while [[ $i -le $# ]]; do
-            local word="${!i}"
+            local word="${args[$i]}"
 
             # Handle combined flags like -ri, -rn, etc.
             if [[ $word =~ ^-[a-zA-Z]{2,}$ ]] && [[ $word != --* ]]; then
                 # Split combined flags (e.g., -ri becomes -r -i)
                 local flags=${word#-}
                 for (( j=1; j<=${#flags}; j++ )); do
-                    local flag=${flags:$((j-1)):1}
+                    local pos=$((j-1))
+                    local flag=${flags:$pos:1}
                     case $flag in
                         r|R)
                             # ripgrep reads stdin when no files specified
@@ -2276,16 +2269,18 @@ if [[ -o interactive ]] || [[ -n $ZSH_VERSION ]]; then
         local glob_excludes=()
         local pattern_found=false
 
+        local args=("$@")
         local i=1
         while [[ $i -le $# ]]; do
-            local word="${!i}"
+            local word="${args[$i]}"
 
             # Handle combined flags like -ri, -rn, etc.
             if [[ $word =~ ^-[a-zA-Z]{2,}$ ]] && [[ $word != --* ]]; then
                 # Split combined flags (e.g., -ri becomes -r -i)
                 local flags=${word#-}
                 for (( j=1; j<=${#flags}; j++ )); do
-                    local flag=${flags:$((j-1)):1}
+                    local pos=$((j-1))
+                    local flag=${flags:$pos:1}
                     case $flag in
                         r|R)
                             # ripgrep is recursive by default
@@ -2392,19 +2387,12 @@ if [[ -o interactive ]] || [[ -n $ZSH_VERSION ]]; then
         echo "$output"
     }
 
-    # Enhanced grep override function
-    grep() {
+    # Enhanced ripgrep function (use rgrep to convert grep commands to ripgrep)
+    rgrep() {
         # Check if ripgrep is available
         if ! command -v rg &> /dev/null; then
             echo "Warning: ripgrep (rg) not found, falling back to original grep" >&2
-            __original_grep "$@"
-            return $?
-        fi
-
-        # Check if user wants to bypass auto-conversion
-        if [[ $1 == "--use-grep" ]] || [[ $1 == "-og" ]]; then
-            shift
-            __original_grep "$@"
+            command grep "$@"
             return $?
         fi
 
@@ -2437,48 +2425,29 @@ if [[ -o interactive ]] || [[ -n $ZSH_VERSION ]]; then
     # Helper functions
     # ========================================================================
 
-    # Use original grep
-    original-grep() {
-        __original_grep "$@"
-    }
-
-    # Toggle verbose mode
-    grep-verbose-on() {
+    # Toggle verbose mode for rgrep
+    rgrep-verbose-on() {
         export GREP_TO_RG_VERBOSE=1
-        echo "grep-to-rg verbose mode enabled"
+        echo "rgrep verbose mode enabled"
     }
 
-    grep-verbose-off() {
+    rgrep-verbose-off() {
         unset GREP_TO_RG_VERBOSE
-        echo "grep-to-rg verbose mode disabled"
-    }
-
-    # Disable auto-conversion
-    grep-auto-off() {
-        unfunction grep 2>/dev/null
-        echo "grep auto-conversion disabled (source again to re-enable)"
+        echo "rgrep verbose mode disabled"
     }
 
     # Show status
-    grep-status() {
-        echo "g2rg Status:"
-        echo "  Auto-conversion: $(if [[ $(type -w grep) == "grep: function" ]]; then echo "enabled"; else echo "disabled"; fi)"
+    rgrep-status() {
+        echo "rgrep Status:"
         echo "  Verbose mode: $(if [[ -n $GREP_TO_RG_VERBOSE ]]; then echo "enabled"; else echo "disabled"; fi)"
         echo "  Ripgrep available: $(if command -v rg &> /dev/null; then echo "yes"; else echo "no"; fi)"
         echo ""
         echo "Commands:"
         echo "  g2rg \"command\"        - Convert grep command to ripgrep"
         echo "  g2rg-exec \"command\"   - Convert and execute"
-        echo "  grep -og              - Use original grep (bypass conversion)"
-        echo "  original-grep         - Use original grep"
-        echo "  grep-verbose-on/off   - Toggle conversion display"
-        echo "  grep-auto-off         - Disable auto-conversion"
-        echo "  grep-status           - Show this status"
+        echo "  rgrep [grep-args]     - Convert grep arguments to ripgrep and execute"
+        echo "  rgrep-verbose-on/off  - Toggle conversion display"
+        echo "  rgrep-status          - Show this status"
     }
-
-    # Show initial notice (only once per session)
-    if [[ -z $GREP_TO_RG_LOADED ]]; then
-        export GREP_TO_RG_LOADED=1
-    fi
 
 fi
