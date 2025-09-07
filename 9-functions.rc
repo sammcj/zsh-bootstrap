@@ -46,7 +46,8 @@ git-fix-casing() {
 # wrapper for adding advanced git cli customisation
 alias git='git_wrapper'
 git_wrapper() {
-  set +m # Make jobs quiet by default
+  # Safely disable job control if possible
+  set +m 2>/dev/null || true
   # If invoked by another function, alias or xargs, interpret it as normal
   if [[ -n ${FUNCNAME[*]} ]] || [[ -n $ALIASES ]] || [[ -n $XARGS ]]; then
     command git "$@"
@@ -78,7 +79,8 @@ git_wrapper() {
   else
     command git "$@"
   fi
-  set -m # Make jobs verbose again
+  # Safely re-enable job control if possible
+  set -m 2>/dev/null || true
 }
 
 function gco() {
