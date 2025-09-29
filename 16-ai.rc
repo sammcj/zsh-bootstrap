@@ -7,9 +7,9 @@
 alias clinerules="code /Users/samm/Library/Mobile\ Documents/com\~apple\~CloudDocs/Documents/Cline"
 alias clinerulesd="cd /Users/samm/Library/Mobile\ Documents/com\~apple\~CloudDocs/Documents/Cline"
 alias sync_ollama_models="${HOME}/git/sammcj/scripts/ollama/export_ollama_model.py"
-alias copilot="gh copilot suggest -t shell"
-alias copilot-explain="gh copilot explain"
-alias '??'='copilot'
+# alias copilot="gh copilot suggest -t shell"
+# alias copilot-explain="gh copilot explain"
+alias '??'='claude -p'
 alias '???'='copilot-comments'
 alias wtf='copilot'
 alias l="OLLAMA_HOST=http://localhost:11434 gollama -l"
