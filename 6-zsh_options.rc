@@ -15,7 +15,7 @@ zmodload zsh/mapfile # bring mapfile to zsh
 # zmodload zsh/attr # attrs info
 
 # Keep echo "station" > station from clobbering station
-setopt NO_CLOBBER
+# setopt NO_CLOBBER # disabled as not sure I'm getting value from this 2025-10-28
 
 # Case insensitive globbing
 setopt NO_CASE_GLOB
