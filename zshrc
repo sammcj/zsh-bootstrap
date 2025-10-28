@@ -104,7 +104,9 @@ fi
 # <<< conda initialize <<<
 
 ### zoxide ###
-eval "$(zoxide init zsh)"
+if [ -z "$RUNNING_IN_VSCODE" ]; then
+  eval "$(zoxide init zsh)"
+fi
 ### zoxide ###
 
 # Load custom aliases

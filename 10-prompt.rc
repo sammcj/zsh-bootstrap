@@ -3,48 +3,44 @@
 ### Prompt! ###
 autoload -U colors && colors
 
-# Outputs current branch info in prompt format
-# function git_prompt_info() {
-#   local ref
-#   # if [[ "$(command git config --get oh-my-zsh.hide-status 2>/dev/null)" != "1" ]]; then
-#   # ref=$(command git symbolic-ref HEAD 2>/dev/null) || - ref=$(command git rev-parse --short HEAD 2>/dev/null) || return 0
-#   # echo "$ZSH_THEME_GIT_PROMPT_PREFIX${ref#refs/heads/}$(parse_git_dirty)$ZSH_THEME_GIT_PROMPT_SUFFIX"
-#   echo "${ZSH_THEME_GIT_PROMPT_PREFIX}${ref#refs/heads/}${ZSH_THEME_GIT_PROMPT_SUFFIX}"
-#   # fi
-# }
+if [ -z "$RUNNING_IN_VSCODE" ]; then
+  # Fancy prompt with git info - only when not in VS Code
+  # show git changes on the command line
+  autoload -Uz vcs_info add-zsh-hook
+  setopt prompt_subst
+  add-zsh-hook precmd vcs_info
 
-# show git changes on the command line
-autoload -Uz vcs_info add-zsh-hook
-setopt prompt_subst
-add-zsh-hook precmd vcs_info
+  zstyle ':vcs_info:*' enable git
+  precmd() {
+    vcs_info
+  }
 
-zstyle ':vcs_info:*' enable git
-precmd() {
-  vcs_info
-}
+  # Enable checking for (un)staged changes, enabling use of %u and %c
+  zstyle ':vcs_info:*' check-for-changes true
+  zstyle ':vcs_info:git:*' formats '[%b%u%c]'
+  zstyle ':vcs_info:git:*' actionformats '[%b|%a%u%c]'
+  # add the number of unstaged/staged changes to the prompt
+  zstyle ':vcs_info:git:*' enable git
 
-# Enable checking for (un)staged changes, enabling use of %u and %c
-zstyle ':vcs_info:*' check-for-changes true
-zstyle ':vcs_info:git:*' formats '[%b%u%c]'
-zstyle ':vcs_info:git:*' actionformats '[%b|%a%u%c]'
-# add the number of unstaged/staged changes to the prompt
-zstyle ':vcs_info:git:*' enable git
+  # %s - The current version control system, like git or svn.
+  # %r - The name of the root directory of the repository
+  # %S - The current path relative to the repository root directory
+  # %b - Branch information, like master
+  # %m - In case of Git, show information about stashes
+  # %u - Show unstaged changes in the repository
+  # %c - Show staged changes in the repository
 
-# %s - The current version control system, like git or svn.
-# %r - The name of the root directory of the repository
-# %S - The current path relative to the repository root directory
-# %b - Branch information, like master
-# %m - In case of Git, show information about stashes
-# %u - Show unstaged changes in the repository
-# %c - Show staged changes in the repository
+  # %{$(tput setaf 60)%}%m  # this is the machine IP/hostname
 
-# %{$(tput setaf 60)%}%m  # this is the machine IP/hostname
+  # Right hand side of the prompt line
+  # RPROMPT="%{$(tput setaf 177)%}\$vcs_info_msg_0_"
 
-# Right hand side of the prompt line
-# RPROMPT="%{$(tput setaf 177)%}\$vcs_info_msg_0_"
+  # PROMPT="%{$(tput setaf 60)%}%m %{$(tput setaf 105)%}%~${vcs_info_msg_0_}%{$(tput sgr0)%} %(?..[%?] )$ "
 
-# PROMPT="%{$(tput setaf 60)%}%m %{$(tput setaf 105)%}%~${vcs_info_msg_0_}%{$(tput sgr0)%} %(?..[%?] )$ "
+  # %{$(tput setaf 177)%}\$vcs_info_msg_0_ # means pink git information
 
-# %{$(tput setaf 177)%}\$vcs_info_msg_0_ # means pink git information
-
-PROMPT="%{$(tput setaf 177)%}\$vcs_info_msg_0_ %{$(tput setaf 105)%}%~${vcs_info_msg_0_}%{$(tput sgr0)%} %(?..[%?] )$ "
+  PROMPT="%{$(tput setaf 177)%}\$vcs_info_msg_0_ %{$(tput setaf 105)%}%~${vcs_info_msg_0_}%{$(tput sgr0)%} %(?..[%?] )$ "
+else
+  # Simple prompt for VS Code terminal
+  PROMPT="%{$(tput setaf 105)%}%~%{$(tput sgr0)%} %(?..[%?] )$ "
+fi

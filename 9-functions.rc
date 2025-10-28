@@ -1656,7 +1656,12 @@ function aws-nas() {
 
 if_not_in_vscode() {
   # if not running in vscode, run the rest of the arguments
-  # requires setting RUNNING_IN_VSCODE to true in vscode's terminal env settings
+  # requires setting RUNNING_IN_VSCODE to true in vscode's terminal env settings:
+  #   {
+  #   "terminal.integrated.env.osx": {
+  #     "RUNNING_IN_VSCODE": "true"
+  #   }
+
   if [ -z "$RUNNING_IN_VSCODE" ]; then
     "$@"
   fi

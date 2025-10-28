@@ -18,36 +18,32 @@ if ! zgen saved; then
   # echo "Creating a zgen save"
 
   ## load omz plugins ##
-  # zgen oh-my-zsh
-  zgen oh-my-zsh plugins/gitfast
-  zgen oh-my-zsh plugins/command-not-found
   zgen oh-my-zsh plugins/fzf # https://github.com/ohmyzsh/ohmyzsh/issues/12412
-  # zgen oh-my-zsh plugins/fnm
-  # zgen oh-my-zsh plugins/docker
-  zgen oh-my-zsh plugins/docker-compose
-  zgen oh-my-zsh plugins/aws
-  zgen oh-my-zsh plugins/colored-man-pages
-  # plugins/macos - throwing compdef errors
-  # zgen oh-my-zsh plugins/nmap
-  # zgen oh-my-zsh plugins/gh
+  zgen oh-my-zsh plugins/command-not-found
+
+  if [ -z "$RUNNING_IN_VSCODE" ]; then
+    zgen oh-my-zsh plugins/docker-compose
+    zgen oh-my-zsh plugins/aws
+    zgen oh-my-zsh plugins/colored-man-pages
+    zgen oh-my-zsh plugins/gitfast
+  fi
 
   ## load normal plugins ##
   zgen loadall <<EOPLUGINS
     zsh-users/zsh-completions src
-    # zgen load zsh-users/zsh-completions
-    # zsh-users/zsh-syntax-highlighting
     zsh-users/zsh-autosuggestions
     zsh-users/zsh-history-substring-search
     zdharma-continuum/fast-syntax-highlighting
+EOPLUGINS
+
+  if [ -z "$RUNNING_IN_VSCODE" ]; then
+    zgen loadall <<EOPLUGINS
 
     # git related
     peterhurford/git-it-on.zsh
-
-    # fzf wrappers
     bigH/git-fuzzy
 EOPLUGINS
-  # sunlei/zsh-ssh
-  # ocodo/ollama_zsh_completion
+    fi
 
   # save zgen cache
   zgen save
