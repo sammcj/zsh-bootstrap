@@ -7,9 +7,6 @@
 alias clinerules="code /Users/samm/Library/Mobile\ Documents/com\~apple\~CloudDocs/Documents/Cline"
 alias clinerulesd="cd /Users/samm/Library/Mobile\ Documents/com\~apple\~CloudDocs/Documents/Cline"
 alias sync_ollama_models="${HOME}/git/sammcj/scripts/ollama/export_ollama_model.py"
-# alias copilot="gh copilot suggest -t shell"
-# alias copilot-explain="gh copilot explain"
-alias '??'='claude -p'
 alias '???'='copilot-comments'
 alias wtf='copilot'
 alias l="OLLAMA_HOST=http://localhost:11434 gollama -l"
@@ -27,8 +24,37 @@ alias kanban="npx -y vibe-kanban"
 alias claude="~/.claude/local/claude --dangerously-skip-permissions"
 alias cc='claude --dangerously-skip-permissions'
 
+# Claude Code non-interactive functions
+alias '??'='claude_helper'
+alias '??!'='claude_helper_exec'
 
 ### Functions ###
+
+# Command-line helper - provides commands without execution
+function claude_helper {
+    local prompt="$*"
+
+    claude \
+        --system-prompt 'You are a macOS zsh command-line assistant. Provide exact commands to accomplish tasks. Output the command. If the command is highly complex you may provide a concise explanation. You are running non-interactively so you cannot ask questions. You cannot execute commands. Do not add conversational text, questions, or unnecessary detail. Focus on providing the most appropriate and efficient command following current best practices.' \
+        --disallowed-tools Bash \
+        --strict-mcp-config \
+        -p \
+        "$prompt"
+}
+
+# Command-line helper with execution - runs commands when explicitly requested
+function claude_helper_exec {
+    local prompt="$*"
+
+    claude \
+        --system-prompt 'You are a macOS command-line assistant with execution access. Run commands to accomplish the requested task. Do not run unsafe commands that may harm the system or compromise security. You are running non-interactively so you cannot ask questions. If the user asks you to run a command that may delete, edit or overwrite files BEFORE DOING ANYTHING ELSE YOU MUST REFUSE unless they have given you the exact phrase "YES REALLY" at the start or end of their request - you may state this as a condition for executing such commands. Provide concise output keeping explanations brief and focused on the commands being run.' \
+        --strict-mcp-config \
+        -p \
+        "$prompt"
+}
+
+
+
 
 copilot-comments() {
   # Function to list and display comments made by GitHub Copilot on the current PR
