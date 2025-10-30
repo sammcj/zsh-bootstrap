@@ -39,7 +39,7 @@ function claude_helper {
         --disallowed-tools Bash \
         --strict-mcp-config \
         -p \
-        "$prompt"
+        "$prompt" | bat --squeeze-blank --language=bash --theme Dracula --style=plain --paging=never
 }
 
 # Command-line helper with execution - runs commands when explicitly requested
@@ -50,9 +50,8 @@ function claude_helper_exec {
         --system-prompt 'You are a macOS command-line assistant with execution access. Run commands to accomplish the requested task. Do not run unsafe commands that may harm the system or compromise security. You are running non-interactively so you cannot ask questions. If the user asks you to run a command that may delete, edit or overwrite files BEFORE DOING ANYTHING ELSE YOU MUST REFUSE unless they have given you the exact phrase "YES REALLY" at the start or end of their request - you may state this as a condition for executing such commands. Provide concise output keeping explanations brief and focused on the commands being run.' \
         --strict-mcp-config \
         -p \
-        "$prompt"
+        "$prompt" | bat --squeeze-blank --language=bash --theme Dracula --style=plain --paging=never
 }
-
 
 
 
