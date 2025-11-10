@@ -11,10 +11,6 @@ export XZ_OPT="--threads=8"
 export MU_REPO_SERIAL=false
 export EDITOR=vim
 
-# colima / docker
-# export DOCKER_HOST="unix://$HOME/.colima/docker.sock"
-# export DOCKER_HOST="unix:///Users/samm/.colima/default/docker.sock"
-
 # Tells 'less' not to paginate if less than a page
 export LESS="-F -X $LESS"
 
@@ -62,3 +58,13 @@ export POSTHOG_API_ENDPOINT=""
 export HF_HUB_ENABLE_HF_TRANSFER=1
 export CONDA_SUBDIR=osx-arm64
 export LOCAL_ENDPOINT=https://ollama.icu.lol/v1 # For OpenCode
+
+## SDKs
+export SDKROOT="$(xcrun --sdk macosx --show-sdk-path)"
+
+### Homebrew library paths
+export PKG_CONFIG_PATH="/opt/homebrew/lib/pkgconfig:$PKG_CONFIG_PATH"
+export LIBRARY_PATH="/opt/homebrew/lib:$LIBRARY_PATH"
+export LD_LIBRARY_PATH="/opt/homebrew/lib:$LD_LIBRARY_PATH"
+export DYLD_FALLBACK_LIBRARY_PATH="/opt/homebrew/lib:$DYLD_FALLBACK_LIBRARY_PATH"
+export FFMPEG_DIR="/opt/homebrew/opt/ffmpeg"
