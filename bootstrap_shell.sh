@@ -34,7 +34,7 @@ function installPythonPackages() {
   uv venv
   . venv/bin/activate
   popd
-  uv pip3 install -U mu-repo oterm
+  uv pip3 install -U mu-repo oterm "yt-dlp[default,curl-cffi]"
 
   oterm --install-completion zsh
 }
@@ -201,11 +201,42 @@ function configureDotfiles() {
 
   link_dotfile "bat-config" "/Users/samm/.config/bat/config"
   link_dotfile "rsyncd.conf" "/Users/samm/.rsyncd.conf"
-
-  # TODO: clean this up
-  ln -s /Users/samm/Library/Mobile\ Documents/com~apple~CloudDocs/Dropbox\ Import/dotfiles/aider/.aider.conf.yml $HOME/.aider.conf.yml
-  ln -s /Users/samm/Library/Mobile\ Documents/com~apple~CloudDocs/Dropbox\ Import/dotfiles/aider/.aider.models.json $HOME/.aider.models.json
 }
+
+function configureAmazonQ(){
+  # if amazon q is installed, run q setup
+  if command -v q &>/dev/null; then
+    q settings app.beta true
+    q settings codeWhisperer.shareCodeWhispererContentWithAWS false
+    q settings telemetry.enabled false
+    q settings app.launchOnStartup false
+    q settings autocomplete.disable true
+    q settings autocomplete.fuzzySearch true
+    q settings autocomplete.keybindings.control+k "ignore"
+    q settings autocomplete.keybindings.control+n "ignore"
+    q settings autocomplete.keybindings.control+p "ignore"
+    q settings autocomplete.keybindings.control+r "ignore"
+    q settings autocomplete.keybindings.down "ignore"
+    q settings autocomplete.keybindings.enter "ignore"
+    q settings autocomplete.keybindings.shift+tab "ignore"
+    q settings autocomplete.keybindings.tab "ignore"
+    q settings autocomplete.keybindings.up "ignore"
+    q settings chat.enableCheckpoint true
+    q settings chat.enableContextUsageIndicator true
+    q settings chat.enableDelegate true
+    q settings chat.enableTangentMode true
+    q settings chat.enableThinking true
+    q settings chat.enableTodoList true
+    q settings chat.greeting.enabled false
+    q settings inline.enabled false
+    q settings integrations.iterm.disabled true
+    q settings integrations.terminal.disabled true
+    q settings integrations.vscode.disabled true
+    q settings introspect.tangentMode true
+    q settings chat.defaultModel "claude-sonnet-4.5"
+  fi
+}
+
 
 function main() {
   installHomebrew
@@ -222,6 +253,8 @@ function main() {
   macOSConfig
   gitConfig
   configureDotfiles
+
+  configureAmazonQ
 }
 
 # Run the main functions to install and configure

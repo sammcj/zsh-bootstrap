@@ -2159,303 +2159,339 @@ g2rg-exec() {
 
 if [[ -o interactive ]] || [[ -n $ZSH_VERSION ]]; then
 
-    # Direct argument version of g2rg for stdin input
-    g2rg-direct-stdin() {
-        local output="rg"
-        local pattern=""
-        local glob_excludes=()
-        local pattern_found=false
+  # Direct argument version of g2rg for stdin input
+  g2rg-direct-stdin() {
+      local output="rg"
+      local pattern=""
+      local glob_excludes=()
+      local pattern_found=false
 
-        local args=("$@")
-        local i=1
-        while [[ $i -le $# ]]; do
-            local word="${args[$i]}"
+      local args=("$@")
+      local i=1
+      while [[ $i -le $# ]]; do
+          local word="${args[$i]}"
 
-            # Handle combined flags like -ri, -rn, etc.
-            if [[ $word =~ ^-[a-zA-Z]{2,}$ ]] && [[ $word != --* ]]; then
-                # Split combined flags (e.g., -ri becomes -r -i)
-                local flags=${word#-}
-                for (( j=1; j<=${#flags}; j++ )); do
-                    local pos=$((j-1))
-                    local flag=${flags:$pos:1}
-                    case $flag in
-                        r|R)
-                            # ripgrep reads stdin when no files specified
-                            ;;
-                        i) output="$output -i" ;;
-                        v) output="$output -v" ;;
-                        n) output="$output -n" ;;
-                        H) output="$output -H" ;;
-                        h) output="$output -h" ;;
-                        l) output="$output -l" ;;
-                        L) output="$output -L" ;;
-                        c) output="$output -c" ;;
-                        w) output="$output -w" ;;
-                        x) output="$output -x" ;;
-                        *) output="$output -$flag" ;;
-                    esac
-                done
-            else
-                case $word in
-                    -r|-R|--recursive)
-                        # not relevant for stdin
-                        ;;
-                    -i|--ignore-case) output="$output -i" ;;
-                    -v|--invert-match) output="$output -v" ;;
-                    -n|--line-number) output="$output -n" ;;
-                    -H|--with-filename) output="$output -H" ;;
-                    -h|--no-filename) output="$output -h" ;;
-                    -l|--files-with-matches) output="$output -l" ;;
-                    -L|--files-without-match) output="$output --files-without-match" ;;
-                    -c|--count) output="$output -c" ;;
-                    -w|--word-regexp) output="$output -w" ;;
-                    -x|--line-regexp) output="$output -x" ;;
-                    -A*)
-                        if [[ $word == "-A" ]]; then
-                            ((i++))
-                            local num="${!i}"
-                            output="$output -A $num"
-                        else
-                            local num=${word#-A}
-                            output="$output -A $num"
-                        fi
-                        ;;
-                    -B*)
-                        if [[ $word == "-B" ]]; then
-                            ((i++))
-                            local num="${!i}"
-                            output="$output -B $num"
-                        else
-                            local num=${word#-B}
-                            output="$output -B $num"
-                        fi
-                        ;;
-                    -C*)
-                        if [[ $word == "-C" ]]; then
-                            ((i++))
-                            local num="${!i}"
-                            output="$output -C $num"
-                        else
-                            local num=${word#-C}
-                            output="$output -C $num"
-                        fi
-                        ;;
-                    --exclude-dir|--exclude)
-                        ((i++))
-                        # Skip exclude patterns for stdin - not relevant
-                        ;;
-                    -*)
-                        output="$output $word"
-                        ;;
-                    *)
-                        if [[ $pattern_found == false ]]; then
-                            pattern=$word
-                            pattern_found=true
-                        fi
-                        # Skip additional arguments (would be file paths) for stdin
-                        ;;
-                esac
-            fi
-            ((i++))
-        done
+          # Handle combined flags like -ri, -rn, etc.
+          if [[ $word =~ ^-[a-zA-Z]{2,}$ ]] && [[ $word != --* ]]; then
+              # Split combined flags (e.g., -ri becomes -r -i)
+              local flags=${word#-}
+              for (( j=1; j<=${#flags}; j++ )); do
+                  local pos=$((j-1))
+                  local flag=${flags:$pos:1}
+                  case $flag in
+                      r|R)
+                          # ripgrep reads stdin when no files specified
+                          ;;
+                      i) output="$output -i" ;;
+                      v) output="$output -v" ;;
+                      n) output="$output -n" ;;
+                      H) output="$output -H" ;;
+                      h) output="$output -h" ;;
+                      l) output="$output -l" ;;
+                      L) output="$output -L" ;;
+                      c) output="$output -c" ;;
+                      w) output="$output -w" ;;
+                      x) output="$output -x" ;;
+                      *) output="$output -$flag" ;;
+                  esac
+              done
+          else
+              case $word in
+                  -r|-R|--recursive)
+                      # not relevant for stdin
+                      ;;
+                  -i|--ignore-case) output="$output -i" ;;
+                  -v|--invert-match) output="$output -v" ;;
+                  -n|--line-number) output="$output -n" ;;
+                  -H|--with-filename) output="$output -H" ;;
+                  -h|--no-filename) output="$output -h" ;;
+                  -l|--files-with-matches) output="$output -l" ;;
+                  -L|--files-without-match) output="$output --files-without-match" ;;
+                  -c|--count) output="$output -c" ;;
+                  -w|--word-regexp) output="$output -w" ;;
+                  -x|--line-regexp) output="$output -x" ;;
+                  -A*)
+                      if [[ $word == "-A" ]]; then
+                          ((i++))
+                          local num="${!i}"
+                          output="$output -A $num"
+                      else
+                          local num=${word#-A}
+                          output="$output -A $num"
+                      fi
+                      ;;
+                  -B*)
+                      if [[ $word == "-B" ]]; then
+                          ((i++))
+                          local num="${!i}"
+                          output="$output -B $num"
+                      else
+                          local num=${word#-B}
+                          output="$output -B $num"
+                      fi
+                      ;;
+                  -C*)
+                      if [[ $word == "-C" ]]; then
+                          ((i++))
+                          local num="${!i}"
+                          output="$output -C $num"
+                      else
+                          local num=${word#-C}
+                          output="$output -C $num"
+                      fi
+                      ;;
+                  --exclude-dir|--exclude)
+                      ((i++))
+                      # Skip exclude patterns for stdin - not relevant
+                      ;;
+                  -*)
+                      output="$output $word"
+                      ;;
+                  *)
+                      if [[ $pattern_found == false ]]; then
+                          pattern=$word
+                          pattern_found=true
+                      fi
+                      # Skip additional arguments (would be file paths) for stdin
+                      ;;
+              esac
+          fi
+          ((i++))
+      done
 
-        # Build the final ripgrep command for stdin
-        if [[ -n $pattern ]]; then
-            output="$output $(printf %q "$pattern")"
-        fi
+      # Build the final ripgrep command for stdin
+      if [[ -n $pattern ]]; then
+          output="$output $(printf %q "$pattern")"
+      fi
 
-        # Don't add any file paths - ripgrep will read from stdin
+      # Don't add any file paths - ripgrep will read from stdin
 
-        echo "$output"
-    }
+      echo "$output"
+  }
 
-    # Direct argument version of g2rg for the grep function
-    g2rg-direct() {
-        local output="rg"
-        local pattern=""
-        local search_path="."
-        local glob_excludes=()
-        local pattern_found=false
+  # Direct argument version of g2rg for the grep function
+  g2rg-direct() {
+      local output="rg"
+      local pattern=""
+      local search_path="."
+      local glob_excludes=()
+      local pattern_found=false
 
-        local args=("$@")
-        local i=1
-        while [[ $i -le $# ]]; do
-            local word="${args[$i]}"
+      local args=("$@")
+      local i=1
+      while [[ $i -le $# ]]; do
+          local word="${args[$i]}"
 
-            # Handle combined flags like -ri, -rn, etc.
-            if [[ $word =~ ^-[a-zA-Z]{2,}$ ]] && [[ $word != --* ]]; then
-                # Split combined flags (e.g., -ri becomes -r -i)
-                local flags=${word#-}
-                for (( j=1; j<=${#flags}; j++ )); do
-                    local pos=$((j-1))
-                    local flag=${flags:$pos:1}
-                    case $flag in
-                        r|R)
-                            # ripgrep is recursive by default
-                            ;;
-                        i) output="$output -i" ;;
-                        v) output="$output -v" ;;
-                        n) output="$output -n" ;;
-                        H) output="$output -H" ;;
-                        h) output="$output -h" ;;
-                        l) output="$output -l" ;;
-                        L) output="$output -L" ;;
-                        c) output="$output -c" ;;
-                        w) output="$output -w" ;;
-                        x) output="$output -x" ;;
-                        *) output="$output -$flag" ;;
-                    esac
-                done
-            else
-                case $word in
-                    -r|-R|--recursive)
-                        # ripgrep is recursive by default
-                        ;;
-                    -i|--ignore-case) output="$output -i" ;;
-                    -v|--invert-match) output="$output -v" ;;
-                    -n|--line-number) output="$output -n" ;;
-                    -H|--with-filename) output="$output -H" ;;
-                    -h|--no-filename) output="$output -h" ;;
-                    -l|--files-with-matches) output="$output -l" ;;
-                    -L|--files-without-match) output="$output --files-without-match" ;;
-                    -c|--count) output="$output -c" ;;
-                    -w|--word-regexp) output="$output -w" ;;
-                    -x|--line-regexp) output="$output -x" ;;
-                    -A*)
-                        if [[ $word == "-A" ]]; then
-                            ((i++))
-                            local num="${!i}"
-                            output="$output -A $num"
-                        else
-                            local num=${word#-A}
-                            output="$output -A $num"
-                        fi
-                        ;;
-                    -B*)
-                        if [[ $word == "-B" ]]; then
-                            ((i++))
-                            local num="${!i}"
-                            output="$output -B $num"
-                        else
-                            local num=${word#-B}
-                            output="$output -B $num"
-                        fi
-                        ;;
-                    -C*)
-                        if [[ $word == "-C" ]]; then
-                            ((i++))
-                            local num="${!i}"
-                            output="$output -C $num"
-                        else
-                            local num=${word#-C}
-                            output="$output -C $num"
-                        fi
-                        ;;
-                    --exclude-dir)
-                        ((i++))
-                        local dir_pattern="${!i}"
-                        if [[ $dir_pattern == */* ]]; then
-                            glob_excludes+=("!$dir_pattern")
-                        else
-                            glob_excludes+=("!$dir_pattern/*")
-                        fi
-                        ;;
-                    --exclude)
-                        ((i++))
-                        local file_pattern="${!i}"
-                        glob_excludes+=("!$file_pattern")
-                        ;;
-                    -*)
-                        output="$output $word"
-                        ;;
-                    *)
-                        if [[ $pattern_found == false ]]; then
-                            pattern=$word
-                            pattern_found=true
-                        else
-                            search_path=$word
-                        fi
-                        ;;
-                esac
-            fi
-            ((i++))
-        done
+          # Handle combined flags like -ri, -rn, etc.
+          if [[ $word =~ ^-[a-zA-Z]{2,}$ ]] && [[ $word != --* ]]; then
+              # Split combined flags (e.g., -ri becomes -r -i)
+              local flags=${word#-}
+              for (( j=1; j<=${#flags}; j++ )); do
+                  local pos=$((j-1))
+                  local flag=${flags:$pos:1}
+                  case $flag in
+                      r|R)
+                          # ripgrep is recursive by default
+                          ;;
+                      i) output="$output -i" ;;
+                      v) output="$output -v" ;;
+                      n) output="$output -n" ;;
+                      H) output="$output -H" ;;
+                      h) output="$output -h" ;;
+                      l) output="$output -l" ;;
+                      L) output="$output -L" ;;
+                      c) output="$output -c" ;;
+                      w) output="$output -w" ;;
+                      x) output="$output -x" ;;
+                      *) output="$output -$flag" ;;
+                  esac
+              done
+          else
+              case $word in
+                  -r|-R|--recursive)
+                      # ripgrep is recursive by default
+                      ;;
+                  -i|--ignore-case) output="$output -i" ;;
+                  -v|--invert-match) output="$output -v" ;;
+                  -n|--line-number) output="$output -n" ;;
+                  -H|--with-filename) output="$output -H" ;;
+                  -h|--no-filename) output="$output -h" ;;
+                  -l|--files-with-matches) output="$output -l" ;;
+                  -L|--files-without-match) output="$output --files-without-match" ;;
+                  -c|--count) output="$output -c" ;;
+                  -w|--word-regexp) output="$output -w" ;;
+                  -x|--line-regexp) output="$output -x" ;;
+                  -A*)
+                      if [[ $word == "-A" ]]; then
+                          ((i++))
+                          local num="${!i}"
+                          output="$output -A $num"
+                      else
+                          local num=${word#-A}
+                          output="$output -A $num"
+                      fi
+                      ;;
+                  -B*)
+                      if [[ $word == "-B" ]]; then
+                          ((i++))
+                          local num="${!i}"
+                          output="$output -B $num"
+                      else
+                          local num=${word#-B}
+                          output="$output -B $num"
+                      fi
+                      ;;
+                  -C*)
+                      if [[ $word == "-C" ]]; then
+                          ((i++))
+                          local num="${!i}"
+                          output="$output -C $num"
+                      else
+                          local num=${word#-C}
+                          output="$output -C $num"
+                      fi
+                      ;;
+                  --exclude-dir)
+                      ((i++))
+                      local dir_pattern="${!i}"
+                      if [[ $dir_pattern == */* ]]; then
+                          glob_excludes+=("!$dir_pattern")
+                      else
+                          glob_excludes+=("!$dir_pattern/*")
+                      fi
+                      ;;
+                  --exclude)
+                      ((i++))
+                      local file_pattern="${!i}"
+                      glob_excludes+=("!$file_pattern")
+                      ;;
+                  -*)
+                      output="$output $word"
+                      ;;
+                  *)
+                      if [[ $pattern_found == false ]]; then
+                          pattern=$word
+                          pattern_found=true
+                      else
+                          search_path=$word
+                      fi
+                      ;;
+              esac
+          fi
+          ((i++))
+      done
 
-        # Build the final ripgrep command
-        if [[ -n $pattern ]]; then
-            output="$output $(printf %q "$pattern")"
-        fi
+      # Build the final ripgrep command
+      if [[ -n $pattern ]]; then
+          output="$output $(printf %q "$pattern")"
+      fi
 
-        output="$output $search_path"
+      output="$output $search_path"
 
-        for exclude in "${glob_excludes[@]}"; do
-            output="$output --glob $(printf %q "$exclude")"
-        done
+      for exclude in "${glob_excludes[@]}"; do
+          output="$output --glob $(printf %q "$exclude")"
+      done
 
-        echo "$output"
-    }
+      echo "$output"
+  }
 
-    # Enhanced ripgrep function (use rgrep to convert grep commands to ripgrep)
-    rgrep() {
-        # Check if ripgrep is available
-        if ! command -v rg &> /dev/null; then
-            echo "Warning: ripgrep (rg) not found, falling back to original grep" >&2
-            command grep "$@"
-            return $?
-        fi
+  # Enhanced ripgrep function (use rgrep to convert grep commands to ripgrep)
+  rgrep() {
+      # Check if ripgrep is available
+      if ! command -v rg &> /dev/null; then
+          echo "Warning: ripgrep (rg) not found, falling back to original grep" >&2
+          command grep "$@"
+          return $?
+      fi
 
-        # Check if stdin is being piped
-        local use_stdin=false
-        if [[ ! -t 0 ]]; then
-            use_stdin=true
-        fi
+      # Check if stdin is being piped
+      local use_stdin=false
+      if [[ ! -t 0 ]]; then
+          use_stdin=true
+      fi
 
-        # Pass arguments directly instead of building a string
-        local rg_cmd
-        if [[ $use_stdin == true ]]; then
-            rg_cmd=$(g2rg-direct-stdin "$@")
-        else
-            rg_cmd=$(g2rg-direct "$@")
-        fi
+      # Pass arguments directly instead of building a string
+      local rg_cmd
+      if [[ $use_stdin == true ]]; then
+          rg_cmd=$(g2rg-direct-stdin "$@")
+      else
+          rg_cmd=$(g2rg-direct "$@")
+      fi
 
-        # Show conversion if verbose mode is enabled
-        if [[ -n $GREP_TO_RG_VERBOSE ]]; then
-            echo "# Converting grep with ${#@} arguments" >&2
-            echo "# Using stdin: $use_stdin" >&2
-            echo "# Running: $rg_cmd" >&2
-        fi
+      # Show conversion if verbose mode is enabled
+      if [[ -n $GREP_TO_RG_VERBOSE ]]; then
+          echo "# Converting grep with ${#@} arguments" >&2
+          echo "# Using stdin: $use_stdin" >&2
+          echo "# Running: $rg_cmd" >&2
+      fi
 
-        # Execute the ripgrep command
-        eval "$rg_cmd"
-    }
+      # Execute the ripgrep command
+      eval "$rg_cmd"
+  }
 
-    # ========================================================================
-    # Helper functions
-    # ========================================================================
+  # ========================================================================
+  # Helper functions
+  # ========================================================================
 
-    # Toggle verbose mode for rgrep
-    rgrep-verbose-on() {
-        export GREP_TO_RG_VERBOSE=1
-        echo "rgrep verbose mode enabled"
-    }
+  # Toggle verbose mode for rgrep
+  rgrep-verbose-on() {
+      export GREP_TO_RG_VERBOSE=1
+      echo "rgrep verbose mode enabled"
+  }
 
-    rgrep-verbose-off() {
-        unset GREP_TO_RG_VERBOSE
-        echo "rgrep verbose mode disabled"
-    }
+  rgrep-verbose-off() {
+      unset GREP_TO_RG_VERBOSE
+      echo "rgrep verbose mode disabled"
+  }
 
-    # Show status
-    rgrep-status() {
-        echo "rgrep Status:"
-        echo "  Verbose mode: $(if [[ -n $GREP_TO_RG_VERBOSE ]]; then echo "enabled"; else echo "disabled"; fi)"
-        echo "  Ripgrep available: $(if command -v rg &> /dev/null; then echo "yes"; else echo "no"; fi)"
-        echo ""
-        echo "Commands:"
-        echo "  g2rg \"command\"        - Convert grep command to ripgrep"
-        echo "  g2rg-exec \"command\"   - Convert and execute"
-        echo "  rgrep [grep-args]     - Convert grep arguments to ripgrep and execute"
-        echo "  rgrep-verbose-on/off  - Toggle conversion display"
-        echo "  rgrep-status          - Show this status"
-    }
-
+  # Show status
+  rgrep-status() {
+      echo "rgrep Status:"
+      echo "  Verbose mode: $(if [[ -n $GREP_TO_RG_VERBOSE ]]; then echo "enabled"; else echo "disabled"; fi)"
+      echo "  Ripgrep available: $(if command -v rg &> /dev/null; then echo "yes"; else echo "no"; fi)"
+      echo ""
+      echo "Commands:"
+      echo "  g2rg \"command\"        - Convert grep command to ripgrep"
+      echo "  g2rg-exec \"command\"   - Convert and execute"
+      echo "  rgrep [grep-args]     - Convert grep arguments to ripgrep and execute"
+      echo "  rgrep-verbose-on/off  - Toggle conversion display"
+      echo "  rgrep-status          - Show this status"
+  }
 fi
+
+yt-dlp() {
+  # Downloads the provided video with subtitles using the browsers cookies to ~/Downloads/videos
+  # and converts the subs to a plain txt file
+  local base_name output_file video_dir converted_count
+
+  video_dir="${HOME}/Downloads/videos"
+  mkdir -p "$video_dir"
+
+  if ! command yt-dlp --write-subs --write-auto-subs --sub-format json3 --sub-lang en \
+    --cookies-from-browser firefox --remote-components ejs:github \
+    -f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best" \
+    -o "$video_dir/%(title)s.%(ext)s" "$@"; then
+    echo "yt-dlp failed to download video"
+    return 1
+  fi
+
+  # Convert any json3 files in the video directory
+  converted_count=0
+  for file in "$video_dir"/*.json3; do
+    [[ -e "$file" ]] || continue
+    base_name="${file%.json3}"
+    output_file="${base_name}.txt"
+    echo "Converting $file to $output_file"
+    if jq -r '[.events[].segs[]?.utf8] | join("") | gsub("[\n ]+"; " ")' "$file" > "$output_file"; then
+      rm "$file"
+      echo "Cleaned up $file"
+      ((converted_count++))
+    else
+      echo "Failed to convert $file"
+    fi
+  done
+
+  if [[ $converted_count -eq 0 ]]; then
+    echo "No subtitles found or downloaded for this video"
+  fi
+}

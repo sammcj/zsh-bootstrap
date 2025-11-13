@@ -140,7 +140,7 @@ alias dnsbenchmark='dnstrace -n 10 -c 10 --server 192.168.0.1 --recurse microsof
 # alias docker='colima'
 
 alias youtube-dl='yt-dlp'
-alias yt-dlp='yt-dlp --cookies-from-browser firefox --remote-components ejs:github -f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best"'
+# alias yt-dlp='yt-dlp --write-subs --write-auto-subs --sub-format best --sub-lang en --cookies-from-browser firefox --remote-components ejs:github -f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best"' # now a function
 
 alias nvm='echo I think you meant FNM'
 
