@@ -54,7 +54,11 @@ function claude_helper_exec {
 }
 
 copilot-comments () {
-  # Fetches unresolved GitHub Copilot comments for the current branch's PR, useful for piping to pbcopy and providing to Claude Code etc.
+  # Fetches unresolved GitHub Copilot comments for the current branch's PR, useful for piping to pbcopy and providing to Claude Code etc. The workflow is:
+  # 1. Open a PR on Github
+  # 2. Wait for Copilot to review it
+  # 3. In the repo on your machine run copilot-comments|pbcopy
+  # 4. Paste into your claude code or whatever session on the repo
 	local -r current_branch="$(git branch --show-current 2>/dev/null)" || {
 		printf "Error: Not in a git repository or no current branch\n" >&2
 		return 1
