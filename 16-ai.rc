@@ -9,10 +9,10 @@ alias clinerulesd="cd /Users/samm/Library/Mobile\ Documents/com\~apple\~CloudDoc
 alias sync_ollama_models="${HOME}/git/sammcj/scripts/ollama/export_ollama_model.py"
 alias '???'='copilot-comments'
 alias wtf='copilot'
-alias l="OLLAMA_HOST=http://localhost:11434 gollama -l"
+# alias l="OLLAMA_HOST=http://localhost:11434 gollama -l"
 alias i="ingest"
 alias code2prompt="ingest"
-alias ln="gollama -l"
+# alias ln="gollama -l"
 alias gl="gollama"
 alias ol="mods"
 alias idf='. $HOME/git/esp-idf/export.sh'
@@ -53,57 +53,91 @@ function claude_helper_exec {
         "$prompt" | bat --squeeze-blank --language=bash --theme Dracula --style=plain --paging=never
 }
 
+copilot-comments () {
+  # Fetches unresolved GitHub Copilot comments for the current branch's PR, useful for piping to pbcopy and providing to Claude Code etc.
+	local -r current_branch="$(git branch --show-current 2>/dev/null)" || {
+		printf "Error: Not in a git repository or no current branch\n" >&2
+		return 1
+	}
+	local base_branch pr_num general_reviews inline_comments all_prs owner repo
 
+	base_branch="$(gh repo view --json defaultBranchRef --jq '.defaultBranchRef.name' 2>/dev/null)" || base_branch="main"
+	pr_num="$(gh pr list --head "${current_branch}" --base "${base_branch}" --json number --jq '.[0].number' 2>/dev/null)" || pr_num=""
 
-copilot-comments() {
-  # Function to list and display comments made by GitHub Copilot on the current PR
-  local -r current_branch="$(git branch --show-current 2>/dev/null)" || {
-    printf "Error: Not in a git repository or no current branch\n" >&2
-    return 1
-  }
+	if [[ -z "${pr_num}" || "${pr_num}" == "null" ]]
+	then
+		printf "No open PR found for current branch %s\n" "${current_branch}"
+		if all_prs="$(gh pr list --base "${base_branch}" --json number,title,headRefName --jq '.[] | "PR #\(.number): \(.title) (branch: \(.headRefName))"' 2>/dev/null)" && [[ -n "${all_prs}" ]]
+		then
+			printf "All open PRs to %s:\n%s\n" "${base_branch}" "${all_prs}"
+		fi
+		return 1
+	fi
 
-  local base_branch pr_num general_reviews inline_comments all_prs
+	# Get owner and repo for GraphQL query
+	owner="$(gh repo view --json owner --jq '.owner.login' 2>/dev/null)"
+	repo="$(gh repo view --json name --jq '.name' 2>/dev/null)"
 
-  # Use printf instead of echo for better portability and consistency
-  base_branch="$(gh repo view --json defaultBranch --jq '.defaultBranch.name' 2>/dev/null)" || base_branch="main"
-  pr_num="$(gh pr list --head "${current_branch}" --base "${base_branch}" --json number --jq '.[0].number' 2>/dev/null)" || pr_num=""
+	# Fetch general review comments (these don't have resolved status)
+	general_reviews="$(gh api "repos/:owner/:repo/pulls/${pr_num}/reviews" 2>/dev/null | jq -r '.[] | select(.user.login == "copilot-pull-request-reviewer" or .user.login == "Copilot") | .body' 2>/dev/null || true)"
 
-  if [[ -z "${pr_num}" || "${pr_num}" == "null" ]]; then
-    printf "No open PR found for current branch %s\n" "${current_branch}"
+	# Fetch unresolved inline comments using GraphQL
+	inline_comments="$(gh api graphql -f query='
+		query($owner: String!, $repo: String!, $pr: Int!) {
+			repository(owner: $owner, name: $repo) {
+				pullRequest(number: $pr) {
+					reviewThreads(first: 100) {
+						nodes {
+							isResolved
+							comments(first: 100) {
+								nodes {
+									author {
+										login
+									}
+									body
+									path
+									line
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	' -F owner="${owner}" -F repo="${repo}" -F pr="${pr_num}" 2>/dev/null | \
+	jq -r '
+		.data.repository.pullRequest.reviewThreads.nodes[] |
+		select(.isResolved == false) |
+		.comments.nodes[] |
+		select(.author.login == "copilot-pull-request-reviewer" or .author.login == "Copilot") |
+		if .line then
+			"\(.path) (line \(.line))\n\(.body)\n" + ("=" * 50) + "\n"
+		else
+			"\(.path)\n\(.body)\n" + ("=" * 50) + "\n"
+		end
+	' 2>/dev/null || true)"
 
-    if all_prs="$(gh pr list --base "${base_branch}" --json number,title,headRefName --jq '.[] | "PR #\(.number): \(.title) (branch: \(.headRefName))"' 2>/dev/null)" && [[ -n "${all_prs}" ]]; then
-      printf "All open PRs to %s:\n%s\n" "${base_branch}" "${all_prs}"
-    fi
-    return 1
-  fi
+	if [[ -n "${general_reviews}" || -n "${inline_comments}" ]]
+	then
+		printf "I submitted the changes to Github Copilot to review, keep in mind that Github Copilot doesn't use a very strong AI model so it may not be accurate.\n"
+		printf "🤖 GitHub Copilot comments on PR #%s (unresolved only):\n\n" "${pr_num}"
 
-  # Helper function to reduce code duplication
-  _fetch_copilot_data() {
-    local -r endpoint="$1"
-    local -r jq_filter="$2"
-    gh api "repos/:owner/:repo/pulls/${pr_num}/${endpoint}" 2>/dev/null | jq -r "${jq_filter}" 2>/dev/null || true
-  }
+		if [[ -n "${general_reviews}" ]]
+		then
+			printf "## Copilot review comments\n"
+			printf "%s\n\n------\n\n" "${general_reviews}"
+		fi
 
-  general_reviews="$(_fetch_copilot_data "reviews" '.[] | select(.user.login == "Copilot") | .body')"
-  inline_comments="$(_fetch_copilot_data "comments" '.[] | select(.user.login == "Copilot") | "\(.path) (line \(.line))\n\(.body)\n" + ("=" * 50) + "\n"')"
+		if [[ -n "${inline_comments}" ]]
+		then
+			printf "## Copilot inline comments\n"
+			printf "%s\n" "${inline_comments}"
+		fi
 
-  if [[ -n "${general_reviews}" || -n "${inline_comments}" ]]; then
-    printf "I submitted the changes to Github Copilot to review, keep in mind that Github Copilot doesn't use a very strong AI model so it may not be accurate.\n"
-
-    printf "🤖 GitHub Copilot comments on PR #%s:\n" "${pr_num}"
-
-    if [[ -n "${general_reviews}" ]]; then
-      printf "## Copilot review comments\n"
-      printf "%s\n" "${general_reviews}\n------\n"
-    fi
-
-    if [[ -n "${inline_comments}" ]]; then
-      printf "\n## Copilot inline comments\n"
-      printf "%s\n" "${inline_comments}"
-    fi
-
-    printf "⚠️ Be mindful that GitHub Copilot's comments may be inaccurate. Ignore any invalid or out of context comments. Please review them carefully before applying any changes. Discuss recommendations with me if the path forward is unclear.\n"
-  fi
+		printf "⚠️ Be mindful that GitHub Copilot's comments may be inaccurate. Ignore any invalid or out of context comments. Please review them carefully before applying any changes. Discuss recommendations with me if the path forward is unclear.\n"
+	else
+		printf "No unresolved Copilot comments found on PR #%s\n" "${pr_num}"
+	fi
 }
 
 

@@ -68,3 +68,6 @@ export LIBRARY_PATH="/opt/homebrew/lib:$LIBRARY_PATH"
 export LD_LIBRARY_PATH="/opt/homebrew/lib:$LD_LIBRARY_PATH"
 export DYLD_FALLBACK_LIBRARY_PATH="/opt/homebrew/lib:$DYLD_FALLBACK_LIBRARY_PATH"
 export FFMPEG_DIR="/opt/homebrew/opt/ffmpeg"
+
+# Custom user locate path
+export LOCATE_PATH="$HOME/.locatedb"

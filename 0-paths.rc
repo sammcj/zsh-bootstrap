@@ -59,3 +59,4 @@ export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
 
 # to fix Library not loaded: @rpath/libllama.dylib
 export PATH="${HOME}/git/llama.cpp/bin:$PATH"
+

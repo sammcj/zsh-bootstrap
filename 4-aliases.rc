@@ -86,7 +86,8 @@ alias tree="tree -ChF"
 alias mtr="sudo mtr"
 alias iftop="sudo iftop -i en0"
 alias ls='gls --color=auto -AHhF --group-directories-first'
-alias updatedb='sudo /usr/libexec/locate.updatedb'
+alias updatedb='/Users/samm/bin/updatedb-macos.sh'
+alias locate='locate -d ~/.locatedb'
 alias netwatch='lsof -i'
 alias flushdns='sudo discoveryutil udnsflushcaches'
 alias httpserver='sudo python3 -m http.server 80'
@@ -111,7 +112,15 @@ alias kubes-busybox='kubectl run -i --tty loader --image=busybox /bin/sh'
 alias k='kubectl'
 
 # VSC
-alias code='/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code'
+# alias code='/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code'
+# TODO: Working around vscode / macOS broken sandbox - temporarily replace this with a function that opens '/Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code' if it exists, otherwise it opens '/Applications/Visual\ Studio\ Code 2.app/Contents/Resources/app/bin/code'
+function code() {
+  if [ -f /Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code ]; then
+    /Applications/Visual\ Studio\ Code.app/Contents/Resources/app/bin/code "$@"
+  else
+    /Applications/Visual\ Studio\ Code\ 2.app/Contents/Resources/app/bin/code "$@"
+  fi
+}
 
 # Merge two files with diff
 alias merge='diff --line-format %L'
@@ -131,6 +140,7 @@ alias dnsbenchmark='dnstrace -n 10 -c 10 --server 192.168.0.1 --recurse microsof
 # alias docker='colima'
 
 alias youtube-dl='yt-dlp'
+alias yt-dlp='yt-dlp --cookies-from-browser firefox --remote-components ejs:github -f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best"'
 
 alias nvm='echo I think you meant FNM'
 
@@ -194,10 +204,12 @@ alias ender='cd ~/git/sammcj/ender-configs/ && code .'
 alias rotate='tweaker3 -vb -x -i'
 alias rotate_min_supports='tweaker3 -vb -x -min sur -i'
 
-alias obsidian='cd /Users/samm/Library/Mobile\ Documents/iCloud~md~obsidian/Documents/Main && ls -ltarh'
+alias obsidian='cd /Users/samm/Obsidian/Main && ls -ltarh'
+alias obs=obsidian
 
 # uv
 alias venv='uv venv ; source .venv/bin/activate'
 
 ### AWS ###
 alias aws-rds-list-instances="aws rds describe-db-instances --region ap-southeast-2 --query \"DBInstances[].{Instance: DBInstanceIdentifier, Class: DBInstanceClass, Endpoint: Endpoint.Address, Status: DBInstanceStatus}\" --output text | sed -r 's/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[m|K]//g'"
+
