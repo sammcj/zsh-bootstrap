@@ -23,6 +23,7 @@ alias gemini="gemini --yolo"
 alias kanban="npx -y vibe-kanban"
 alias claude="~/.local/bin/claude --dangerously-skip-permissions"
 alias cc='claude --dangerously-skip-permissions'
+alias claude-history='claude-code-viewer' # pnpm install -g @kimuson/claude-code-viewer@latest
 
 # Claude Code non-interactive functions
 alias '??'='claude_helper'

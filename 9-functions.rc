@@ -1761,7 +1761,7 @@ g() { _git_nav "g" "$@"; }
 npm-global-update() {
     # Define allowed package patterns (substring matches)
     local allowed_patterns
-    allowed_patterns=("@anthropic-ai/claude-code" "@google/gemini-cli" "@qwen-code/qwen-code" "ccstatusline" "claude-code-router" "claudekit" "ccusage" "npm-check-updates" "playwright" "ccexp" "vibe-kanban" "@vscode/vsce" "yaml-language-server" "typescript-language-server" "typescript" "corepack" "npm" "pnpm" "jest" "tweakcc" "@modelcontextprotocol/inspector" "happy-coder" "@github/copilot" "cline@nightly" "cline" "@anthropic-ai/sandbox-runtime")
+    allowed_patterns=("@anthropic-ai/claude-code" "@google/gemini-cli" "@qwen-code/qwen-code" "ccstatusline" "claude-code-router" "claudekit" "ccusage" "npm-check-updates" "playwright" "ccexp" "vibe-kanban" "@vscode/vsce" "yaml-language-server" "typescript-language-server" "typescript" "corepack" "npm" "pnpm" "jest" "tweakcc" "@modelcontextprotocol/inspector" "happy-coder" "@github/copilot" "cline@nightly" "cline" "@anthropic-ai/sandbox-runtime" "@kimuson/claude-code-viewer@latest")
 
     echo "🔍 Checking for global package updates..."
 
