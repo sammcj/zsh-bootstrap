@@ -199,8 +199,10 @@ function configureDotfiles() {
     link_dotfile "$dotfile"
   done
 
-  link_dotfile "bat-config" "/Users/samm/.config/bat/config"
-  link_dotfile "rsyncd.conf" "/Users/samm/.rsyncd.conf"
+  link_dotfile "bat-config" "$HOME/.config/bat/config"
+  link_dotfile "rsyncd.conf" "$HOME/.rsyncd.conf"
+  link_dotfile "zshrc" "$HOME/.zshrc"
+  link_dotfile "zprofile" "$HOME/.zprofile"
 }
 
 function configureAmazonQ(){

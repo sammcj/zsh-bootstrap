@@ -1,4 +1,4 @@
-# Amazon Q pre block. Keep at the top of this file.
+
 ### q slow debugging ###
 # date
 # echo "STARTING: amazon q pre block loading from .zshrc"
@@ -7,8 +7,10 @@
 # ###
 # only run if LOADING_Q is true
 if [[ "$LOADING_Q" == "true" ]]; then
-    # Amazon Q post block. Keep at the bottom of this file.
-    [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh"
+  # Kiro CLI post block. Keep at the bottom of this file.
+  # This is in an if statement because Amazon Q / Kiro CLI is _really_ poorly written and slows down your terminal
+  # See https://github.com/aws/amazon-q-developer-cli/discussions/202
+  [[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.pre.zsh"
 fi
 # ### q slow debugging ###
 # date
@@ -133,7 +135,9 @@ if [ -f '/Users/samm/Downloads/google-cloud-sdk/completion.zsh.inc' ] && if_not_
 # # Amazon Q post block. Keep at the bottom of this file.
 if [[ "$LOADING_Q" == "true" ]]; then
 # Amazon Q post block. Keep at the bottom of this file.
-    [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
+  # This is in an if statement because Amazon Q / Kiro CLI is _really_ poorly written and slows down your terminal
+  # See https://github.com/aws/amazon-q-developer-cli/discussions/202
+  [[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh"
 fi
 
 # ####### PROFILING #######
