@@ -154,5 +154,4 @@ setopt SHARE_HISTORY
 
 export PATH="$HOME/.local/bin:$PATH"
 
-
 [[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"

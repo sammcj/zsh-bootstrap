@@ -1668,27 +1668,28 @@ if_not_in_vscode() {
   fi
 }
 
-# Amazon Q wrapper because their Q CLI installer completely hoses terminal performance
-# https://github.com/aws/amazon-q-developer-cli/issues/844
-# https://github.com/aws/amazon-q-developer-cli/discussions/202
-# doesn't quite work yet as their MCP integrations seem to fail, e.g
-# failed installing shell integration bash pre post into .bashrc err=Integration not installed: /Users/samm/.bashrc does not source pre integration
-# Failed installing shell integration bash pre post into .profile err=File does not exist: /Users/samm/.profile
-# Failed installing shell integration zsh pre post into .zshrc err=Integration not installed: /Users/samm/.zshrc does not source pre integration
-# Failed installing shell integration zsh pre post into .zprofile err=Integration not installed: /Users/samm/.zprofile does not source pre integration
-q() {
-  # Amazon Q pre block for .zprofile
-  [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zprofile.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zprofile.pre.zsh"
-  # Amazon Q post block for .zprofile
-  [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zprofile.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zprofile.post.zsh"
+# q() {
+  # DISABLED as Q is being replaced with Kiro-CLI
+  # Amazon Q wrapper because their Q CLI installer completely hoses terminal performance
+  # https://github.com/aws/amazon-q-developer-cli/issues/844
+  # https://github.com/aws/amazon-q-developer-cli/discussions/202
+  # doesn't quite work yet as their MCP integrations seem to fail, e.g
+  # failed installing shell integration bash pre post into .bashrc err=Integration not installed: /Users/samm/.bashrc does not source pre integration
+  # Failed installing shell integration bash pre post into .profile err=File does not exist: /Users/samm/.profile
+  # Failed installing shell integration zsh pre post into .zshrc err=Integration not installed: /Users/samm/.zshrc does not source pre integration
+  # Failed installing shell integration zsh pre post into .zprofile err=Integration not installed: /Users/samm/.zprofile does not source pre integration
+#   # Amazon Q pre block for .zprofile
+#   [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zprofile.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zprofile.pre.zsh"
+#   # Amazon Q post block for .zprofile
+#   [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zprofile.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zprofile.post.zsh"
 
-  # Amazon Q pre block for .zshrc
-  [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh"
-  # Amazon Q post block for .zshrc
-  [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
+#   # Amazon Q pre block for .zshrc
+#   [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh"
+#   # Amazon Q post block for .zshrc
+#   [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
 
-  command /Users/samm/.local/bin/q "$@"
-}
+#   command /Users/samm/.local/bin/q "$@"
+# }
 
 cline-workflows() {
   SOURCE_DIR="/Users/samm/git/sammcj/agentic-coding/Cline/Rules/workflows"
