@@ -23,6 +23,9 @@ alias gemini="gemini --yolo"
 alias kanban="npx -y vibe-kanban"
 alias claude="~/.local/bin/claude --dangerously-skip-permissions"
 alias cc='claude --dangerously-skip-permissions'
+alias ccc='cc --continue'
+alias ccr='cc --resume'
+alias ccs='ccr'
 alias claude-history='claude-code-viewer' # pnpm install -g @kimuson/claude-code-viewer@latest
 alias q='kiro-cli'
 

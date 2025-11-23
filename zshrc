@@ -155,3 +155,9 @@ setopt SHARE_HISTORY
 export PATH="$HOME/.local/bin:$PATH"
 
 [[ "$TERM_PROGRAM" == "kiro" ]] && . "$(kiro --locate-shell-integration-path zsh)"
+
+# Added by Antigravity
+export PATH="/Users/samm/.antigravity/antigravity/bin:$PATH"
+
+# Added by Antigravity
+export PATH="/Users/samm/.antigravity/antigravity/bin:$PATH"
