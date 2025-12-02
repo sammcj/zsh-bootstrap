@@ -161,3 +161,6 @@ export PATH="/Users/samm/.antigravity/antigravity/bin:$PATH"
 
 # Added by Antigravity
 export PATH="/Users/samm/.antigravity/antigravity/bin:$PATH"
+
+# opencode
+export PATH=/Users/samm/.opencode/bin:$PATH

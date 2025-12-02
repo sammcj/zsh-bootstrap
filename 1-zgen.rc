@@ -11,6 +11,9 @@ source "${HOME}/.zgen/zgen.zsh"
 export ZGEN_RESET_ON_CHANGE="${HOME}/.zshrc"
 export ZSH_DISABLE_AUTO_UPDATE=7 # Only check for oh-my-zsh updates every 7 days
 
+# Disable AWS prompt display (keep plugin functions)
+export SHOW_AWS_PROMPT=false
+
 # start compdef
 # compinit -u
 
