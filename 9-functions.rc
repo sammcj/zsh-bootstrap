@@ -124,6 +124,13 @@ function gco() {
   fi
 }
 
+# Creates a date+hour based branch
+function gcd() {
+  local DATESTAMP
+  DATESTAMP=$(date +%Y-%m-%d-%H)
+  gco -b "$DATESTAMP"
+}
+
 function gcor() {
   # list all remote branches and select one with fzf git branch -v -a
   command git branch -v -a | fzf --header 'Checkout Remote Branch' --preview 'git diff --color=always {1}' --pointer='>' | awk '{print $1}' | xargs command git checkout
@@ -1429,9 +1436,9 @@ function touchid_sudo() {
 }
 
 a() {
-  # Extract filename from the URL (the part after the last slash)
-  local filename
-  filename=$(basename "$1")
+  # aria2c download wrapper
+  # Extract filename from the URL (the part after the last slash), otherwise use provided filename
+  local filename="${2:-$(basename "$1")}"
 
   # Base aria2c options
   local aria_opts=(
@@ -1760,6 +1767,7 @@ g() { _git_nav "g" "$@"; }
 # Automatically handles ENOTEMPTY errors by removing problematic directories
 # and reinstalling packages individually when batch install fails
 npm-global-update() {
+    # TODO: switch to pnpm, detect if packages are installed with pnpm or npm and use the appropriate tool or migrated npm packages to pnpm
     # Define allowed package patterns (substring matches)
     local allowed_patterns
     allowed_patterns=("@anthropic-ai/claude-code" "@google/gemini-cli" "@qwen-code/qwen-code" "ccstatusline" "claude-code-router" "claudekit" "ccusage" "npm-check-updates" "playwright" "ccexp" "vibe-kanban" "@vscode/vsce" "yaml-language-server" "typescript-language-server" "typescript" "corepack" "npm" "pnpm" "jest" "tweakcc" "@modelcontextprotocol/inspector" "happy-coder" "@github/copilot" "cline@nightly" "cline" "@anthropic-ai/sandbox-runtime" "@kimuson/claude-code-viewer@latest")
@@ -2495,4 +2503,103 @@ yt-dlp() {
   if [[ $converted_count -eq 0 ]]; then
     echo "No subtitles found or downloaded for this video"
   fi
+}
+
+# Intelligently generate shell completions with file completion support
+# Usage: generate_zsh_completions <tool> <subcommand> [file_pattern]
+# Examples:
+#   generate_zsh_completions uv run "*.py"
+#   generate_zsh_completions mycommand process "*"
+#   generate_zsh_completions rg search "*.txt"
+generate_zsh_completions() {
+    # Show help if no arguments or help flag
+    if [[ $# -eq 0 ]] || [[ "${1}" == "-h" ]] || [[ "${1}" == "--help" ]]; then
+        cat <<'HELP'
+Setup shell completion with file pattern matching
+
+Usage: generate_zsh_completions <tool> <subcommand> [file_pattern]
+
+Arguments:
+  tool          - Command name (e.g. uv, rg, mycommand)
+  subcommand    - Subcommand that takes files (e.g. run, process)
+  file_pattern  - Optional glob pattern for files (default: "*")
+                  Examples: "*.py", "*.{json,yaml}", "*.txt"
+
+Examples:
+  generate_zsh_completions uv run "*.py"
+  generate_zsh_completions poetry run "*.py"
+  generate_zsh_completions mycommand process "*"
+  generate_zsh_completions rg search "*.{md,txt}"
+
+The function will automatically detect if the tool has built-in
+completion support and use the appropriate method.
+HELP
+        return 0
+    fi
+
+    local tool="${1}"
+    local subcommand="${2}"
+    local file_pattern="${3:-*}"
+    local custom_dir="${HOME}/.oh-my-zsh/custom"
+    local completion_file="${custom_dir}/${tool}-completion.zsh"
+
+    if ! command -v "${tool}" &> /dev/null; then
+        echo "Error: ${tool} not found in PATH"
+        return 1
+    fi
+
+    mkdir -p "${custom_dir}"
+
+    # Try to detect if the tool supports built-in shell completion
+    local has_builtin_completion=false
+
+    if "${tool}" generate-shell-completion zsh &>/dev/null 2>&1; then
+        has_builtin_completion=true
+    elif "${tool}" completion zsh &>/dev/null 2>&1; then
+        has_builtin_completion=true
+    elif "${tool}" --help 2>&1 | grep -qE "(completion|generate.*shell)"; then
+        echo "Note: ${tool} may support completions, but couldn't auto-detect the command"
+        echo "Check '${tool} --help' and update the function if needed"
+    fi
+
+    if [[ "${has_builtin_completion}" == "true" ]]; then
+        echo "Detected built-in completion support for ${tool}"
+        cat > "${completion_file}" <<EOF
+# Enhanced completion for ${tool} with built-in generation
+# Generated on $(date)
+
+if command -v ${tool} &> /dev/null; then
+    eval "\$(${tool} generate-shell-completion zsh)"
+fi
+
+_${tool}_enhanced() {
+    if [[ \${words[2]} == "${subcommand}" ]]; then
+        _files -g "${file_pattern}"
+        return 0
+    fi
+    _${tool} "\$@"
+}
+
+compdef _${tool}_enhanced ${tool}
+EOF
+    else
+        echo "No built-in completion detected, creating simple file completion for ${tool}"
+        cat > "${completion_file}" <<EOF
+# Simple file completion for ${tool}
+# Generated on $(date)
+
+_${tool}_simple() {
+    if [[ \${words[2]} == "${subcommand}" ]]; then
+        _files -g "${file_pattern}"
+        return 0
+    fi
+    _arguments "1:subcommand:(${subcommand})"
+}
+
+compdef _${tool}_simple ${tool}
+EOF
+    fi
+
+    echo "Created ${completion_file}"
+    echo "Run 'exec zsh' or restart your terminal to apply changes"
 }
