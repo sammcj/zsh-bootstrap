@@ -44,7 +44,7 @@ git-fix-casing() {
 }
 
 # wrapper for adding advanced git cli customisation
-alias git='git_wrapper'
+# alias git='git_wrapper' # disabled for now, has a few issues with things like bare repos
 git_wrapper() {
   # Safely disable job control if possible
   set +m 2>/dev/null || true
@@ -1126,7 +1126,8 @@ function ba() {
   npm-global-update
 
   uv tool install claude-monitor -U >>"${log_file}" 2>&1 &
-  uv tool install claude-code-tools >>"${log_file}" 2>&1 &
+  uv tool install claude-code-tools -U >>"${log_file}" 2>&1 &
+  uv tool install mistral-vibe -U >>"${log_file}" 2>&1 &
   pip install -U yt-dlp >>"${log_file}" 2>&1 &
 
   # update homebrew and all apps

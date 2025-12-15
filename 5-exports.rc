@@ -60,7 +60,7 @@ export CONDA_SUBDIR=osx-arm64
 export LOCAL_ENDPOINT=https://ollama.icu.lol/v1 # For OpenCode
 
 ## SDKs
-export SDKROOT="$(xcrun --sdk macosx --show-sdk-path)"
+# export SDKROOT="$(xcrun --sdk macosx --show-sdk-path)"
 
 ### Homebrew library paths
 export PKG_CONFIG_PATH="/opt/homebrew/lib/pkgconfig:$PKG_CONFIG_PATH"
