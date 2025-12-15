@@ -2604,3 +2604,102 @@ EOF
     echo "Created ${completion_file}"
     echo "Run 'exec zsh' or restart your terminal to apply changes"
 }
+
+# ============================================================================
+# Git Worktree Helpers
+# ============================================================================
+
+# Fast repo root finder (no git subprocess)
+_wt_find_repo_root() {
+  local dir="$PWD"
+  while [[ "$dir" != "/" ]]; do
+    if [[ -f "$dir/.git" ]]; then
+      # Worktree - .git file contains: gitdir: /path/.git/worktrees/NAME
+      local gitdir_line
+      gitdir_line=$(<"$dir/.git")
+      gitdir_line="${gitdir_line#gitdir: }"
+      # Main repo is parent of .git/worktrees/NAME
+      echo "${gitdir_line%/.git/worktrees/*}"
+      return
+    elif [[ -d "$dir/.git" ]]; then
+      echo "$dir"
+      return
+    fi
+    dir="${dir:h}"
+  done
+  return 1
+}
+
+# List all worktrees
+wt() {
+  git worktree list
+}
+
+# Add a new worktree as a sibling directory
+wta() {
+  local name="${1:?Usage: wta <name> [base-branch]}"
+  local base="${2:-HEAD}"
+  local repo_root
+  repo_root=$(_wt_find_repo_root) || { echo "Not in a git repository"; return 1; }
+  local target="${repo_root:h}/${name}"
+
+  git worktree add -b "$name" "$target" "$base" && \
+    echo "Created worktree: $target"
+}
+
+# Remove a worktree (with fzf selection if no name given)
+wtr() {
+  local name="$1"
+  local wt_path
+  if [[ -z "$name" ]]; then
+    wt_path=$(git worktree list | tail -n +2 | fzf --height=40% --prompt="Remove worktree: " | awk '{print $1}')
+    [[ -z "$wt_path" ]] && return 1
+  else
+    wt_path=$(git worktree list | awk -v name="/$name " '$0 ~ name {print $1}')
+  fi
+  [[ -z "$wt_path" ]] && { echo "Worktree not found"; return 1; }
+  git worktree remove "$wt_path" && git worktree prune
+}
+
+# Change directory to a worktree (with fzf selection if no name given)
+wtcd() {
+  local target
+  if [[ -n "$1" ]]; then
+    target=$(git worktree list | awk -v name="/$1 " '$0 ~ name {print $1}')
+  else
+    target=$(git worktree list | fzf --height=40% --prompt="Switch to: " | awk '{print $1}')
+  fi
+  if [[ -n "$target" && -d "$target" ]]; then
+    cd "$target"
+  else
+    echo "Worktree not found"
+    return 1
+  fi
+}
+
+# Jump to the main worktree (fast, no git subprocess)
+wtmain() {
+  local main
+  main=$(_wt_find_repo_root) || { echo "Not in a git repository"; return 1; }
+  cd "$main"
+}
+
+# Clone a repo in bare-repo + worktrees layout for worktree-first workflow
+wtclone() {
+  local url="${1:?Usage: wtclone <repo-url>}"
+  local name="${url:t:r}"  # zsh: tail then remove extension
+  local bare_dir="${name}.git"
+
+  git clone --bare "$url" "$bare_dir" || return 1
+  cd "$bare_dir" || return 1
+
+  # Determine default branch
+  local default_branch
+  default_branch=$(git symbolic-ref --short HEAD 2>/dev/null || echo "main")
+
+  # Create first worktree
+  git worktree add "../${name}" "$default_branch" || return 1
+  cd "../${name}" || return 1
+  echo "Bare repo: ../${bare_dir}"
+  echo "Worktree:  $(pwd)"
+}

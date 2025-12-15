@@ -11,8 +11,38 @@ if [ -z "$RUNNING_IN_VSCODE" ]; then
   add-zsh-hook precmd vcs_info
 
   zstyle ':vcs_info:*' enable git
+
+  # Detect if we're in a git worktree (fast filesystem check, no git commands)
+  _get_worktree_name() {
+    # Walk up to find .git file/dir
+    local dir="$PWD"
+    while [[ "$dir" != "/" ]]; do
+      if [[ -f "$dir/.git" ]]; then
+        # .git is a file in worktrees, contains: gitdir: /path/.git/worktrees/NAME
+        local gitdir_line
+        gitdir_line=$(<"$dir/.git")
+        if [[ "$gitdir_line" == *"/worktrees/"* ]]; then
+          # Extract worktree name from path
+          echo "${gitdir_line##*/}"
+          return
+        fi
+      elif [[ -d "$dir/.git" ]]; then
+        # Regular repo (not a worktree)
+        return
+      fi
+      dir="${dir:h}"
+    done
+  }
+
   precmd() {
     vcs_info
+    local wt_name
+    wt_name=$(_get_worktree_name)
+    if [[ -n "$wt_name" ]]; then
+      _worktree_indicator="%{$(tput setaf 214)%}⎇${wt_name}%{$(tput sgr0)%} "
+    else
+      _worktree_indicator=""
+    fi
   }
 
   # Enable checking for (un)staged changes, enabling use of %u and %c
@@ -39,7 +69,7 @@ if [ -z "$RUNNING_IN_VSCODE" ]; then
 
   # %{$(tput setaf 177)%}\$vcs_info_msg_0_ # means pink git information
 
-  PROMPT="%{$(tput setaf 177)%}\$vcs_info_msg_0_ %{$(tput setaf 105)%}%~${vcs_info_msg_0_}%{$(tput sgr0)%} %(?..[%?] )$ "
+  PROMPT="%{$(tput setaf 177)%}\$vcs_info_msg_0_ \$_worktree_indicator%{$(tput setaf 105)%}%~%{$(tput sgr0)%} %(?..[%?] )$ "
 else
   # Simple prompt for VS Code terminal
   PROMPT="%{$(tput setaf 105)%}%~%{$(tput sgr0)%} %(?..[%?] )$ "
