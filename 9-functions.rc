@@ -132,8 +132,26 @@ function gcd() {
 }
 
 function gcor() {
-  # list all remote branches and select one with fzf git branch -v -a
-  command git branch -v -a | fzf --header 'Checkout Remote Branch' --preview 'git diff --color=always {1}' --pointer='>' | awk '{print $1}' | xargs command git checkout
+  # List remote branches and checkout with proper tracking
+  local selected remote_ref branch_name
+
+  selected=$(command git branch -v -a | fzf --header 'Checkout Remote Branch' --preview 'git diff --color=always {1}' --pointer='>')
+
+  [[ -z "$selected" ]] && return
+
+  # Extract the branch reference (first field)
+  remote_ref=$(echo "$selected" | awk '{print $1}')
+
+  # Strip remotes/origin/ prefix to get the short branch name
+  branch_name="${remote_ref#remotes/origin/}"
+
+  # Check if local branch already exists
+  if command git show-ref --verify --quiet "refs/heads/$branch_name"; then
+    command git switch "$branch_name"
+  else
+    # Create local tracking branch
+    command git switch -c "$branch_name" "origin/$branch_name"
+  fi
 }
 
 function gbd() {
