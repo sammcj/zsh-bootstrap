@@ -39,12 +39,40 @@ function installPythonPackages() {
   oterm --install-completion zsh
 }
 
+cspell_dicts=(
+  "en-au"
+  "en-gb"
+  "scientific-terms-us"
+  "companies"
+  "html"
+  "python"
+  "cpp"
+  "filetypes"
+  "cpp"
+  "rust"
+  "typescript"
+  "node"
+  "golang"
+  "aws"
+  "software-terms"
+  "bash"
+  "terraform"
+  "makefile"
+)
+
 # Ensure we don't have those pesky ^ in our package.json files
 npm config set save-exact=true
 
 function installNpmPackages() {
-  npm install -g npm-check-updates eslint prettier editorconfig \
-    @typescript-eslint/parser typescript ts-node bash-language-server
+  npm install -g pnpm
+
+  pnpm install -g npm-check-updates eslint prettier editorconfig @typescript-eslint/parser typescript \
+  ts-node bash-language-server cspell
+
+  for dict in "${cspell_dicts[@]}"; do
+    pnpm install -g "@cspell/dict-${dict}"
+    cspell link add "@cspell/dict-${dict}"
+  done
 }
 
 function clone_repo() {
@@ -194,7 +222,7 @@ function macOSConfig() {
 
 function configureDotfiles() {
   # Link dotfiles
-  dotfiles=(".gitignoreglobal" ".gitconfig" ".vimrc" ".gitconfig_nopush" ".gitconfig.private" ".dircolors" ".tmux.conf" ".zshrc" ".asdfrc")
+  dotfiles=(".gitignoreglobal" ".gitconfig" ".vimrc" ".gitconfig_nopush" ".gitconfig.private" ".dircolors" ".tmux.conf" ".zshrc" ".asdfrc" ".cspell.json" ".cspell-custom-words.txt")
   for dotfile in "${dotfiles[@]}"; do
     link_dotfile "$dotfile"
   done

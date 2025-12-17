@@ -1,0 +1,30 @@
+{
+  "version": "0.2",
+  "language": "en-GB",
+  "dictionaryDefinitions": [
+    {
+      "name": "user-words",
+      "path": "/Users/samm/.cspell-custom-words.txt",
+      "addWords": true
+    }
+  ],
+  "ignorePaths": ["node_modules", ".git", "dist", ".cargo"],
+  "dictionaries": [
+    "en-AU",
+    "en-GB",
+    "user-words",
+    "en-US",
+    "en",
+    "software-terms",
+    "filetypes",
+    "golang",
+    "python",
+    "rust",
+    "bash",
+    "typescript",
+    "node",
+    "html",
+    "makefile",
+    "companies"
+  ]
+}

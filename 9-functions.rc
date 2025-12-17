@@ -1791,6 +1791,16 @@ npm-global-update() {
     local allowed_patterns
     allowed_patterns=("@anthropic-ai/claude-code" "@google/gemini-cli" "@qwen-code/qwen-code" "ccstatusline" "claude-code-router" "claudekit" "ccusage" "npm-check-updates" "playwright" "ccexp" "vibe-kanban" "@vscode/vsce" "yaml-language-server" "typescript-language-server" "typescript" "corepack" "npm" "pnpm" "jest" "tweakcc" "@modelcontextprotocol/inspector" "happy-coder" "@github/copilot" "cline@nightly" "cline" "@anthropic-ai/sandbox-runtime" "@kimuson/claude-code-viewer@latest")
 
+    cspell_packages=( "cspell" "@cspell/dict-en-au" "@cspell/dict-en-gb" "@cspell/dict-companies" "@cspell/dict-html"
+                      "@cspell/dict-python" "@cspell/dict-rust" "@cspell/dict-typescript" "@cspell/dict-node" "@cspell/dict-terraform"
+                      "@cspell/dict-golang" "@cspell/filetypes" "@cspell/dict-software-terms" "@cspell/dict-bash" "@cspell/dict-makefile"
+                      "@cspell/dict-cpp" "@cspell/dict-scientific-terms-us")
+
+    # add cspell packages to allowed patterns
+    for pkg in "${cspell_packages[@]}"; do
+        allowed_patterns+=("$pkg")
+    done
+
     echo "🔍 Checking for global package updates..."
 
     # Run npm-check-updates and capture output
