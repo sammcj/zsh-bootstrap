@@ -43,14 +43,33 @@ if [ -z "$RUNNING_IN_VSCODE" ]; then
     else
       _worktree_indicator=""
     fi
+
+    # Show venv only if it's not the default ~/.venv
+    if [[ -n "$VIRTUAL_ENV" && "$VIRTUAL_ENV" != "$HOME/.venv" ]]; then
+      local venv_name="${VIRTUAL_ENV:t}"
+      # If venv is named .venv, show parent directory (project name) instead
+      [[ "$venv_name" == ".venv" ]] && venv_name="${VIRTUAL_ENV:h:t}"
+      _venv_indicator="%{$(tput setaf 34)%}(${venv_name})%{$(tput sgr0)%} "
+    else
+      _venv_indicator=""
+    fi
   }
 
   # Enable checking for (un)staged changes, enabling use of %u and %c
   zstyle ':vcs_info:*' check-for-changes true
-  zstyle ':vcs_info:git:*' formats '[%b%u%c]'
-  zstyle ':vcs_info:git:*' actionformats '[%b|%a%u%c]'
-  # add the number of unstaged/staged changes to the prompt
+  # Use %m for misc info (we'll populate it with untracked indicator via hook)
+  zstyle ':vcs_info:git:*' formats '[%b%u%c%m]'
+  zstyle ':vcs_info:git:*' actionformats '[%b|%a%u%c%m]'
   zstyle ':vcs_info:git:*' enable git
+
+  # Hook to detect untracked files and show N indicator
+  zstyle ':vcs_info:git*+set-message:*' hooks git-untracked
+
+  +vi-git-untracked() {
+    if [[ $(git ls-files --other --exclude-standard 2>/dev/null | head -1) ]]; then
+      hook_com[misc]='N'
+    fi
+  }
 
   # %s - The current version control system, like git or svn.
   # %r - The name of the root directory of the repository
@@ -69,7 +88,7 @@ if [ -z "$RUNNING_IN_VSCODE" ]; then
 
   # %{$(tput setaf 177)%}\$vcs_info_msg_0_ # means pink git information
 
-  PROMPT="%{$(tput setaf 177)%}\$vcs_info_msg_0_ \$_worktree_indicator%{$(tput setaf 105)%}%~%{$(tput sgr0)%} %(?..[%?] )$ "
+  PROMPT="\$_venv_indicator%{$(tput setaf 177)%}\$vcs_info_msg_0_ \$_worktree_indicator%{$(tput setaf 105)%}%~%{$(tput sgr0)%} %(?..[%?] )$ "
 else
   # Simple prompt for VS Code terminal
   PROMPT="%{$(tput setaf 105)%}%~%{$(tput sgr0)%} %(?..[%?] )$ "

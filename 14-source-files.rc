@@ -15,6 +15,8 @@ export PYENV_ROOT="$HOME/.pyenv"
 command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 eval "$(pyenv init -)"
 
+# Disable venv's built-in prompt modification - we handle it in 10-prompt.rc
+export VIRTUAL_ENV_DISABLE_PROMPT=1
 . ~/.venv/bin/activate
 
 # # pnpm
