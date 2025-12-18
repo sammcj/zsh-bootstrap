@@ -6,6 +6,7 @@ THIS_DIRECTORY="/Users/samm/Library/Mobile Documents/com~apple~CloudDocs/Dropbox
 ### Aliases ###
 
 # Directory Jumps
+alias -- -='z -'  # typing just - returns to previous directory
 alias d="cd ~/Downloads && ls -ltarh"
 alias icloud_drive="cd ~/Library/Mobile\ Documents/com\~apple\~CloudDocs/"
 
