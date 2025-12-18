@@ -118,8 +118,29 @@ function gco() {
       fi
     fi
   else
-    # shellcheck disable=SC2033
-    command git branch --sort=-committerdate | fzf --header 'Checkout Recent Branch' --preview 'git diff --color=always {1}' --pointer='>' | xargs command git switch
+    local selected branch_name is_worktree
+
+    # Use sed to strip markers for clean preview; {1} would capture * or + markers
+    selected=$(command git branch --sort=-committerdate | fzf --header 'Checkout Recent Branch' --preview 'git diff --color=always $(echo {} | sed "s/^[* +]*//")'  --pointer='>')
+
+    [[ -z "$selected" ]] && return
+
+    # Check if this is a worktree branch (marked with +)
+    is_worktree=false
+    [[ "$selected" == *"+"* ]] && is_worktree=true
+
+    # Strip leading markers (*, +) and whitespace to get branch name
+    branch_name=$(echo "$selected" | sed 's/^[* +]*//')
+
+    if [[ "$is_worktree" == true ]]; then
+      local worktree_path
+      worktree_path=$(command git worktree list | grep "\[$branch_name\]" | awk '{print $1}')
+      echo "Branch '$branch_name' is checked out in worktree, switching to: $worktree_path"
+      cd "$worktree_path" || return 1
+      return 0
+    fi
+
+    command git switch "$branch_name"
     echo -e "${_FMT_ITL}Hint: You can check remote branches with 'gcor'${_FMT_END}"
   fi
 }
@@ -158,8 +179,29 @@ function gbd() {
   if [[ -n $* ]]; then
     command git branch -d "$@"
   else
-    # shellcheck disable=SC2033
-    command git branch --sort=-committerdate | fzf --header 'Delete Git Branch' --preview 'git diff --color=always {1}' --pointer='>' | xargs command git branch -d
+    local selected branch_name is_worktree
+
+    # Use sed to strip markers for clean preview; {1} would capture * or + markers
+    selected=$(command git branch --sort=-committerdate | fzf --header 'Delete Git Branch' --preview 'git diff --color=always $(echo {} | sed "s/^[* +]*//")'  --pointer='>')
+
+    [[ -z "$selected" ]] && return
+
+    # Check if this is a worktree branch (marked with +)
+    is_worktree=false
+    [[ "$selected" == *"+"* ]] && is_worktree=true
+
+    # Strip leading markers (*, +) and whitespace to get branch name
+    branch_name=$(echo "$selected" | sed 's/^[* +]*//')
+
+    if [[ "$is_worktree" == true ]]; then
+      local worktree_path
+      worktree_path=$(command git worktree list | grep "\[$branch_name\]" | awk '{print $1}')
+      echo "Cannot delete branch '$branch_name' - it's checked out in worktree: $worktree_path"
+      echo "Remove the worktree first with: git worktree remove $worktree_path"
+      return 1
+    fi
+
+    command git branch -d "$branch_name"
   fi
 }
 
