@@ -250,3 +250,4 @@ Wezterm
 workdir
 xlarge
 zerolog
+dropoff

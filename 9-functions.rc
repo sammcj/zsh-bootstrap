@@ -1188,6 +1188,7 @@ function ba() {
   uv tool install claude-monitor -U >>"${log_file}" 2>&1 &
   uv tool install claude-code-tools -U >>"${log_file}" 2>&1 &
   uv tool install mistral-vibe -U >>"${log_file}" 2>&1 &
+  uv tool install claude-code-transcripts -U >>"${log_file}" 2>&1 &
   pip install -U yt-dlp >>"${log_file}" 2>&1 &
 
   # update homebrew and all apps

@@ -1,0 +1,147 @@
+# vim: ft=ghostty
+# Ghostty Configuration
+# 2025-12-20 23:00
+
+# Common commands:
+# ghostty +list-fonts
+# ghostty +list-keybinds
+# ghostty +list-themes
+# ghostty +list-colors
+# ghostty +list-actions
+# ghostty +show-config
+# cmd+shift+, to reload config
+
+# Keybindings
+#keybind = ctrl+q>r=reload_config
+keybind = ctrl+shift+e=equalize_splits
+keybind = global:option+grave_accent=toggle_visibility
+keybind = global:ctrl+grave_accent=toggle_visibility
+keybind = performable:cmd+c=copy_to_clipboard
+
+# Shift+Left/Right Arrow
+keybind = shift+left=text:\x1b[1;2D
+keybind = shift+right=text:\x1b[1;2C
+keybind = shift+up=text:\x1b[1;2A
+keybind = shift+down=text:\x1b[1;2B
+
+# Ctrl+Left/Right Arrow (word navigation)
+keybind = ctrl+left=text:\x1b[1;5D
+keybind = ctrl+right=text:\x1b[1;5C
+keybind = ctrl+up=text:\x1b[1;5A
+keybind = ctrl+down=text:\x1b[1;5B
+
+# Ctrl+Shift+Left/Right Arrow
+keybind = ctrl+shift+left=text:\x1b[1;6D
+keybind = ctrl+shift+right=text:\x1b[1;6C
+keybind = ctrl+shift+up=text:\x1b[1;6A
+keybind = ctrl+shift+down=text:\x1b[1;6B
+
+# Home/End keys
+keybind = shift+home=text:\x1b[1;2H
+keybind = shift+end=text:\x1b[1;2F
+keybind = ctrl+home=text:\x1b[1;5H
+keybind = ctrl+end=text:\x1b[1;5F
+
+# Fix Claude Code Interpreter newlines
+# keybind = shift+enter=text:\n
+keybind = shift+enter=text:\x1b\r
+
+# Edit ghostty config with $EDITOR
+keybind = super+,=text:ghostty +edit-config\n
+
+
+# Example: require cmd+q twice to quit
+#keybind = cmd+q>cmd+q=quit
+confirm-close-surface = always
+
+# theme = Dracula
+# theme = Sublette
+# theme = TokyoNight
+# theme = Earthsong
+theme = Challenger Deep
+selection-background = #357482
+selection-foreground = #ffffff
+split-divider-color = #444444
+
+# Font Configuration
+font-thicken = true
+font-thicken-strength = 100
+font-family = "TX-02"
+font-size = 14
+# Disable ligatures
+font-feature = -calt
+
+cursor-text = #000000
+auto-update = check
+auto-update-channel = stable
+quit-after-last-window-closed = false
+
+# window-decoration = none # breaks tabs
+# macos-titlebar-style = hidden # breaks tabs
+macos-titlebar-style = tabs
+macos-titlebar-proxy-icon = visible
+window-colorspace = display-p3
+
+# Shell Configuration
+shell-integration-features = cursor,sudo,title,ssh-env,ssh-terminfo
+command = /opt/homebrew/bin/zsh
+shell-integration = zsh
+working-directory = /Users/samm
+
+# Terminal Type
+term = xterm-ghostty
+
+# Window Configuration
+# Maximize window on launch
+maximize = false
+window-width = 426
+window-height = 100
+window-position-x = 100
+window-position-y = 0
+window-padding-x = 5
+window-padding-y = 5
+window-padding-balance = true
+
+# window-decoration = auto
+# window-save-state = always
+
+# 100000000 = ~100mb per terminal
+scrollback-limit = 100000000
+
+# Cursor Configuration
+cursor-style = block
+cursor-style-blink = true
+
+# Background Effects
+background-opacity = 0.9
+background-blur = 30
+# Make inactive splits more obvious (1.0 = fully opaque, lower = more dimmed)
+unfocused-split-opacity = 0.85
+
+# Cell Spacing
+adjust-cell-width = -11%
+adjust-cell-height = -6%
+
+# macOS Behaviour
+macos-option-as-alt = false
+macos-window-shadow = true
+
+# Mouse Configuration
+mouse-hide-while-typing = true
+copy-on-select = false
+cursor-click-to-move = false
+mouse-shift-capture = true
+#focus-follows-mouse = true
+## clipboard protection
+# prompts before programs read clipboard
+clipboard-read = ask
+# allows writing to clipboard
+clipboard-write = allow
+# warns about dangerous pastes (e.g., commands with newlines)
+clipboard-paste-protection = true
+
+# prevent title query attacks
+title-report = false
+
+# Bell Configuration
+# bell-features = no-audio
