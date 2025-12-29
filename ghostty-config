@@ -113,7 +113,7 @@ cursor-style = block
 cursor-style-blink = true
 
 # Background Effects
-background-opacity = 0.9
+background-opacity = 0.95
 background-blur = 30
 # Make inactive splits more obvious (1.0 = fully opaque, lower = more dimmed)
 unfocused-split-opacity = 0.85
