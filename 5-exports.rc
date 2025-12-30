@@ -18,7 +18,10 @@ else
 fi
 
 # Tells 'less' not to paginate if less than a page
-export LESS="-F -X $LESS"
+# -R: output raw ANSI colour codes (required for git log colours etc)
+# -F: quit if output fits on one screen
+# -X: don't clear screen on exit
+export LESS="-R -F -X $LESS"
 
 # Options to fzf command
 export FZF_COMPLETION_OPTS='--border --info=inline'
