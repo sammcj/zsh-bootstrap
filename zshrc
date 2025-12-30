@@ -127,10 +127,10 @@ fpath+=~/.zfunc
 export PATH="/opt/homebrew/opt/tcl-tk@8/bin:$PATH"
 
 # # The next line updates PATH for the Google Cloud SDK.
-if [ -f '/Users/samm/Downloads/google-cloud-sdk/path.zsh.inc' ] && if_not_in_vscode; then . '/Users/samm/Downloads/google-cloud-sdk/path.zsh.inc'; fi
+# if [ -f '/Users/samm/Downloads/google-cloud-sdk/path.zsh.inc' ] && if_not_in_vscode; then . '/Users/samm/Downloads/google-cloud-sdk/path.zsh.inc'; fi
 
 # The next line enables shell command completion for gcloud.
-if [ -f '/Users/samm/Downloads/google-cloud-sdk/completion.zsh.inc' ] && if_not_in_vscode; then . '/Users/samm/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
+# if [ -f '/Users/samm/Downloads/google-cloud-sdk/completion.zsh.inc' ] && if_not_in_vscode; then . '/Users/samm/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
 
 # # Amazon Q post block. Keep at the bottom of this file.
 if [[ "$LOADING_Q" == "true" ]]; then

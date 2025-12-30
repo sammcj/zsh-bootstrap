@@ -4,12 +4,18 @@
 export SAM_CLI_TELEMETRY=0 TELEMETRY=0 ENABLE_TELEMETRY=0 SEND_TELEMETRY=0 DO_NOT_TRACK=1 ANALYTICS=0 DISABLE_ANALYTICS=1 NO_ANALYTICS=1 DOTNET_CLI_TELEMETRY_OPTOUT=1 # General catch-all
 export GREP_OPTIONS="--color"
 # export LSCOLORS="ExFxCxDxBxegedabagacad"
-export LS_COLORS="$(vivid generate dracula)"
 export CLICOLOR=1
 export GOPATH="${HOME}/go"
 export XZ_OPT="--threads=8"
 export MU_REPO_SERIAL=false
-export EDITOR=vim
+LS_COLORS="$(vivid generate dracula)"
+export LS_COLORS
+
+if [ -x "/usr/local/bin/zed" ]; then
+  export EDITOR="/usr/local/bin/zed"
+else
+  export EDITOR="vim"
+fi
 
 # Tells 'less' not to paginate if less than a page
 export LESS="-F -X $LESS"
