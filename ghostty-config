@@ -67,7 +67,7 @@ split-divider-color = #444444
 font-thicken = true
 font-thicken-strength = 100
 font-family = "TX-02"
-font-size = 14
+font-size = 15
 # Disable ligatures
 font-feature = -calt
 

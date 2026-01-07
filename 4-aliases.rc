@@ -68,6 +68,7 @@ alias h="hugo serve --disableFastRender --buildDrafts"
 alias m="git checkout main"
 alias p="git pull"
 alias P="git push"
+alias gcod="gcd"
 
 # GNU tools
 alias sed="gsed"
