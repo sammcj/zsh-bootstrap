@@ -94,8 +94,8 @@ term = xterm-ghostty
 # Window Configuration
 # Maximize window on launch
 maximize = false
-window-width = 426
-window-height = 100
+window-width = 478
+window-height = 114
 window-position-x = 100
 window-position-y = 0
 window-padding-x = 5
