@@ -69,6 +69,7 @@ DEVELOPMENT_PLAN.md
 
 
 **/.crush
+.serena/cache
 **/.serena/cache
+.serena/logs
 **/.serena/logs
-**/.serena/memories

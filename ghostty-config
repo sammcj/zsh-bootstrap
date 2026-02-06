@@ -14,7 +14,7 @@
 # Keybindings
 #keybind = ctrl+q>r=reload_config
 keybind = ctrl+shift+e=equalize_splits
-keybind = global:option+grave_accent=toggle_visibility
+#keybind = global:option+grave_accent=toggle_visibility
 keybind = global:ctrl+grave_accent=toggle_visibility
 keybind = performable:cmd+c=copy_to_clipboard
 
@@ -62,6 +62,8 @@ theme = Challenger Deep
 selection-background = #357482
 selection-foreground = #ffffff
 split-divider-color = #444444
+# Fix low-contrast text
+palette = 7=#ffffff
 
 # Font Configuration
 font-thicken = true
@@ -131,6 +133,9 @@ mouse-hide-while-typing = true
 copy-on-select = false
 cursor-click-to-move = false
 mouse-shift-capture = true
+#disable mouse reporting to apps like vim
+mouse-reporting = false
+
 #focus-follows-mouse = true
 ## clipboard protection
 # prompts before programs read clipboard
@@ -142,6 +147,3 @@ clipboard-paste-protection = true
 
 # prevent title query attacks
 title-report = false
-
-# Bell Configuration
-# bell-features = no-audio
