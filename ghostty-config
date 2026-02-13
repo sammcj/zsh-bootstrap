@@ -68,7 +68,7 @@ palette = 7=#ffffff
 # Font Configuration
 font-thicken = true
 font-thicken-strength = 100
-font-family = "TX-02"
+font-family = "TX-02 Retina"
 font-size = 15
 # Disable ligatures
 font-feature = -calt
@@ -79,10 +79,11 @@ auto-update-channel = stable
 quit-after-last-window-closed = false
 
 # window-decoration = none # breaks tabs
-# macos-titlebar-style = hidden # breaks tabs
+#macos-titlebar-style = hidden # breaks tabs
 macos-titlebar-style = tabs
 macos-titlebar-proxy-icon = visible
 window-colorspace = display-p3
+
 
 # Shell Configuration
 shell-integration-features = cursor,sudo,title,ssh-env,ssh-terminfo
@@ -105,7 +106,7 @@ window-padding-y = 5
 window-padding-balance = true
 
 # window-decoration = auto
-# window-save-state = always
+window-save-state = always
 
 # 100000000 = ~100mb per terminal
 scrollback-limit = 100000000

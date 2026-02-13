@@ -27,6 +27,8 @@ alias pa="pip freeze --local | grep -v '^\-e' | cut -d = -f 1  | xargs -n1 pip i
 # Second homebrew install with x86 arch
 alias brew86="arch -x86_64 /usr/local/homebrew/bin/brew"
 
+alias just="jmake" # https://github.com/sammcj/jmake
+
 # Git
 # alias gbd="git branch -d" Moved to functions
 #alias gitrb='for branch in $(git branch -r --merged | grep -v HEAD); do echo -e $(git show --format="%ci %cr %an" "$branch" | head -n 1) \\t$branch; done | sort -r'
@@ -65,7 +67,7 @@ alias minor="git commit -m 'chore: minor tweaks [skip ci]"
 alias add="git add ."
 alias c="git commit -m"
 alias h="hugo serve --disableFastRender --buildDrafts"
-alias m="git checkout main"
+alias m="markless" # cargo install markless
 alias p="git pull"
 alias P="git push"
 alias gcod="gcd"

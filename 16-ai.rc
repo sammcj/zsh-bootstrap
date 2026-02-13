@@ -20,21 +20,31 @@ alias o='tlm explain'
 alias hf="hfdownloader -c 10 -t \$HUGGINGFACE_TOKEN -j"
 alias imagesearch="sisi search"
 alias gemini="gemini --yolo"
-alias kanban="npx -y vibe-kanban"
-alias claude="~/.local/bin/claude" # --dangerously-skip-permissions
-alias cc='claude' # --dangerously-skip-permissions
-alias ccd='cc --dangerously-skip-permissions'
-alias ccc='cc --continue'
-alias cccd='ccc --dangerously-skip-permissions'
-alias ccr='cc --resume'
-alias ccrd='ccr --dangerously-skip-permissions'
-alias ccs='ccr'
-alias claude-history='claude-code-viewer' # pnpm install -g @kimuson/claude-code-viewer@latest
 alias q='kiro-cli'
+alias kanban="npx -y vibe-kanban"
+
+## Claude Code aliases
+alias claude="~/.local/bin/claude"
+alias cc='claude'
+alias cca='CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 cc'
+alias ccd='cc --dangerously-skip-permissions'
+alias ccda='CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 ccd'
+alias ccc='cc --continue'
+alias ccaac='CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 ccc'
+alias cccd='ccc --dangerously-skip-permissions'
+alias ccaacd='CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 cccd'
+alias ccr='cc --resume'
+alias ccra='CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 ccr'
+alias ccrd='ccr --dangerously-skip-permissions'
+alias ccra='CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 ccrd'
+alias ccs='ccr'
+alias ccsa='CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 ccs'
+alias claude-history='claude-code-viewer' # requires: pnpm install -g @kimuson/claude-code-viewer@latest
 
 # Claude Code non-interactive functions
 alias '??'='claude_helper'
 alias '??!'='claude_helper_exec'
+## End of Claude Code aliases
 
 ### Functions ###
 
