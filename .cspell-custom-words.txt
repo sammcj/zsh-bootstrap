@@ -74,12 +74,14 @@ doesnt
 dotenv
 dotfile
 dotfiles
+dropoff
 elif
 entrypoint
 entrypoints
 envconfig
 eoux
 esbuild
+Excalidraw
 FACEFUSION
 familiarise
 Fargate
@@ -250,4 +252,3 @@ Wezterm
 workdir
 xlarge
 zerolog
-dropoff

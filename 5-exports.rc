@@ -80,3 +80,4 @@ export FFMPEG_DIR="/opt/homebrew/opt/ffmpeg"
 
 # Custom user locate path
 export LOCATE_PATH="$HOME/.locatedb"
+
