@@ -5,12 +5,44 @@ autoload -U colors && colors
 
 if [ -z "$RUNNING_IN_VSCODE" ]; then
   # Fancy prompt with git info - only when not in VS Code
-  # show git changes on the command line
   autoload -Uz vcs_info add-zsh-hook
   setopt prompt_subst
-  add-zsh-hook precmd vcs_info
 
   zstyle ':vcs_info:*' enable git
+
+  ## Async git dirty-state rendering (Feb 2026)
+  ## -------------------------------------------
+  ## Previously, vcs_info ran with `check-for-changes true`, which calls `git diff`
+  ## synchronously on every prompt. In repos with large LFS/xet-managed files
+  ## (e.g. HuggingFace model repos with multi-GB binaries), `git diff` must
+  ## SHA-hash the entire working-tree copy of those files, adding 4-5+ seconds
+  ## of blocking delay per prompt.
+  ##
+  ## Fix: disable synchronous change detection so the prompt renders instantly
+  ## with just the branch name (~10ms). Dirty state (staged/unstaged/untracked
+  ## indicators: u, c, N) is computed in a background process. When it finishes,
+  ## the prompt updates in-place via `zle reset-prompt`.
+  ##
+  ## Uses zsh's built-in `zle -F` fd-watcher -- no external plugins required.
+  ## Works on zsh 5.8+.
+  ##
+  ## Indicators: u = unstaged changes, c = staged changes, N = untracked files
+  ## e.g. [main] -> [mainucN] once the async check completes
+
+  # Disable the expensive synchronous change detection in vcs_info.
+  # With this off, %u (unstaged) and %c (staged) are always empty.
+  # We compute them asynchronously instead (see _async_git_callback below).
+  zstyle ':vcs_info:*' check-for-changes false
+
+  # Simplified format: just branch (or branch|action during rebase/merge/etc).
+  # Dirty indicators are appended separately via the async mechanism.
+  zstyle ':vcs_info:git:*' formats '%b'
+  zstyle ':vcs_info:git:*' actionformats '%b|%a'
+
+  # --- Async state variables ---
+  typeset -g _git_info=""             # Full formatted string for the prompt, e.g. "[mainucN]"
+  typeset -g _async_git_fd=""         # File descriptor for the current async worker process
+  typeset -g _async_git_branch=""     # Branch name captured when async was kicked off
 
   # Detect if we're in a git worktree (fast filesystem check, no git commands)
   _get_worktree_name() {
@@ -34,8 +66,46 @@ if [ -z "$RUNNING_IN_VSCODE" ]; then
     done
   }
 
+  # Called by zle when the async worker's fd becomes readable (i.e. it finished).
+  # Reads the dirty indicators, rebuilds _git_info, and redraws the prompt.
+  _async_git_callback() {
+    local fd=$1
+    local dirty=""
+
+    # Read the dirty indicators string from the background process
+    read -r dirty <&$fd 2>/dev/null
+
+    # Clean up the fd watcher and close the descriptor
+    zle -F "$fd"
+    exec {fd}<&-
+    _async_git_fd=""
+
+    # Rebuild _git_info with dirty indicators appended to the branch name
+    if [[ -n "$_async_git_branch" ]]; then
+      _git_info="[${_async_git_branch}${dirty}]"
+    fi
+
+    # Redraw the prompt (only if zle is active, i.e. user is at a prompt)
+    zle && zle reset-prompt
+  }
+
+  # Cancel any in-flight async check (e.g. user pressed enter before it finished,
+  # or cd'd to a different directory)
+  _async_git_cancel() {
+    if [[ -n "$_async_git_fd" ]]; then
+      zle -F "$_async_git_fd" 2>/dev/null
+      exec {_async_git_fd}<&- 2>/dev/null
+      _async_git_fd=""
+    fi
+  }
+
   precmd() {
     vcs_info
+
+    # Cancel any still-pending async check from the previous prompt cycle
+    _async_git_cancel
+
+    # Worktree indicator (fast filesystem check, no git commands)
     local wt_name
     wt_name=$(_get_worktree_name)
     if [[ -n "$wt_name" ]]; then
@@ -53,42 +123,39 @@ if [ -z "$RUNNING_IN_VSCODE" ]; then
     else
       _venv_indicator=""
     fi
-  }
 
-  # Enable checking for (un)staged changes, enabling use of %u and %c
-  zstyle ':vcs_info:*' check-for-changes true
-  # Use %m for misc info (we'll populate it with untracked indicator via hook)
-  zstyle ':vcs_info:git:*' formats '[%b%u%c%m]'
-  zstyle ':vcs_info:git:*' actionformats '[%b|%a%u%c%m]'
-  zstyle ':vcs_info:git:*' enable git
+    # Git info: render branch immediately, dirty state arrives async
+    if [[ -n "$vcs_info_msg_0_" ]]; then
+      _async_git_branch="$vcs_info_msg_0_"
+      _git_info="[${_async_git_branch}]"  # Immediate: just [branch], no dirty indicators yet
 
-  # Hook to detect untracked files and show N indicator
-  zstyle ':vcs_info:git*+set-message:*' hooks git-untracked
-
-  +vi-git-untracked() {
-    if [[ $(git ls-files --other --exclude-standard 2>/dev/null | head -1) ]]; then
-      hook_com[misc]='N'
+      # Kick off background process to compute dirty indicators.
+      # This is where the expensive `git diff` runs without blocking the prompt.
+      local async_pwd="$PWD"
+      exec {_async_git_fd}< <(
+        builtin cd -q "$async_pwd" 2>/dev/null || exit
+        local indicators=""
+        # Unstaged changes (u) -- this is the slow one in large/LFS repos
+        git diff --no-ext-diff --quiet 2>/dev/null || indicators+="u"
+        # Staged changes (c)
+        git diff --cached --no-ext-diff --quiet 2>/dev/null || indicators+="c"
+        # Untracked files (N)
+        [[ -n "$(git ls-files --other --exclude-standard 2>/dev/null | head -1)" ]] && indicators+="N"
+        echo "$indicators"
+      )
+      # Register callback for when the background process writes its result
+      zle -F "$_async_git_fd" _async_git_callback
+    else
+      _git_info=""
+      _async_git_branch=""
     fi
   }
 
-  # %s - The current version control system, like git or svn.
-  # %r - The name of the root directory of the repository
-  # %S - The current path relative to the repository root directory
-  # %b - Branch information, like master
-  # %m - In case of Git, show information about stashes
-  # %u - Show unstaged changes in the repository
-  # %c - Show staged changes in the repository
+  # %b - Branch information, like main
+  # Indicators (computed async): u = unstaged, c = staged, N = untracked
+  # e.g. [main], [mainuc], [mainucN], [main|rebase]
 
-  # %{$(tput setaf 60)%}%m  # this is the machine IP/hostname
-
-  # Right hand side of the prompt line
-  # RPROMPT="%{$(tput setaf 177)%}\$vcs_info_msg_0_"
-
-  # PROMPT="%{$(tput setaf 60)%}%m %{$(tput setaf 105)%}%~${vcs_info_msg_0_}%{$(tput sgr0)%} %(?..[%?] )$ "
-
-  # %{$(tput setaf 177)%}\$vcs_info_msg_0_ # means pink git information
-
-  PROMPT="\$_venv_indicator%{$(tput setaf 177)%}\$vcs_info_msg_0_ \$_worktree_indicator%{$(tput setaf 105)%}%~%{$(tput sgr0)%} %(?..[%?] )$ "
+  PROMPT="\$_venv_indicator%{$(tput setaf 177)%}\$_git_info \$_worktree_indicator%{$(tput setaf 105)%}%~%{$(tput sgr0)%} %(?..[%?] )$ "
 else
   # Simple prompt for VS Code terminal
   PROMPT="%{$(tput setaf 105)%}%~%{$(tput sgr0)%} %(?..[%?] )$ "
