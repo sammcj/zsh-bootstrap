@@ -37,8 +37,6 @@ alias ccr='cc --resume'
 alias ccra='CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 ccr'
 alias ccrd='ccr --dangerously-skip-permissions'
 alias ccra='CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 ccrd'
-alias ccs='ccr'
-alias ccsa='CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 ccs'
 alias claude-history='claude-code-viewer' # requires: pnpm install -g @kimuson/claude-code-viewer@latest
 
 # Claude Code non-interactive functions

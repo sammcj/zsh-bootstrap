@@ -63,6 +63,7 @@ alias jira-commit="commit-jira"
 alias jira="checkout-jira"
 alias main="git checkout main && git pull"
 alias minor="git commit -m 'chore: minor tweaks [skip ci]"
+alias ct="container"
 ### Short git aliases
 alias add="git add ."
 alias c="git commit -m"

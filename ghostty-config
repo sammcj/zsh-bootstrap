@@ -49,6 +49,9 @@ keybind = shift+enter=text:\x1b\r
 # Edit ghostty config with $EDITOR
 keybind = super+,=text:ghostty +edit-config\n
 
+# Word selection boundaries (double-click)
+selection-word-chars = " \t'\"│`|:;,()[]{}<>$"
+
 
 # Example: require cmd+q twice to quit
 #keybind = cmd+q>cmd+q=quit
@@ -75,7 +78,7 @@ font-feature = -calt
 
 cursor-text = #000000
 auto-update = check
-auto-update-channel = stable
+auto-update-channel = tip
 quit-after-last-window-closed = false
 
 # window-decoration = none # breaks tabs

@@ -1847,7 +1847,7 @@ npm-global-update() {
     # TODO: switch to pnpm, detect if packages are installed with pnpm or npm and use the appropriate tool or migrated npm packages to pnpm
     # Define allowed package patterns (substring matches)
     local allowed_patterns
-    allowed_patterns=("@anthropic-ai/claude-code" "@google/gemini-cli" "@qwen-code/qwen-code" "ccstatusline" "claude-code-router" "claudekit" "ccusage" "npm-check-updates" "playwright" "ccexp" "vibe-kanban" "@vscode/vsce" "yaml-language-server" "typescript-language-server" "typescript" "corepack" "npm" "pnpm" "jest" "tweakcc" "@modelcontextprotocol/inspector" "happy-coder" "@github/copilot" "cline@nightly" "cline" "@anthropic-ai/sandbox-runtime" "@kimuson/claude-code-viewer@latest")
+    allowed_patterns=("@anthropic-ai/claude-code" "@google/gemini-cli" "@qwen-code/qwen-code" "ccstatusline" "claude-code-router" "claudekit" "ccusage" "npm-check-updates" "playwright" "ccexp" "vibe-kanban" "@vscode/vsce" "yaml-language-server" "typescript-language-server" "typescript" "corepack" "npm" "pnpm" "jest" "tweakcc" "@modelcontextprotocol/inspector" "happy-coder" "@github/copilot" "cline@nightly" "cline" "@anthropic-ai/sandbox-runtime" "@kimuson/claude-code-viewer@latest" "@mermaid-js/mermaid-cli")
 
     cspell_packages=( "cspell" "@cspell/dict-en-au" "@cspell/dict-en-gb" "@cspell/dict-companies" "@cspell/dict-html"
                       "@cspell/dict-python" "@cspell/dict-rust" "@cspell/dict-typescript" "@cspell/dict-node" "@cspell/dict-terraform"

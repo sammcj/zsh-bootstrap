@@ -11,11 +11,11 @@ export MU_REPO_SERIAL=false
 LS_COLORS="$(vivid generate dracula)"
 export LS_COLORS
 
-if [ -x "/usr/local/bin/zed" ]; then
-  export EDITOR="/usr/local/bin/zed"
-else
-  export EDITOR="vim"
-fi
+# if [ -x "/usr/local/bin/zed" ]; then
+#   export EDITOR="/usr/local/bin/zed"
+# else
+export EDITOR="vim"
+# fi
 
 # Tells 'less' not to paginate if less than a page
 # -R: output raw ANSI colour codes (required for git log colours etc)
