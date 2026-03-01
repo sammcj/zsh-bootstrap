@@ -50,6 +50,8 @@ keybind = shift+enter=text:\x1b\r
 keybind = super+,=text:ghostty +edit-config\n
 
 # Word selection boundaries (double-click)
+# Characters listed here act as word separators - selection stops at these
+# Quoted to preserve space; \t = tab, \" = literal double-quote
 selection-word-chars = " \t'\"│`|:;,()[]{}<>$"
 
 
