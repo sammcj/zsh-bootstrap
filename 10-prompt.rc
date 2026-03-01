@@ -155,8 +155,8 @@ if [ -z "$RUNNING_IN_VSCODE" ]; then
   # Indicators (computed async): u = unstaged, c = staged, N = untracked
   # e.g. [main], [mainuc], [mainucN], [main|rebase]
 
-  PROMPT="\$_venv_indicator%{$(tput setaf 177)%}\$_git_info \$_worktree_indicator%{$(tput setaf 105)%}%~%{$(tput sgr0)%} %(?..[%?] )$ "
+  PROMPT="\$_venv_indicator%{$(tput setaf 177)%}\$_git_info \$_worktree_indicator%{$(tput setaf 105)%}%~%{$(tput sgr0)%} %(?..[%?] )▸ "
 else
   # Simple prompt for VS Code terminal
-  PROMPT="%{$(tput setaf 105)%}%~%{$(tput sgr0)%} %(?..[%?] )$ "
+  PROMPT="%{$(tput setaf 105)%}%~%{$(tput sgr0)%} %(?..[%?] )▸ "
 fi

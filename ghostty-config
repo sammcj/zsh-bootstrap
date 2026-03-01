@@ -49,10 +49,11 @@ keybind = shift+enter=text:\x1b\r
 # Edit ghostty config with $EDITOR
 keybind = super+,=text:ghostty +edit-config\n
 
-# Word selection boundaries (double-click)
-# Characters listed here act as word separators - selection stops at these
-# Quoted to preserve space; \t = tab, \" = literal double-quote
-selection-word-chars = " \t'\"│`|:;,()[]{}<>$"
+# Word selection boundaries - using compiled-in default
+# Ghostty's config parser can't include space, tab, or " in custom values
+# (space/tab are trimmed, " is treated as a string delimiter).
+# To add * as a boundary, this parser bug needs fixing upstream.
+# See: https://github.com/ghostty-org/ghostty/issues
 
 
 # Example: require cmd+q twice to quit
