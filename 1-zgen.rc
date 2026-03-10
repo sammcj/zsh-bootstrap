@@ -18,37 +18,55 @@ export SHOW_AWS_PROMPT=false
 # compinit -u
 
 if ! zgen saved; then
-  # echo "Creating a zgen save"
+  # Use mkdir as an atomic lock to prevent concurrent zgen save races
+  _zgen_lockdir="${HOME}/.zgen/init.zsh.lock"
+  if mkdir "$_zgen_lockdir" 2>/dev/null; then
+    trap 'rmdir "$_zgen_lockdir" 2>/dev/null' EXIT INT TERM
 
-  ## load omz plugins ##
-  zgen oh-my-zsh plugins/fzf # https://github.com/ohmyzsh/ohmyzsh/issues/12412
-  zgen oh-my-zsh plugins/command-not-found
+    ## load omz plugins ##
+    zgen oh-my-zsh plugins/fzf # https://github.com/ohmyzsh/ohmyzsh/issues/12412
+    zgen oh-my-zsh plugins/command-not-found
 
-  if [ -z "$RUNNING_IN_VSCODE" ]; then
-    zgen oh-my-zsh plugins/docker-compose
-    zgen oh-my-zsh plugins/aws
-    zgen oh-my-zsh plugins/colored-man-pages
-    zgen oh-my-zsh plugins/gitfast
-  fi
+    if [ -z "$RUNNING_IN_VSCODE" ]; then
+      zgen oh-my-zsh plugins/docker-compose
+      zgen oh-my-zsh plugins/aws
+      zgen oh-my-zsh plugins/colored-man-pages
+      zgen oh-my-zsh plugins/gitfast
+    fi
 
-  ## load normal plugins ##
-  zgen loadall <<EOPLUGINS
-    zsh-users/zsh-completions src
-    zsh-users/zsh-autosuggestions
-    zsh-users/zsh-history-substring-search
-    zdharma-continuum/fast-syntax-highlighting
+    ## load normal plugins ##
+    zgen loadall <<EOPLUGINS
+      zsh-users/zsh-completions src
+      zsh-users/zsh-autosuggestions
+      zsh-users/zsh-history-substring-search
+      zdharma-continuum/fast-syntax-highlighting
 EOPLUGINS
 
-  if [ -z "$RUNNING_IN_VSCODE" ]; then
-    zgen loadall <<EOPLUGINS
+    if [ -z "$RUNNING_IN_VSCODE" ]; then
+      zgen loadall <<EOPLUGINS
 
-    # git related
-    peterhurford/git-it-on.zsh
-    bigH/git-fuzzy
+      # git related
+      peterhurford/git-it-on.zsh
+      bigH/git-fuzzy
 EOPLUGINS
     fi
 
-  # save zgen cache
-  zgen save
+    # save zgen cache
+    zgen save
+
+    rmdir "$_zgen_lockdir" 2>/dev/null
+    trap - EXIT INT TERM
+  else
+    # Another shell is already regenerating init.zsh - warn if the lock looks stale
+    zmodload -F zsh/stat b:zstat 2>/dev/null
+    if [[ -d "$_zgen_lockdir" ]]; then
+      _lock_mtime=$(zstat +mtime "$_zgen_lockdir" 2>/dev/null)
+      if [[ -n "$_lock_mtime" ]] && (( EPOCHSECONDS - _lock_mtime > 60 )); then
+        echo "zgen: stale lock detected ($(( EPOCHSECONDS - _lock_mtime ))s old). Run: rmdir ~/.zgen/init.zsh.lock" >&2
+      fi
+      unset _lock_mtime
+    fi
+  fi
+  unset _zgen_lockdir
 fi
 

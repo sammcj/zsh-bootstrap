@@ -1442,12 +1442,12 @@ nas_dcup() {
 # Yazi https://github.com/sxyazi/yazi
 # https://github.com/sxyazi/yazi/tree/main/config/docs
 function y() {
-  tmp="$(mktemp -t "yazi-cwd.XXXXX")"
-  yazi --cwd-file="$tmp"
-  if cwd="$(cat -- "$tmp")" && [ -n "$cwd" ] && [ "$cwd" != "$PWD" ]; then
-    cd -- "$cwd"
-  fi
-  rm -f -- "$tmp"
+	local tmp
+  tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+	command yazi "$@" --cwd-file="$tmp"
+	IFS= read -r -d '' cwd < "$tmp"
+	[ "$cwd" != "$PWD" ] && [ -d "$cwd" ] && builtin cd -- "$cwd"
+	rm -f -- "$tmp"
 }
 
 function brewbackup() {
@@ -1717,6 +1717,7 @@ EOF
   echo "source $aws_creds_file"
 }
 alias aws-ai="aws-sso aisandpit"
+alias aws-kbdev="aws-sso kb-dev"
 # shellcheck disable=SC2139
 alias awl="source ${HOME}/.tmp/awltmp"
 
@@ -1773,31 +1774,6 @@ cline-workflows() {
   cp -r $SOURCE_DIR/*.md $DEST_DIR/
 }
 
-# Track previous directory for z - / cd - functionality
-# Uses chpwd hook so it works with z, cd, pushd, etc.
-typeset -g _ZOXIDE_OLDPWD="$PWD"
-typeset -g _ZOXIDE_CURPWD="$PWD"
-
-_track_directory() {
-  _ZOXIDE_OLDPWD="$_ZOXIDE_CURPWD"
-  _ZOXIDE_CURPWD="$PWD"
-}
-autoload -Uz add-zsh-hook
-add-zsh-hook chpwd _track_directory
-
-# Go to previous directory with z -
-z() {
-  if [[ "$1" == "-" ]]; then
-    if [[ -n "$_ZOXIDE_OLDPWD" && -d "$_ZOXIDE_OLDPWD" ]]; then
-      __zoxide_z "$_ZOXIDE_OLDPWD"
-    else
-      echo "z: no previous directory" >&2
-      return 1
-    fi
-  else
-    __zoxide_z "$@"
-  fi
-}
 
 
 # Quick navigation to git repositories, optionally taking a subdirectory as an argument
@@ -1847,7 +1823,8 @@ npm-global-update() {
     # TODO: switch to pnpm, detect if packages are installed with pnpm or npm and use the appropriate tool or migrated npm packages to pnpm
     # Define allowed package patterns (substring matches)
     local allowed_patterns
-    allowed_patterns=("@anthropic-ai/claude-code" "@google/gemini-cli" "@qwen-code/qwen-code" "ccstatusline" "claude-code-router" "claudekit" "ccusage" "npm-check-updates" "playwright" "ccexp" "vibe-kanban" "@vscode/vsce" "yaml-language-server" "typescript-language-server" "typescript" "corepack" "npm" "pnpm" "jest" "tweakcc" "@modelcontextprotocol/inspector" "happy-coder" "@github/copilot" "cline@nightly" "cline" "@anthropic-ai/sandbox-runtime" "@kimuson/claude-code-viewer@latest" "@mermaid-js/mermaid-cli")
+    allowed_patterns=("@anthropic-ai/claude-code" "@google/gemini-cli" "@qwen-code/qwen-code" "ccstatusline" "claude-code-router" "claudekit" "ccusage" "npm-check-updates" "playwright" "ccexp" "vibe-kanban" "@vscode/vsce" "yaml-language-server" "typescript-language-server" "typescript" "corepack" "npm" "pnpm" "jest" "tweakcc" "@modelcontextprotocol/inspector" "happy-coder" "@github/copilot" "cline@nightly" "cline" "@anthropic-ai/sandbox-runtime" "@kimuson/claude-code-viewer@latest" "@mermaid-js/mermaid-cli"
+    "@googleworkspace/cli")
 
     cspell_packages=( "cspell" "@cspell/dict-en-au" "@cspell/dict-en-gb" "@cspell/dict-companies" "@cspell/dict-html"
                       "@cspell/dict-python" "@cspell/dict-rust" "@cspell/dict-typescript" "@cspell/dict-node" "@cspell/dict-terraform"

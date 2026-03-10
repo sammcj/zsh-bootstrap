@@ -56,7 +56,7 @@ alias gitwip="git add .; git commit -m '[automated commit or incremental update]
 alias hotfix-checkout="checkout-hotfix"
 alias hotfix-commit="commit-hotfix"
 alias hotfix="checkout-hotfix"
-alias L="ls -ltarh"
+alias ll="ls -ltarh"
 alias j="checkout-jira"
 alias jira-checkout="checkout-jira"
 alias jira-commit="commit-jira"
@@ -180,6 +180,7 @@ alias -s {jpg,jpeg,png,gif,bmp,ico,svg,webp}=open
 
 # Glow for Markdown
 alias -s md=glow
+alias mdpdf='~/.claude/skills/extract-wisdom/scripts/render_pdf.sh'
 
 # Networking
 alias ip6="curl -s 6.ipquail.com/ip"

@@ -105,12 +105,6 @@ fi
 # fi
 # <<< conda initialize <<<
 
-### zoxide ###
-if [ -z "$RUNNING_IN_VSCODE" ]; then
-  eval "$(zoxide init zsh)"
-fi
-### zoxide ###
-
 # Load custom aliases
 export PATH="$PATH:/Users/samm/Fltr"
 
@@ -132,13 +126,6 @@ export PATH="/opt/homebrew/opt/tcl-tk@8/bin:$PATH"
 # The next line enables shell command completion for gcloud.
 # if [ -f '/Users/samm/Downloads/google-cloud-sdk/completion.zsh.inc' ] && if_not_in_vscode; then . '/Users/samm/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
 
-# # Amazon Q post block. Keep at the bottom of this file.
-if [[ "$LOADING_Q" == "true" ]]; then
-# Amazon Q post block. Keep at the bottom of this file.
-  # This is in an if statement because Amazon Q / Kiro CLI is _really_ poorly written and slows down your terminal
-  # See https://github.com/aws/amazon-q-developer-cli/discussions/202
-  [[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh"
-fi
 
 # ####### PROFILING #######
 # # Uncomment below to enable debug timing
@@ -159,5 +146,41 @@ export PATH="$HOME/.local/bin:$PATH"
 # Added by Antigravity
 # export PATH="/Users/samm/.antigravity/antigravity/bin:$PATH"
 
-# opencode
-export PATH=/Users/samm/.opencode/bin:$PATH
+### zoxide ###
+if [ -z "$RUNNING_IN_VSCODE" ]; then
+  eval "$(zoxide init zsh)"
+
+  # Override z to support z - (go to previous directory)
+  typeset -g _ZOXIDE_OLDPWD="$PWD"
+  typeset -g _ZOXIDE_CURPWD="$PWD"
+
+  _track_directory() {
+    _ZOXIDE_OLDPWD="$_ZOXIDE_CURPWD"
+    _ZOXIDE_CURPWD="$PWD"
+  }
+  autoload -Uz add-zsh-hook
+  add-zsh-hook chpwd _track_directory
+
+  z() {
+    if [[ "$1" == "-" ]]; then
+      if [[ -n "$_ZOXIDE_OLDPWD" && -d "$_ZOXIDE_OLDPWD" ]]; then
+        __zoxide_z "$_ZOXIDE_OLDPWD"
+      else
+        echo "z: no previous directory" >&2
+        return 1
+      fi
+    else
+      __zoxide_z "$@"
+    fi
+  }
+fi
+### zoxide ###
+
+
+# # Amazon Q post block. Keep at the bottom of this file.
+if [[ "$LOADING_Q" == "true" ]]; then
+# Amazon Q post block. Keep at the bottom of this file.
+  # This is in an if statement because Amazon Q / Kiro CLI is _really_ poorly written and slows down your terminal
+  # See https://github.com/aws/amazon-q-developer-cli/discussions/202
+  [[ -f "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/kiro-cli/shell/zshrc.post.zsh"
+fi

@@ -39,6 +39,8 @@ alias ccrd='ccr --dangerously-skip-permissions'
 alias ccra='CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1 ccrd'
 alias claude-history='claude-code-viewer' # requires: pnpm install -g @kimuson/claude-code-viewer@latest
 
+alias oc='opencode'
+
 # Claude Code non-interactive functions
 alias '??'='claude_helper'
 alias '??!'='claude_helper_exec'
@@ -288,3 +290,9 @@ EOF
 #   local -r prompt=$(git diff --cached --name-only | xargs -I{} echo "Why did you change {}?")
 #   local -r api_url="http://localhost:11434/api/generate"
 # }
+
+# Commands that only run within Claude Code sessions
+# if [[ -n "$CLAUDECODE" ]]; then
+
+#   eval "$(direnv hook zsh)" # https://github.com/direnv/direnv
+# fi

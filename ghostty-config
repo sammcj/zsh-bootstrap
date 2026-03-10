@@ -80,7 +80,7 @@ font-size = 15
 font-feature = -calt
 
 cursor-text = #000000
-auto-update = check
+#auto-update = check
 auto-update-channel = tip
 quit-after-last-window-closed = false
 
