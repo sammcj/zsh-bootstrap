@@ -4,3 +4,4 @@ repos:
     hooks:
       - id: gitleaks
         args: ['--config', '.gitleaks.toml']
+        types: [file]
