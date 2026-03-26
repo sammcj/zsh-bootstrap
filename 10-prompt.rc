@@ -160,6 +160,49 @@ if [ -z "$RUNNING_IN_VSCODE" ]; then
   # Indicators (computed async): u = unstaged, c = staged, N = untracked
   # e.g. [main], [mainuc], [mainucN], [main|rebase]
 
+  # Directory-aware background tint for Ghostty.
+  # Sends OSC 11 to change the terminal background based on $PWD.
+  # OSC 111 resets to the theme default (Challenger Deep = dark purple).
+  #
+  # Palette - pick from these or add your own:
+  typeset -gA _ghostty_bg_palette=(
+    [plum_red]='#2e1419'    # warm red-purple
+    [petrol]='#082228'      # blue-green
+    [ocean]='#08162e'       # deep navy
+    [ember]='#302008'       # warm amber/orange
+    [emerald]='#06281a'     # bright green
+    [indigo]='#1e0a32'      # strong violet
+    [blood]='#300808'       # dark red
+    [slate]='#181e28'       # cool grey-blue
+    [moss]='#182a08'        # yellow-green
+    [bronze]='#2e1e06'      # golden brown
+    # lighter variants
+    [sandstone]='#3d3020'   # warm tan
+    [dusk]='#2e2840'        # soft lavender
+    [lagoon]='#183038'      # bright teal
+    [clay]='#3a2218'        # terracotta
+    [sage]='#1e3220'        # muted green
+    [wine]='#381828'        # bright magenta-red
+    [honey]='#383010'       # rich gold
+  )
+  # Directory -> palette colour mappings (add new case branches as needed):
+  _ghostty_dir_bg() {
+    [[ "$TERM_PROGRAM" != "ghostty" ]] && return
+    local colour
+    case "$PWD" in
+      "$HOME"/git/mantel|"$HOME"/git/mantel/*)
+        colour="${_ghostty_bg_palette[plum_red]}" ;;
+      "$HOME"/.claude|"$HOME"/.claude/*)
+        colour="${_ghostty_bg_palette[honey]}" ;;
+      *)
+        printf '\e]111\e\\'  # no match, reset to theme default
+        return ;;
+    esac
+    printf '\e]11;%s\e\\' "$colour"
+  }
+  add-zsh-hook chpwd _ghostty_dir_bg
+  _ghostty_dir_bg  # set initial state for the shell's starting directory
+
   PROMPT="\$_venv_indicator%{$(tput setaf 177)%}\$_git_info \$_worktree_indicator%{$(tput setaf 105)%}%~%{$(tput sgr0)%} %(?..[%?] )▸ "
 else
   # Simple prompt for VS Code terminal
