@@ -100,6 +100,11 @@ if [ -z "$RUNNING_IN_VSCODE" ]; then
   }
 
   precmd() {
+    # Reset kitty keyboard protocol if a crashed program left it enabled.
+    # This prevents stale CSI u mode from corrupting keypresses (e.g. 9;5u).
+    # Pop up to 99 levels - Ghostty silently ignores this when protocol is not active.
+    [[ "$TERM_PROGRAM" == "ghostty" ]] && printf '\e[<99u' 2>/dev/null
+
     vcs_info
 
     # Cancel any still-pending async check from the previous prompt cycle
