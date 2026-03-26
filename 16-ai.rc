@@ -17,7 +17,7 @@ alias gl="gollama"
 alias ol="mods"
 alias idf='. $HOME/.espressif/v5.5.2/esp-idf/export.sh'
 alias o='tlm explain'
-alias hf="hfdownloader -c 10 -t \$HUGGINGFACE_TOKEN -j"
+# alias hf="hfdownloader -c 10 -t \$HUGGINGFACE_TOKEN -j"
 alias imagesearch="sisi search"
 alias gemini="gemini --yolo"
 alias q='kiro-cli'
@@ -294,6 +294,161 @@ EOF
 #   local -r prompt=$(git diff --cached --name-only | xargs -I{} echo "Why did you change {}?")
 #   local -r api_url="http://localhost:11434/api/generate"
 # }
+
+# Move a directory and migrate all Claude Code conversation context to the new path.
+# Source: https://curiouslychase.com/posts/rescuing-your-claude-conversations-when-you-rename-projects/
+function claude-mv() {
+  if [[ $# -ne 2 ]]; then
+    printf "Usage: claude-mv <old_directory> <new_directory>\n" >&2
+    printf "Example: claude-mv ~/old-project ~/new-project\n" >&2
+    return 1
+  fi
+
+  local old_dir="$1"
+  local new_dir="$2"
+  local old_abs new_abs_future new_abs
+  local old_encoded new_encoded
+  local claude_dir="${HOME}/.claude"
+  local already_moved=false
+
+  # Resolve paths to absolute using zsh :a modifier (works even if path doesn't exist)
+  old_abs="${old_dir:a}"
+  new_abs_future="${new_dir:a}"
+
+  if [[ -d "$old_abs" && -e "$new_abs_future" ]]; then
+    printf "Error: Both old and new paths exist. Unclear which way to move.\n" >&2
+    return 1
+  elif [[ ! -d "$old_abs" && -d "$new_abs_future" ]]; then
+    already_moved=true
+    printf "Old path no longer exists, new path found. Migrating Claude context only.\n"
+  elif [[ ! -d "$old_abs" && ! -d "$new_abs_future" ]]; then
+    printf "Error: Neither old (%s) nor new (%s) directory exists.\n" "$old_abs" "$new_abs_future" >&2
+    return 1
+  fi
+
+  # Encode paths the way Claude does (replace / and . with -)
+  old_encoded="${old_abs//[\/.]/-}"
+  new_encoded="${new_abs_future//[\/.]/-}"
+
+  # Check if destination Claude context already exists
+  local -a existing_context
+  local subdir
+  for subdir in projects file-history todos shell-snapshots debug; do
+    local check_path="${claude_dir}/${subdir}/${new_encoded}"
+    if [[ -d "$check_path" || -f "$check_path" ]]; then
+      existing_context+=("$subdir")
+    fi
+  done
+
+  # If destination context exists, prompt user
+  if (( ${#existing_context[@]} > 0 )); then
+    printf "Warning: Claude context already exists for %s:\n" "$new_abs_future"
+    local item
+    for item in "${existing_context[@]}"; do
+      local count_info=""
+      if [[ "$item" = "projects" && -d "${claude_dir}/${item}/${new_encoded}" ]]; then
+        local session_count
+        session_count=$(find "${claude_dir}/${item}/${new_encoded}" -name '*.jsonl' 2>/dev/null | wc -l | tr -d ' ')
+        count_info=" (${session_count} sessions)"
+      fi
+      printf "  - %s%s\n" "$item" "$count_info"
+    done
+    printf "\nOptions:\n"
+    printf "  [c] Clean out existing context and continue\n"
+    printf "  [m] Merge old context into existing context\n"
+    printf "  [n] Abort (default)\n\n"
+
+    local reply
+    read -k 1 "reply?Choose [c/m/N]: "
+    printf "\n"
+
+    case "$reply" in
+      [cC])
+        printf "Cleaning out existing context for %s...\n" "$new_abs_future"
+        for item in "${existing_context[@]}"; do
+          rm -rf "${claude_dir}/${item}/${new_encoded}"
+          printf "  Removed %s\n" "$item"
+        done
+        printf "\n"
+        ;;
+      [mM])
+        printf "Will merge contexts...\n"
+        ;;
+      *)
+        printf "Aborted.\n"
+        return 1
+        ;;
+    esac
+  fi
+
+  printf "Moving Claude context from:\n  %s\n  -> %s\n\n" "$old_abs" "$new_abs_future"
+
+  local moved=0
+
+  # Rename/merge in each location (BEFORE moving directory)
+  for subdir in projects file-history todos shell-snapshots debug; do
+    local old_path="${claude_dir}/${subdir}/${old_encoded}"
+    local new_path="${claude_dir}/${subdir}/${new_encoded}"
+
+    if [[ -d "$old_path" ]]; then
+      if [[ -d "$new_path" ]]; then
+        printf "Merging %s/%s -> %s/%s\n" "$subdir" "$old_encoded" "$subdir" "$new_encoded"
+        # (N) glob qualifier prevents zsh "no matches found" error on empty dirs
+        mv "$old_path"/*(N) "$new_path/" 2>/dev/null || true
+        rmdir "$old_path" 2>/dev/null || rm -rf "$old_path"
+      else
+        printf "Moving %s/%s -> %s/%s\n" "$subdir" "$old_encoded" "$subdir" "$new_encoded"
+        mv "$old_path" "$new_path"
+      fi
+      moved=$((moved + 1))
+    elif [[ -f "$old_path" ]]; then
+      printf "Moving %s/%s -> %s/%s\n" "$subdir" "$old_encoded" "$subdir" "$new_encoded"
+      mv "$old_path" "$new_path"
+      moved=$((moved + 1))
+    fi
+  done
+
+  if (( moved == 0 )); then
+    printf "No Claude context found for %s\n" "$old_abs"
+  else
+    printf "Moved %d context location(s)\n" "$moved"
+  fi
+  printf "\n"
+
+  # Update session file contents to reference new path
+  if [[ -d "${claude_dir}/projects/${new_encoded}" ]]; then
+    local session_files
+    session_files=$(find "${claude_dir}/projects/${new_encoded}" -name '*.jsonl' 2>/dev/null)
+    if [[ -n "$session_files" ]]; then
+      printf "Updating session file references...\n"
+      find "${claude_dir}/projects/${new_encoded}" -name '*.jsonl' -exec sed -i '' "s|${old_abs}|${new_abs_future}|g" {} \;
+      printf "Updated session files\n\n"
+    fi
+  fi
+
+  # Move the actual directory AFTER Claude context is moved
+  if $already_moved; then
+    new_abs="$new_abs_future"
+    printf "Directory already at new location, skipping move.\n\n"
+  else
+    printf "Moving directory:\n  %s\n  -> %s\n" "$old_abs" "$new_dir"
+    if ! mv "$old_abs" "$new_dir"; then
+      printf "Error: Failed to move directory. Claude context was already moved to the new path.\n" >&2
+      return 1
+    fi
+    new_abs="$(cd "$new_dir" 2>/dev/null && pwd)"
+    printf "Directory moved\n\n"
+  fi
+
+  # Update history.jsonl to reference new path
+  local history_file="${claude_dir}/history.jsonl"
+  if [[ -f "$history_file" ]]; then
+    printf "Updating history.jsonl references...\n"
+    cp "$history_file" "${history_file}.backup"
+    sed -i '' "s|${old_abs}|${new_abs}|g" "$history_file"
+    printf "Updated history.jsonl (backup: history.jsonl.backup)\n"
+  fi
+}
 
 # Commands that only run within Claude Code sessions
 # if [[ -n "$CLAUDECODE" ]]; then

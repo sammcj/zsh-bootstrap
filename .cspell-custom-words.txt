@@ -63,6 +63,7 @@ dccache
 decrobin
 deepcoder
 deepseek
+deprioritising
 deserialisation
 devstral
 dialog
