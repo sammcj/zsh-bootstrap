@@ -203,6 +203,22 @@ if [ -z "$RUNNING_IN_VSCODE" ]; then
   add-zsh-hook chpwd _ghostty_dir_bg
   _ghostty_dir_bg  # set initial state for the shell's starting directory
 
+  # SSH wrapper: tint background per remote host, restore on disconnect.
+  # Host matching is against all args so it works with user@host, -p, etc.
+  ssh() {
+    if [[ "$TERM_PROGRAM" == "ghostty" ]]; then
+      local colour
+      case "$*" in
+        *example-host*) colour="${_ghostty_bg_palette[ocean]}" ;;
+        # *prod*) colour="${_ghostty_bg_palette[blood]}" ;;
+      esac
+      [[ -n "$colour" ]] && printf '\e]11;%s\e\\' "$colour"
+    fi
+    command ssh "$@"
+    # Restore directory-based colour (or theme default) after disconnect
+    _ghostty_dir_bg
+  }
+
   PROMPT="\$_venv_indicator%{$(tput setaf 177)%}\$_git_info \$_worktree_indicator%{$(tput setaf 105)%}%~%{$(tput sgr0)%} %(?..[%?] )▸ "
 else
   # Simple prompt for VS Code terminal

@@ -63,8 +63,6 @@ source /opt/homebrew/Cellar/fzf/*/shell/key-bindings.zsh
 # Enable direnv - https://direnv.net
 # eval "$(direnv hook zsh)"
 
-if_not_in_vscode bg_silent test -e "${HOME}/.iterm2_shell_integration.zsh" && bg_silent source "${HOME}/.iterm2_shell_integration.zsh"
-
 zstyle ':completion:*' menu select
 fpath+=~/.zfunc
 

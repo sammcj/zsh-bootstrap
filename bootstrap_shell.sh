@@ -34,7 +34,7 @@ function installPythonPackages() {
   uv venv
   . venv/bin/activate
   popd
-  uv pip3 install -U mu-repo oterm "yt-dlp[default,curl-cffi]"
+  uv pip install -U oterm "yt-dlp[default,curl-cffi]"
 
   oterm --install-completion zsh
 }
@@ -65,6 +65,8 @@ npm config set save-exact=true
 
 function installNpmPackages() {
   npm install -g pnpm
+  pnpm setup
+  source /Users/samm/.zshrc
 
   pnpm install -g npm-check-updates eslint prettier editorconfig @typescript-eslint/parser typescript \
   ts-node bash-language-server cspell
@@ -284,7 +286,7 @@ function main() {
   gitConfig
   configureDotfiles
 
-  configureAmazonQ
+  # configureAmazonQ
 }
 
 # Run the main functions to install and configure

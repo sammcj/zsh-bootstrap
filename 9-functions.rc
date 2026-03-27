@@ -1269,7 +1269,7 @@ function __upgrade_apps() {
 function __upgrade_packages() {
   trap 'fg' SIGINT
 
-  pip3 install -U pip
+  pip install -U pip
   npm i -g npm-check-updates
   \ncu --global
   echo | vim +PluginInstall +qall &>/dev/null
