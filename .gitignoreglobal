@@ -35,6 +35,7 @@ Session.vim
 #cmake
 CMakeFiles/*
 CMakeCache.txt
+CMakeUserPresets.json
 
 **/*.log
 **/*.pem
